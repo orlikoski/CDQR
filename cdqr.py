@@ -1,5 +1,5 @@
 #!python3
-import os, sys, argparse, subprocess, csv, sqlite3, time, datetime, re
+import os, sys, argparse, subprocess, csv, time, datetime, re
 
 ###############################################################################
 # Created by: Alan Orlikoski
