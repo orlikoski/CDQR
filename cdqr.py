@@ -174,7 +174,7 @@ def create_reports(dst_loc, csv_file):
 # Parsing begins
 parser_list = list(parse_options.keys())#["default","win_gen","win7","winxp","linux","android","macosx","test"]
 
-parser = argparse.ArgumentParser(description='Cold Disk Live Response Tool (CDLR)')
+parser = argparse.ArgumentParser(description='Cold Disk Quick Response Tool (CDQR)')
 parser.add_argument('src_location',nargs=1,help='Source File location: Y:\\Case\\Tag009\\sample.E01')
 parser.add_argument('dst_location',nargs='?',default='Results',help='Destination Folder location. If nothing is supplied then the default is \'Results\'')
 parser.add_argument('-p','--parser', nargs='?',help='Choose parser to use.  If nothing chosen then \'default\' is used.  Option are: '+', '.join(parse_options))

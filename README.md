@@ -1,5 +1,5 @@
 # CDLR v1.0
-Cold Disk Live Response tool
+Cold Disk Quick Response tool
 
 DEPENDANCIES: 
 1.) Plaso v1.3 static binaries from:
@@ -27,9 +27,9 @@ These reports are listed below:
 
 
 HOW TO USE IT:
-usage: cdlr.py [-h] [-p [PARSER]] [--hash] src_location [dst_location]
+usage: cdqr.py [-h] [-p [PARSER]] [--hash] src_location [dst_location]
 
-Cold Disk Live Response Tool (CDLR)
+Cold Disk Quick Response Tool (CDLR)
 
 positional arguments:
   src_location          Source File location: Y:\Case\Tag009\sample.E01
