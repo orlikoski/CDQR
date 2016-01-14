@@ -1,5 +1,6 @@
 CDQR v1.0
 Cold Disk Quick Response tool  
+Created by: Alan Orlikoski  
 
 DEPENDANCIES:  
 1.) Plaso v1.3 static binaries from:  
@@ -14,7 +15,9 @@ DEPENDANCIES:
 WHAT IT DOES:  
 This program uses Plaso (https://github.com/log2timeline/plaso/wiki) and a streamlined list of parsers to quickly analyze a forenisic image file (dd, E01, .vmdk, etc) and output nine reports.  
 
-These reports are listed below:  
+This program uses Plaso to parse the data and generate a report in log2timeline format.  I built it to use my experience in choosing which parsers are best for a quick look to see if there is anything bad on the box.  It then parses the supertimeline report into easily readable sub-reports based on the output from the various Plaso parsers used.  It is meant to be a starting off point used to determine if a deeper inspection is required.  
+
+These reports made by this tool are listed below:  
     \<Source File Name\>.SuperTimeLine.csv  
     Event Log Report.csv  
     File System Report.csv  
@@ -45,4 +48,14 @@ optional arguments:
   --hash                Hash all the files as part of the processing of the  
                         image  
 
-Created by: Alan Orlikoski  
+PARSER LIST:  
+Here is the list of parsers and what they translate to for Plaso  
+    'default'  
+        "appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cookies,firefox_downloads,firefox_history,firefox_old_cache,google_drive,java_idx,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msie_zone_software,msiecf,mstsc_rdp,mstsc_rdp_mru,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,symantec_scanlog,userassist,windows_boot_execute,windows_boot_verify,windows_run,windows_run_software,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winrar_mru,winreg,winreg_default"
+    'win_all'  
+        "win_gen,win7,winxp,webhist"
+    'win7'  
+        "win7,webhist"
+    'winxp'  
+        "winxp,webhist"
+
