@@ -19,7 +19,7 @@ This program uses Plaso to parse the data and generate a report in log2timeline 
   
 It then parses the supertimeline report into easily readable sub-reports based on the output from the various Plaso parsers used.  It is meant to be a starting off point used to determine if a deeper inspection is required.  
 
-These reports made by this tool are listed below:  
+The reports made by this tool are listed below:  
 - \<Source File Name\>.SuperTimeLine.csv  
 - Event Log Report.csv  
 - File System Report.csv  
