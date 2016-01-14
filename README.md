@@ -15,7 +15,9 @@ DEPENDANCIES:
 WHAT IT DOES:  
 This program uses Plaso (https://github.com/log2timeline/plaso/wiki) and a streamlined list of parsers to quickly analyze a forenisic image file (dd, E01, .vmdk, etc) and output nine reports.  
 
-This program uses Plaso to parse the data and generate a report in log2timeline format.  I built it to use my experience in choosing which parsers are best for a quick look to see if there is anything bad on the box.  It then parses the supertimeline report into easily readable sub-reports based on the output from the various Plaso parsers used.  It is meant to be a starting off point used to determine if a deeper inspection is required.  
+This program uses Plaso to parse the data and generate a report in log2timeline format.  I built it to use my experience in choosing which parsers are best for a quick look to see if there is anything bad on the box.  I also wanted a simplified way of using Plaso.
+  
+It then parses the supertimeline report into easily readable sub-reports based on the output from the various Plaso parsers used.  It is meant to be a starting off point used to determine if a deeper inspection is required.  
 
 These reports made by this tool are listed below:  
 - \<Source File Name\>.SuperTimeLine.csv  
