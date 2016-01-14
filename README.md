@@ -1,4 +1,4 @@
-# CDLR v1.0
+# CDQR v1.0
 Cold Disk Quick Response tool  
 
 DEPENDANCIES:  
