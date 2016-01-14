@@ -15,7 +15,7 @@ WHAT IT DOES:
 This program uses Plaso (https://github.com/log2timeline/plaso/wiki) and a streamlined list of parsers to quickly analyze a forenisic image file (dd, E01, .vmdk, etc) and output nine reports.  
 
 These reports are listed below:  
-    <Source File Name>.SuperTimeLine.csv  
+    \<Source File Name\>.SuperTimeLine.csv  
     Event Log Report.csv  
     File System Report.csv  
     Internet History Report.csv  
