@@ -28,6 +28,7 @@ These reports are listed below:
 
 HOW TO USE IT:  
 usage: cdqr.py [-h] [-p [PARSER]] [--hash] src_location [dst_location]  
+example: cdqr.py c:\mydiskimage.vmdk  
 
 Cold Disk Quick Response Tool (CDLR)  
 
