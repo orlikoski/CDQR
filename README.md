@@ -4,8 +4,8 @@ Created by: Alan Orlikoski
 
 DEPENDANCIES:  
 1.) Plaso v1.3 static binaries from:  
-	Option 1: Plaso for 64-bit MS Visual C++ disto 2010 (https://e366e647f8637dd31e0a13f75e5469341a9ab0ee.googledrive.com/host/0B30H7z4S52FleW5vUHBnblJfcjg/1.3.0/plaso-1.3.0-win-amd64-vs2010.zip)  
-	Option 2: Plaso for 32-bit MS Visual C++ disto 2008 (https://e366e647f8637dd31e0a13f75e5469341a9ab0ee.googledrive.com/host/0B30H7z4S52FleW5vUHBnblJfcjg/1.3.0/plaso-1.3.0-win32-vs2008.zip)  
+- Option 1: Plaso for 64-bit MS Visual C++ disto 2010 (https://e366e647f8637dd31e0a13f75e5469341a9ab0ee.googledrive.com/host/0B30H7z4S52FleW5vUHBnblJfcjg/1.3.0/plaso-1.3.0-win-amd64-vs2010.zip)  
+- Option 2: Plaso for 32-bit MS Visual C++ disto 2008 (https://e366e647f8637dd31e0a13f75e5469341a9ab0ee.googledrive.com/host/0B30H7z4S52FleW5vUHBnblJfcjg/1.3.0/plaso-1.3.0-win32-vs2008.zip)  
 2.) Correct (see above) MS Visual C++ package installed: https://www.microsoft.com/en-us/search/Results.aspx?q=Microsoft%20Visual%20C%2B%2B%20Redistributable%20Package&form=DLC  
 3.) Python v3.4 (https://www.python.org/downloads/release/python-340/)  
 4.) Currently built to run on Windows 64-bit OS only (linux friendly version is planned)  
@@ -51,7 +51,7 @@ optional arguments:
 -                       image  
 
 PARSER LIST:  
-Here is the list of parsers for cdlr.py and what they translate to for Plaso  
+Here is the list of parsers for cdqr.py and what they translate to for Plaso  
 - default:  
 -- "appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cookies,firefox_downloads,firefox_history,firefox_old_cache,google_drive,java_idx,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msie_zone_software,msiecf,mstsc_rdp,mstsc_rdp_mru,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,symantec_scanlog,userassist,windows_boot_execute,windows_boot_verify,windows_run,windows_run_software,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winrar_mru,winreg,winreg_default"  
   
