@@ -2,6 +2,7 @@
 import os, sys, argparse, subprocess, csv, sqlite3, time, datetime, re
 
 ###############################################################################
+# Created by: Alan Orlikoski
 # DEPENDANCIES: 
 # 1.) Plaso v1.3 static binaries from:
 #		Option 1: Plaso for 64-bit MS Visual C++ disto 2010 (https://e366e647f8637dd31e0a13f75e5469341a9ab0ee.googledrive.com/host/0B30H7z4S52FleW5vUHBnblJfcjg/1.3.0/plaso-1.3.0-win-amd64-vs2010.zip)

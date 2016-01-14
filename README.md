@@ -43,3 +43,5 @@ optional arguments:
                         is used. Option are: default, winxp, win_all, win7
   --hash                Hash all the files as part of the processing of the
                         image
+
+Created by: Alan Orlikoski
