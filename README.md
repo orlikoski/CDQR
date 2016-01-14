@@ -36,26 +36,29 @@ example: cdqr.py c:\mydiskimage.vmdk
 Cold Disk Quick Response Tool (CDLR)  
 
 positional arguments:  
-  src_location          Source File location: Y:\Case\Tag009\sample.E01  
-  dst_location          Destination Folder location. If nothing is supplied  
-                        then the default is 'Results'  
+- src_location          Source File location: Y:\Case\Tag009\sample.E01  
+- dst_location          Destination Folder location. If nothing is supplied  
+-                        then the default is 'Results'  
 
 optional arguments:  
-  -h, --help            show this help message and exit  
-  -p [PARSER], --parser [PARSER]  
-                        Choose parser to use. If nothing chosen then 'default'  
-                        is used. Option are: default, winxp, win_all, win7  
-  --hash                Hash all the files as part of the processing of the  
-                        image  
+- -h, --help            show this help message and exit  
+- -p [PARSER], --parser [PARSER]  
+-                       Choose parser to use. If nothing chosen then 'default'  
+-                       is used. Option are: default, winxp, win_all, win7  
+- --hash                Hash all the files as part of the processing of the  
+-                       image  
 
 PARSER LIST:  
-Here is the list of parsers and what they translate to for Plaso  
-    'default'  
-        "appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cookies,firefox_downloads,firefox_history,firefox_old_cache,google_drive,java_idx,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msie_zone_software,msiecf,mstsc_rdp,mstsc_rdp_mru,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,symantec_scanlog,userassist,windows_boot_execute,windows_boot_verify,windows_run,windows_run_software,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winrar_mru,winreg,winreg_default"  
-    'win_all'  
-        "win_gen,win7,winxp,webhist"  
-    'win7'  
-        "win7,webhist"  
-    'winxp'  
-        "winxp,webhist"  
+Here is the list of parsers for cdlr.py and what they translate to for Plaso  
+default:  
+---------"appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cookies,firefox_downloads,firefox_history,firefox_old_cache,google_drive,java_idx,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msie_zone_software,msiecf,mstsc_rdp,mstsc_rdp_mru,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,symantec_scanlog,userassist,windows_boot_execute,windows_boot_verify,windows_run,windows_run_software,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winrar_mru,winreg,winreg_default"  
+  
+win_all:  
+---------"win_gen,win7,winxp,webhist"  
+
+win7:  
+---------"win7,webhist"  
+
+winxp:  
+---------"winxp,webhist"  
 
