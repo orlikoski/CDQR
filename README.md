@@ -6,6 +6,7 @@ DEPENDANCIES:
 1.) Plaso v1.3 static binaries from:  
 - Option 1: Plaso for 64-bit MS Visual C++ disto 2010 (https://e366e647f8637dd31e0a13f75e5469341a9ab0ee.googledrive.com/host/0B30H7z4S52FleW5vUHBnblJfcjg/1.3.0/plaso-1.3.0-win-amd64-vs2010.zip)  
 - Option 2: Plaso for 32-bit MS Visual C++ disto 2008 (https://e366e647f8637dd31e0a13f75e5469341a9ab0ee.googledrive.com/host/0B30H7z4S52FleW5vUHBnblJfcjg/1.3.0/plaso-1.3.0-win32-vs2008.zip)  
+  
 2.) Correct (see above) MS Visual C++ package installed: https://www.microsoft.com/en-us/search/Results.aspx?q=Microsoft%20Visual%20C%2B%2B%20Redistributable%20Package&form=DLC  
 3.) Python v3.4 (https://www.python.org/downloads/release/python-340/)  
 4.) Currently built to run on Windows 64-bit OS only (linux friendly version is planned)  
