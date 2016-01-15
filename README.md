@@ -67,7 +67,7 @@ winxp,webhist
 cdqr.py c:\mydiskimage.vmdk
 ```
 ```
-cdqr.py -p win_all c:\images\
+cdqr.py -p win_all c:\images\badlaptop.e01
 ```
 
 ## AUTHOR
