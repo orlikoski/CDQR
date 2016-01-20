@@ -3,11 +3,11 @@
 CDQR v1.01 — Cold Disk Quick Response tool by Alan Orlikoski
 
 ## What's New
-```
 Fixes
 * Fixed the "no name" output file issue when attempting to parse a mounted image
 * Provided option to use maximum number of CPU cores
-```
+* Updated Scheduled Task report parser
+
 
 ## SYNOPSIS
 

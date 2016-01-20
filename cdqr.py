@@ -5,13 +5,12 @@ import os, sys, argparse, subprocess, csv, time, datetime, re, multiprocessing
 # Created by: Alan Orlikoski
 # Version 1.01
 #
-# Version 1.01
 # What's New
 # 
 # Fixes
 # 1.) Fixed the "no name" issue when attempting to parse a mounted image
 # 2.) Provided option to use maximum number of CPU cores
-#
+# 3.) Updated Scheduled Task report parser
 #
 # DEPENDANCIES: 
 # 1.) Plaso v1.3 static binaries from:
@@ -131,7 +130,7 @@ def create_reports(dst_loc, csv_file):
 	rpt_ih_search = re.compile(r',WEBHIST|windows_typed_urls|chrome_cache|chrome_cookies|chrome_history|firefox_cache|firefox_history|firefox_cookies')
 	rpt_pf_search = re.compile(r',prefetch')
 	rpt_reg_search = re.compile(r',REG,')
-	rpt_st_search = re.compile(r',winjob,')
+	rpt_st_search = re.compile(r',winjob,'|r'Microsoft-Windows-TaskScheduler')
 	rpt_per_search = re.compile(r'appcompatcache|bagmru|shell_item|windows_run|windows_services|windows_task_cache|bagmru|mrulistex_string|mrulist_string|windows_run_software|windows_boot_execute')
 	rpt_si_search = re.compile(r'windows_version|windows_sam_users|windows_timezone|Microsoft-Windows-NetworkProfile Computer Name')
 
