@@ -1,8 +1,18 @@
 #!python3
-import os, sys, argparse, subprocess, csv, time, datetime, re
+import os, sys, argparse, subprocess, csv, time, datetime, re, multiprocessing
 
 ###############################################################################
 # Created by: Alan Orlikoski
+# Version 1.01
+#
+# Version 1.01
+# What's New
+# 
+# Fixes
+# 1.) Fixed the "no name" issue when attempting to parse a mounted image
+# 2.) Provided option to use maximum number of CPU cores
+#
+#
 # DEPENDANCIES: 
 # 1.) Plaso v1.3 static binaries from:
 #		Option 1: Plaso for 64-bit MS Visual C++ disto 2010 (https://e366e647f8637dd31e0a13f75e5469341a9ab0ee.googledrive.com/host/0B30H7z4S52FleW5vUHBnblJfcjg/1.3.0/plaso-1.3.0-win-amd64-vs2010.zip)
@@ -175,12 +185,13 @@ def create_reports(dst_loc, csv_file):
 # Parsing begins
 parser_list = list(parse_options.keys())#["default","win_gen","win7","winxp","linux","android","macosx","test"]
 
-parser = argparse.ArgumentParser(description='Cold Disk Quick Response Tool (CDQR)')
+parser = argparse.ArgumentParser(description='Cold Disk Quick Response Tool (CDQR) version 1.01')
 parser.add_argument('src_location',nargs=1,help='Source File location: Y:\\Case\\Tag009\\sample.E01')
 parser.add_argument('dst_location',nargs='?',default='Results',help='Destination Folder location. If nothing is supplied then the default is \'Results\'')
 parser.add_argument('-p','--parser', nargs='?',help='Choose parser to use.  If nothing chosen then \'default\' is used.  Option are: '+', '.join(parse_options))
 parser.add_argument('--hash', action='store_true', default=False, help='Hash all the files as part of the processing of the image')
-#parser.add_argument('-sp','--sel_partition', help='Choose partitions to process after log2timeline starts.  Default \"all\" is used when no flag.')
+parser.add_argument('--max_cpu', action='store_true', default=False, help='Use the maximum number of cpu cores to process the image')
+
 
 args=parser.parse_args()
 
@@ -211,6 +222,18 @@ if args:
 		command1.append("--hashers")
 		command1.append("md5")
 
+# Set Number of CPU cores to use
+	if args.max_cpu:
+		num_cpus = multiprocessing.cpu_count()
+		print("Warning: exceeding Plaso recommendations on cpu usage")
+	else:
+		num_cpus = multiprocessing.cpu_count() -3
+		if num_cpus <= 0:
+			num_cpus = 1
+	command1.append("--workers")
+	command1.append(str(num_cpus))
+	print("Number of cpu cores to use:",num_cpus)
+
 
 # Set source location/file
 	if not os.path.exists(args.src_location[0]):
@@ -237,13 +260,17 @@ if args:
 
 	print("Destination Folder: ",dst_loc)
 
-
 # Create DB Filename
+
 db_file = dst_loc+"\\"+src_loc.split('\\')[-1]+".db"
+if db_file == dst_loc+"\\.db":
+	db_file = dst_loc+"\\"+"mounted_image.db"
 print("Database File: ", db_file)
 
 # Create SuperTimeline filename
 csv_file = dst_loc+"\\"+src_loc.split('\\')[-1]+".SuperTimeline.csv"
+if csv_file == dst_loc+"\\.SuperTimeline.csv":
+	csv_file = dst_loc+"\\"+"mounted_image.SuperTimeline.csv"
 print("SuperTimeline CSV File: ", csv_file)
 
 # Finalize the log2timeline command with DB file and source data file location
@@ -255,12 +282,20 @@ print("\n")
 
 # Open Log Files
 logfilename = dst_loc+"\\"+src_loc.split('\\')[-1]+".log"
+if logfilename == dst_loc+"\\.log":
+	logfilename = dst_loc+"\\"+"mounted_image.log"
 
 if os.path.isfile(logfilename):
 	os.remove(logfilename)
 
 
-timingfile = open(dst_loc+"\\"+src_loc.split('\\')[-1]+".timing.log",'w')
+timingfile_name = dst_loc+"\\"+src_loc.split('\\')[-1]+".timing.log"
+if timingfile_name == dst_loc+"\\.timing.log":
+	timingfile_name = dst_loc+"\\"+"mounted_image.timing.log"
+
+timingfile = open(timingfile_name,'w')
+
+
 timingfile.write("Processing started at: "+str(start_dt)+"\n")
 print("Processing started at: "+str(start_dt))
 
