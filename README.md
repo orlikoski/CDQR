@@ -8,6 +8,8 @@ Fixes
 * Provided option to use maximum number of CPU cores  
 * Updated Scheduled Task report parser  
 
+## Important Notes
+* Make sure account has permissions to create files and directories when running cdqr.exe (when in doubt, run as administrator)
 
 ## SYNOPSIS
 
