@@ -1,14 +1,14 @@
 #!python3
 import os, sys, argparse, subprocess, csv, time, datetime, re, multiprocessing
-
 ###############################################################################
 # Created by: Alan Orlikoski
-# Version 1.02
+# Version 1.03
 #
 # What's New
 # 
 # Now supports Plaso 1.4!
 # - Adjusted default parsers for Plaso 1.4
+# - Added backwards compatibility for Plaso 1.3
 #
 # Fixes
 # Improved Logging
@@ -37,9 +37,13 @@ start_dt = datetime.datetime.now()
 end_dt = datetime.datetime.now()
 duration = datetime.datetime.now()
 
+# Compatible Plaso versions
+p_compat = ["default1.3","default1.4"]
+
 # Dictionary of parsing options from command line to log2timeline
 parse_options = {
-	'default' : "appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,java_idx,mft,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,symantec_scanlog,userassist,usnjrnl,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winrar_mru,winreg,winreg_default",
+	'default1.4' : "appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,java_idx,mft,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,symantec_scanlog,userassist,usnjrnl,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winrar_mru,winreg,winreg_default",
+	'default1.3' : "appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cookies,firefox_downloads,firefox_history,firefox_old_cache,google_drive,java_idx,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msie_zone_software,msiecf,mstsc_rdp,mstsc_rdp_mru,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,symantec_scanlog,userassist,windows_boot_execute,windows_boot_verify,windows_run,windows_run_software,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winrar_mru,winreg,winreg_default",
 	'win_all' : "win_gen,win7,winxp,webhist",
 	'win7' : "win7,webhist",
 	'winxp' : "winxp,webhist"
@@ -197,6 +201,11 @@ def create_reports(dst_loc, csv_file):
 		print("Report Created:", item)
 		mylogfile.write("Report Created:" + item + "\n")
 
+def plaso_version(log2timeline_location):
+	myproc = subprocess.Popen([log2timeline_location,"--version"],stderr=subprocess.PIPE)
+	output,err = myproc.communicate()
+	pver = ".".join(str(err).split(" ")[-1].split(".")[0:2])
+	return(pver)
 
 
 # Parsing begins
@@ -205,10 +214,10 @@ parser_list = list(parse_options.keys())#["default","win_gen","win7","winxp","li
 parser = argparse.ArgumentParser(description='Cold Disk Quick Response Tool (CDQR) version 1.02')
 parser.add_argument('src_location',nargs=1,help='Source File location: Y:\\Case\\Tag009\\sample.E01')
 parser.add_argument('dst_location',nargs='?',default='Results',help='Destination Folder location. If nothing is supplied then the default is \'Results\'')
-parser.add_argument('-p','--parser', nargs='?',help='Choose parser to use.  If nothing chosen then \'default\' is used.  Option are: '+', '.join(parse_options))
+parser.add_argument('-p','--parser', nargs='?',help='Choose parser to use.  If nothing chosen then \'default1.4\' is used.  Option are: '+', '.join(parse_options))
 parser.add_argument('--hash', action='store_true', default=False, help='Hash all the files as part of the processing of the image')
 parser.add_argument('--max_cpu', action='store_true', default=False, help='Use the maximum number of cpu cores to process the image')
-parser.add_argument('--version', action='version', version='%(prog)s 1.02')
+parser.add_argument('--version', action='version', version='%(prog)s 1.03')
 
 args=parser.parse_args()
 
@@ -220,6 +229,15 @@ log_list = []
 command1 = [log2timeline_location,"-p","--partition","all","--vss_stores","all"]
 
 if args:
+	# Validate log2timeline.exe and psort.exe locations
+	if not os.path.isfile(log2timeline_location):
+		print("Error: file not found:", log2timeline_location)
+		log2timeline_location = query_file_location("log2timeline.exe")
+
+		if not os.path.isfile(psort_location):
+			print("Error: file not found:", psort_location)
+			psort_location = query_file_location("psort.exe")
+
 # Set log2timeline parsing option(s)
 	if args.parser:
 		if args.parser not in parser_list:
@@ -230,7 +248,18 @@ if args:
 			sys.exit(1)
 		parser_opt = args.parser
 	else:
-		parser_opt = "default"
+		# Determine Plaso version and use correct version
+		p_ver = plaso_version(log2timeline_location)
+		print("Plaso Version: "+p_ver)
+		log_list.append("Plaso Version: "+p_ver+"\n")
+		parser_opt = "default"+p_ver
+
+# Determine if Plaso version is compatible
+	if parser_opt not in p_compat:
+		print("Plaso version not supported.....Exiting")
+		print(parser_opt)
+		sys.exit(1)
+
 	# add parsing options to the command
 	command1.append("--parsers")
 	command1.append(parse_options[parser_opt])
@@ -268,14 +297,7 @@ if args:
 	print("Source data: ",src_loc)
 	log_list.append("Source data: "+src_loc+"\n")
 
-	# Validate log2timeline.exe and psort.exe locations
-	if not os.path.isfile(log2timeline_location):
-		print("Error: file not found:", log2timeline_location)
-		log2timeline_location = query_file_location("log2timeline.exe")
 
-		if not os.path.isfile(psort_location):
-			print("Error: file not found:", psort_location)
-			psort_location = query_file_location("psort.exe")
 
 
 # Set source location/file
