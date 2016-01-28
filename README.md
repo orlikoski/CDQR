@@ -57,7 +57,7 @@ This program uses [Plaso](https://github.com/log2timeline/plaso/wiki) and a stre
 
 ## PARSER LIST
 
-There are four available parsers for cdqr.py: `default1.3` , `default1.4` , `win_all` , `win7` , and `winxp` and here is what they translate to for Plaso:
+There are four available parsers for cdqr.py: `default1.4` , `default1.3` , `win_all` , `win7` , and `winxp` and here is what they translate to for Plaso:
 * **default1.4**
 ```
 appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,java_idx,mft,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,symantec_scanlog,userassist,usnjrnl,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winrar_mru,winreg,winreg_default
