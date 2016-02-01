@@ -3,6 +3,11 @@
 CDQR — Cold Disk Quick Response tool by Alan Orlikoski
 
 ## What's New
+Added Do All The Things! parser (datt)
+* This enables all parsers for Plaso (version appropriate) and disables the partion/shadow copy options.  This is meant to assist in processing extracted artifacts and not entire images.
+* This can be used on individual files as well as all files in a folder
+* example: "cdqr.exe -p datt c:\logs\eventlogs" or "cdqr.exe -p datt c:\logs\eventlogs\security.evt"
+
 Now supports Plaso 1.4!
 * Adjusted default parsers for Plaso 1.4
 * Added compatibility for Plaso 1.3 and Plaso 1.4
