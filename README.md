@@ -115,7 +115,7 @@ cdqr.exe -p win_all c:\images\badlaptop.e01
 
 ## Linux Install
 Run these commands to install lastest stable version of Plaso on Ubuntu
-* Sudo add-apt-repository ppa:gift/stable
+* sudo add-apt-repository ppa:gift/stable
 * sudo apt-get install python-plaso
 
 ## AUTHOR
