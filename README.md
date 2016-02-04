@@ -12,7 +12,7 @@ Now supports Plaso 1.4!
 * Adjusted default parsers for Plaso 1.4
 * Added compatibility for Plaso 1.3 and Plaso 1.4
 * Removes references to parsers no longer found in Plaso
-* Includes the new MFT, USRJRNL, and Fire_fox_cache version 2 parsers found in Plaso 1.4
+* Includes the new MFT, USNJRNL, and Fire_fox_cache version 2 parsers found in Plaso 1.4
 
 ## Fixes
 * Improved Logging
