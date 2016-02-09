@@ -100,8 +100,8 @@ winxp,webhist
 
 1. 64-bit Windows Operating System (a linux-friendly version is planned)
 2. Depending on your preference, either:
-  * Win 64-bit: [Plaso 1.3.0 (x64)](https://e366e647f8637dd31e0a13f75e5469341a9ab0ee.googledrive.com/host/0B30H7z4S52FleW5vUHBnblJfcjg/1.4.0/plaso-1.4.0-win-amd64-vs2010.zip) AND [Microsoft Visual C++ 2010 Redistributable Package (x64)](https://www.microsoft.com/en-us/download/details.aspx?id=14632), or
-  * Win 32-bit: [Plaso 1.3.0 (x86)](https://e366e647f8637dd31e0a13f75e5469341a9ab0ee.googledrive.com/host/0B30H7z4S52FleW5vUHBnblJfcjg/1.4.0/plaso-1.4.0-win32-vs2008.zip) AND [Microsoft Visual C++ 2008 Redistributable Package (x86)](https://www.microsoft.com/en-us/download/details.aspx?id=29)
+  * Win 64-bit: [Plaso 1.4.0 (x64)](https://e366e647f8637dd31e0a13f75e5469341a9ab0ee.googledrive.com/host/0B30H7z4S52FleW5vUHBnblJfcjg/1.4.0/plaso-1.4.0-win-amd64-vs2010.zip) AND [Microsoft Visual C++ 2010 Redistributable Package (x64)](https://www.microsoft.com/en-us/download/details.aspx?id=14632), or
+  * Win 32-bit: [Plaso 1.4.0 (x86)](https://e366e647f8637dd31e0a13f75e5469341a9ab0ee.googledrive.com/host/0B30H7z4S52FleW5vUHBnblJfcjg/1.4.0/plaso-1.4.0-win32-vs2008.zip) AND [Microsoft Visual C++ 2008 Redistributable Package (x86)](https://www.microsoft.com/en-us/download/details.aspx?id=29)
 3. [Python v3.4](https://www.python.org/downloads/release/python-340/)
 
 ## EXAMPLES
