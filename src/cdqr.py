@@ -249,10 +249,11 @@ if args:
 			sys.exit(1)
 		tmp_parser_opt = args.parser
 		if tmp_parser_opt == "datt" or tmp_parser_opt == "default":
+			command1 = [log2timeline_location, "-p"]
 			parser_opt = tmp_parser_opt +plaso_version(log2timeline_location)
 		else:
 			parser_opt = tmp_parser_opt
-		command1 = [log2timeline_location, "-p"]
+
 	else:
 		# Determine Plaso version and use correct version
 		p_ver = plaso_version(log2timeline_location)
