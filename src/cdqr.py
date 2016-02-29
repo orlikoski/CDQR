@@ -2,11 +2,14 @@
 import os, sys, argparse, subprocess, csv, time, datetime, re, multiprocessing
 ###############################################################################
 # Created by: Alan Orlikoski
-# Version 1.04
+# Version 1.05
 #
 # What's New
 # 
 # "Do All the Things" (DATT) option enabled.  This flag enables all parsers for Plaso (version appropriate) and disables the partion/shadow copy options.  This is meant to assist in processing extracted artifacts and not entire images.
+#
+# Fixed:
+# Fixed parser selection bug
 #
 # Known Bugs
 # The Plaso 1.4 MFT parser is not functioning (Plaso Error #556) for disk images but filestat and usrjrnl are working fine.  This will be corrected once Plaso 1.4 is updated.
@@ -33,7 +36,7 @@ end_dt = datetime.datetime.now()
 duration = datetime.datetime.now()
 
 # Compatible Plaso versions
-p_compat = ["default1.3","default1.4","datt1.3","datt1.4"]
+p_compat = ["default1.3","default1.4","datt1.3","datt1.4","win_all","win7","winxp"]
 
 # Dictionary of parsing options from command line to log2timeline
 parse_options = {
@@ -215,7 +218,7 @@ parser.add_argument('dst_location',nargs='?',default='Results',help='Destination
 parser.add_argument('-p','--parser', nargs='?',help='Choose parser to use.  If nothing chosen then \'default\' is used.  Option are: '+', '.join(parser_list))
 parser.add_argument('--hash', action='store_true', default=False, help='Hash all the files as part of the processing of the image')
 parser.add_argument('--max_cpu', action='store_true', default=False, help='Use the maximum number of cpu cores to process the image')
-parser.add_argument('--version', action='version', version='%(prog)s 1.04')
+parser.add_argument('-v','--version', action='version', version='%(prog)s 1.05')
 
 args=parser.parse_args()
 
@@ -245,10 +248,11 @@ if args:
 			print("Exiting...")
 			sys.exit(1)
 		tmp_parser_opt = args.parser
-		if tmp_parser_opt == "datt":
+		if tmp_parser_opt == "datt" or tmp_parser_opt == "default":
 			parser_opt = tmp_parser_opt +plaso_version(log2timeline_location)
-			command1 = [log2timeline_location, "-p"]
-
+		else:
+			parser_opt = tmp_parser_opt
+		command1 = [log2timeline_location, "-p"]
 	else:
 		# Determine Plaso version and use correct version
 		p_ver = plaso_version(log2timeline_location)
@@ -258,7 +262,8 @@ if args:
 
 # Determine if Plaso version is compatible
 	if parser_opt not in p_compat:
-		print("Plaso version not supported.....Exiting")
+		print(parser_opt)
+		print("Plaso version not supported or invalid parser was selected.....Exiting")
 		print(parser_opt)
 		sys.exit(1)
 
