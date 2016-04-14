@@ -3,7 +3,7 @@ import io, os, sys, argparse, subprocess, csv, time, datetime, re, multiprocessi
 ###############################################################################
 # Created by: Alan Orlikoski
 # Version Info
-cdqr_version = "CDQR Version: 2.01"
+cdqr_version = "CDQR Version: 2.02"
 #
 # What's New
 #  Ability to parse Mac images
@@ -297,34 +297,38 @@ def create_export(srcfilename):
 	if os.path.exists(dstfilename):
 		if query_yes_no("\n"+dstfilename+" already exists.  Would you like to delete that file?","no"):
 			os.remove(dstfilename)
-			# Run psort against plaso db file to output a file in line delimited json format
-			print("Creating json line delimited file")
-			mylogfile.writelines("Creating json line delimited file\n")
+		else:
+			return dstfilename
 
-			# Create command to run
-			command = [psort_location,"-o","json_line", srcfilename,"-w",dstrawfilename]
-			
-			print("\""+"\" \"".join(command)+"\"")
-			mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
+	# Run psort against plaso db file to output a file in line delimited json format
+	print("Creating json line delimited file")
+	mylogfile.writelines("Creating json line delimited file\n")
 
-			# Execute Command
-			subprocess.call(command,stdout=mylogfile,stderr=mylogfile)
-			
-			print("Json line delimited file created")
-			mylogfile.writelines("Json line delimited file created"+"\n")
-			print("Adding Json line delimited file to "+dstfilename)
-			mylogfile.writelines("Adding Json line delimited file to "+dstfilename+"\n")
-			mylogfile.writelines("Adding " + dstrawfilename + " to "+ dstfilename +"\n")
+	# Create command to run
+	command = [psort_location,"-o","json_line", srcfilename,"-w",dstrawfilename]
+	
+	print("\""+"\" \"".join(command)+"\"")
+	mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
 
-			# Compresse the file for export
-			with io.open(dstrawfilename, 'rb') as f_in:
-				with gzip.open(dstfilename, 'wb') as f_out:
-					shutil.copyfileobj(f_in,f_out)
-			f_in.close()
-			f_out.close()
-			os.remove(dstrawfilename)
-			print("Cleaning up temporary file: Removed "+ dstrawfilename)
-			mylogfile.writelines("Cleaning up temporary file: Removed "+ dstrawfilename +"\n")
+	# Execute Command
+	subprocess.call(command,stdout=mylogfile,stderr=mylogfile)
+	
+	print("Json line delimited file created")
+	mylogfile.writelines("Json line delimited file created"+"\n")
+	print("Adding Json line delimited file to "+dstfilename)
+	mylogfile.writelines("Adding Json line delimited file to "+dstfilename+"\n")
+	mylogfile.writelines("Adding " + dstrawfilename + " to "+ dstfilename +"\n")
+
+	# Compresse the file for export
+	with io.open(dstrawfilename, 'rb') as f_in:
+		with gzip.open(dstfilename, 'wb') as f_out:
+			shutil.copyfileobj(f_in,f_out)
+	f_in.close()
+	f_out.close()
+	os.remove(dstrawfilename)
+	print("Cleaning up temporary file: Removed "+ dstrawfilename)
+	mylogfile.writelines("Cleaning up temporary file: Removed "+ dstrawfilename +"\n")
+
 
 	return dstfilename
 
