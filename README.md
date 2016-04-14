@@ -40,7 +40,7 @@ It creates up to 14 Reports (.csv files) based on triaging best practices and th
 *  Ability to create an export file
 
 ## Fixes
-
+* Fixed the --export function
 
 ## Known Bugs
 * The Plaso 1.4 MFT parser is not functioning [Plaso Error #556](https://github.com/log2timeline/plaso/issues/556) for disk images but filestat and usrjrnl are working fine.  This will be corrected once Plaso 1.4 is updated.
