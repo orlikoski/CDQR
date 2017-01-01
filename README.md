@@ -25,16 +25,17 @@ It creates up to 15 Reports (.csv files) based on triaging best practices and th
 *  Supports Plaso 1.5.x!!
 *  "Login" Report that incorporates login information for Windows and Linux
 *  ElasticSearch output mode supported
-*  Ability to automatically unzip .zip files and process contents
-*  Now python version works on Windows, Linux and Mac
+*  Supports .zip file source input detection and handling
+*  Python version works on Windows, Linux and Mac
+*  Improvements to support the [CCF-VM](https://github.com/rough007/CCF-VM) release 
 *  NOTE: Ensure line endings are correct
 
 ## Important Notes
-* Make sure account has permissions to create files and directories when running cdqr.exe (when in doubt, run as administrator)
+* Make sure account has permissions to create files and directories when running (when in doubt, run as administrator)
 
 ## SYNOPSIS
 
-Windows 64-bit binary or Python
+Windows 64-bit binary or Python 3.x
 ```
 cdqr.[exe|py] [-h] [-p [PARSER]] [--nohash] [--max_cpu] [--export]
                 [--es [ES]] [-z] [-v]
@@ -43,7 +44,7 @@ cdqr.[exe|py] [-h] [-p [PARSER]] [--nohash] [--max_cpu] [--export]
 
 ## DESCRIPTION
 
-This program uses [Plaso](https://github.com/log2timeline/plaso/wiki) and a streamlined list of parsers to quickly analyze a forenisic image file (dd, E01, .vmdk, etc) or group of forensic artifacts.  The results are output in either ElasticSearch, JSON (line delimited), or the following report files in CSV format:
+This program uses [Plaso](https://github.com/log2timeline/plaso/wiki) and a streamlined list of its parsers to quickly analyze a forenisic image file (dd, E01, .vmdk, etc) or group of forensic artifacts.  The results are output in either ElasticSearch, JSON (line delimited), or the following report files in CSV format:
 *  15 Reports for DATT:  
       ```
       Login, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall, Mac, and Linux
