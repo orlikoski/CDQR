@@ -157,7 +157,7 @@ cdqr.exe -p datt --max_cpu C:\artifacts\tag009\$MFT --export
 cdqr.exe -z --max_cpu C:\artifacts\tag009\artifacts.zip
 ```
 ```
-cdqr.exe -z --max_cpu C:\artifacts\tag009\artifacts.zip --es mytag
+cdqr.exe -z --max_cpu C:\artifacts\tag009\artifacts.zip --es myindexname
 ```
 
 ## Plaso Installation Guides
