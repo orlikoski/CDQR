@@ -1,1 +1,6 @@
 *.pyperf
+src/test/
+src/plaso/
+src/Results/
+*.zip
+*.exe
