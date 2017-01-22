@@ -33,7 +33,6 @@ def appcompat_report_fix(row):
     if search_results_desc:
         row[header_desc_rows] = search_results_desc.group(1)+","+search_results_desc.group(3)+","+search_results_desc.group(5)+","+search_results_desc.group(5).split('\\')[-1]
 
-
     search_results_extra = re.search(search_extra,row[header_extra_rows])
     if search_results_extra:
         row[header_extra_rows] = search_results_extra.group(2).strip()
