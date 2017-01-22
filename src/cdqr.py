@@ -267,6 +267,9 @@ def create_reports(dst_loc, csv_file):
             else:
                 final_lor.append(i_filename)
 
+
+        #report_improvements(lor)
+
         # Print report created messages
         print("Created "+str(len(final_lor))+" Reports")
         mylogfile.writelines("Created "+str(len(final_lor))+" Reports\n")
