@@ -4,3 +4,6 @@ src/plaso/
 src/Results/
 *.zip
 *.exe
+src/C/
+src/Results_new/Reports/Original/AntiVirus Report.csv
+src/Results_new/

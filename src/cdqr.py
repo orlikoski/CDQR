@@ -124,6 +124,7 @@ def create_reports(dst_loc, csv_file):
     rpt_fsusnjrnl_name = rpt_dir_name+"/UsnJrnl Report.csv"
     rpt_ih_name = rpt_dir_name+"/Internet History Report.csv"
     rpt_pf_name = rpt_dir_name+"/Prefetch Report.csv"
+    rpt_appc_name = rpt_dir_name+"/Appcompat Report.csv"
     rpt_reg_name = rpt_dir_name+"/Registry Report.csv"
     rpt_st_name = rpt_dir_name+"/Scheduled Tasks Report.csv"
     rpt_per_name = rpt_dir_name+"/Persistence Report.csv"
@@ -140,10 +141,11 @@ def create_reports(dst_loc, csv_file):
     rpt_fsmft_search = re.compile(r',mft,')
     rpt_fsusnjrnl_search = re.compile(r',usnjrnl,')
     rpt_ih_search = re.compile(r'binary_cookies,|chrome_cache,|chrome_preferences,|,firefox_cache,|firefox_cache2,|java_idx,|msiecf,|opera_global,|opera_typed_history,|safari_history,|chrome_cookies,|chrome_extension_activity,|chrome_history,|firefox_cookies,|firefox_downloads,|firefox_history,|google_drive,|windows_typed_urls,')
-    rpt_pf_search = re.compile(r'prefetch,,')
+    rpt_pf_search = re.compile(r'prefetch,')
+    rpt_appc_search = re.compile(r'appcompatcache,')
     rpt_reg_search = re.compile(r'winreg,|winreg_default,')
     rpt_st_search = re.compile(r'winjob,|windows_task_cache,|cron,')
-    rpt_per_search = re.compile(r'appcompatcache,|bagmru,|mrulist_shell_item_list,|mrulist_string,|mrulistex_shell_item_list,|mrulistex_string,|mrulistex_string_and_shell_item,|mrulistex_string_and_shell_item_list,|msie_zone,|mstsc_rdp,|mstsc_rdp_mru,|userassist,|windows_boot_execute,|windows_boot_verify,|windows_run,|windows_sam_users,|windows_services,|winrar_mru,')
+    rpt_per_search = re.compile(r'bagmru,|mrulist_shell_item_list,|mrulist_string,|mrulistex_shell_item_list,|mrulistex_string,|mrulistex_string_and_shell_item,|mrulistex_string_and_shell_item_list,|msie_zone,|mstsc_rdp,|mstsc_rdp_mru,|userassist,|windows_boot_execute,|windows_boot_verify,|windows_run,|windows_sam_users,|windows_services,|winrar_mru,')
     rpt_si_search = re.compile(r'rplog,|explorer_mountpoints2,|explorer_programscache,|windows_shutdown,|windows_timezone,|windows_usb_devices,|windows_usbstor_devices,|windows_version,|network_drives,|dpkg,')
     rpt_av_search = re.compile(r'mcafee_protection,|symantec_scanlog,|winfirewall,|ccleaner,')
     rpt_fw_search = re.compile(r'winfirewall,|mac_appfirewall_log,')
@@ -152,9 +154,9 @@ def create_reports(dst_loc, csv_file):
     rpt_login_search = re.compile(r'dockerjson,|ssh,|winlogon,|utmp,|utmpx,')
     # Create a list of the report names
     if parser_opt == "datt":
-        lor = [rpt_evt_name,rpt_fsfs_name,rpt_fsmft_name,rpt_fsusnjrnl_name,rpt_ih_name,rpt_pf_name,rpt_reg_name,rpt_st_name,rpt_per_name,rpt_si_name,rpt_av_name,rpt_fw_name,rpt_mac_name,rpt_lin_name,rpt_login_name]
+        lor = [rpt_appc_name,rpt_evt_name,rpt_fsfs_name,rpt_fsmft_name,rpt_fsusnjrnl_name,rpt_ih_name,rpt_pf_name,rpt_reg_name,rpt_st_name,rpt_per_name,rpt_si_name,rpt_av_name,rpt_fw_name,rpt_mac_name,rpt_lin_name,rpt_login_name]
     elif parser_opt == "win":
-        lor = [rpt_evt_name,rpt_fsfs_name,rpt_fsmft_name,rpt_fsusnjrnl_name,rpt_ih_name,rpt_pf_name,rpt_reg_name,rpt_st_name,rpt_per_name,rpt_si_name,rpt_av_name,rpt_fw_name,rpt_login_name]
+        lor = [rpt_appc_name,rpt_evt_name,rpt_fsfs_name,rpt_fsmft_name,rpt_fsusnjrnl_name,rpt_ih_name,rpt_pf_name,rpt_reg_name,rpt_st_name,rpt_per_name,rpt_si_name,rpt_av_name,rpt_fw_name,rpt_login_name]
     else:
         lor = [rpt_fsfs_name,rpt_ih_name,rpt_si_name,rpt_av_name,rpt_fw_name,rpt_mac_name,rpt_lin_name,rpt_login_name]
 
@@ -191,6 +193,7 @@ def create_reports(dst_loc, csv_file):
             rpt_pf = open(rpt_pf_name,'a+', encoding='utf-8')
             rpt_reg = open(rpt_reg_name,'a+', encoding='utf-8')
             rpt_st = open(rpt_st_name,'a+', encoding='utf-8')
+            rpt_appc = open(rpt_appc_name,'a+', encoding='utf-8')
             rpt_per = open(rpt_per_name,'a+', encoding='utf-8')
             rpt_si = open(rpt_si_name,'a+', encoding='utf-8')
             rpt_av = open(rpt_av_name,'a+', encoding='utf-8')
@@ -198,7 +201,8 @@ def create_reports(dst_loc, csv_file):
             rpt_mac = open(rpt_mac_name,'a+', encoding='utf-8')
             rpt_lin = open(rpt_lin_name,'a+', encoding='utf-8')
             rpt_log = open(rpt_login_name,'a+', encoding='utf-8')
-            lofh = [[rpt_evt_search,rpt_evt,rpt_evt_name],[rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name],[rpt_fsmft_search,rpt_fsmft,rpt_fsmft_name],[rpt_fsusnjrnl_search,rpt_fsusnjrnl,rpt_fsusnjrnl_name],[rpt_ih_search,rpt_ih,rpt_ih_name],[rpt_pf_search,rpt_pf,rpt_pf_name],[rpt_reg_search,rpt_reg,rpt_reg_name],[rpt_st_search,rpt_st,rpt_st_name],[rpt_per_search,rpt_per,rpt_per_name],[rpt_si_search,rpt_si,rpt_si_name],[rpt_av_search,rpt_av,rpt_av_name],[rpt_fw_search,rpt_fw,rpt_fw_name],[rpt_mac_search,rpt_mac,rpt_mac_name],[rpt_lin_search,rpt_lin,rpt_lin_name],[rpt_login_search,rpt_log,rpt_login_name]]
+            
+            lofh = [[rpt_appc_search,rpt_appc,rpt_appc_name],[rpt_evt_search,rpt_evt,rpt_evt_name],[rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name],[rpt_fsmft_search,rpt_fsmft,rpt_fsmft_name],[rpt_fsusnjrnl_search,rpt_fsusnjrnl,rpt_fsusnjrnl_name],[rpt_ih_search,rpt_ih,rpt_ih_name],[rpt_pf_search,rpt_pf,rpt_pf_name],[rpt_reg_search,rpt_reg,rpt_reg_name],[rpt_st_search,rpt_st,rpt_st_name],[rpt_per_search,rpt_per,rpt_per_name],[rpt_si_search,rpt_si,rpt_si_name],[rpt_av_search,rpt_av,rpt_av_name],[rpt_fw_search,rpt_fw,rpt_fw_name],[rpt_mac_search,rpt_mac,rpt_mac_name],[rpt_lin_search,rpt_lin,rpt_lin_name],[rpt_login_search,rpt_log,rpt_login_name]]
         elif parser_opt == "win":
             # Open windows report files for writing
             rpt_evt = open(rpt_evt_name,'a+', encoding='utf-8')
@@ -207,6 +211,7 @@ def create_reports(dst_loc, csv_file):
             rpt_fsusnjrnl = open(rpt_fsusnjrnl_name,'a+', encoding='utf-8')
             rpt_ih = open(rpt_ih_name,'a+', encoding='utf-8')
             rpt_pf = open(rpt_pf_name,'a+', encoding='utf-8')
+            rpt_appc = open(rpt_appc_name,'a+', encoding='utf-8')
             rpt_reg = open(rpt_reg_name,'a+', encoding='utf-8')
             rpt_st = open(rpt_st_name,'a+', encoding='utf-8')
             rpt_per = open(rpt_per_name,'a+', encoding='utf-8')
@@ -214,7 +219,7 @@ def create_reports(dst_loc, csv_file):
             rpt_av = open(rpt_av_name,'a+', encoding='utf-8')
             rpt_fw = open(rpt_fw_name,'a+', encoding='utf-8')
             rpt_log = open(rpt_login_name,'a+', encoding='utf-8')
-            lofh = [[rpt_evt_search,rpt_evt,rpt_evt_name],[rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name],[rpt_fsmft_search,rpt_fsmft,rpt_fsmft_name],[rpt_fsusnjrnl_search,rpt_fsusnjrnl,rpt_fsusnjrnl_name],[rpt_ih_search,rpt_ih,rpt_ih_name],[rpt_pf_search,rpt_pf,rpt_pf_name],[rpt_reg_search,rpt_reg,rpt_reg_name],[rpt_st_search,rpt_st,rpt_st_name],[rpt_per_search,rpt_per,rpt_per_name],[rpt_si_search,rpt_si,rpt_si_name],[rpt_av_search,rpt_av,rpt_av_name],[rpt_fw_search,rpt_fw,rpt_fw_name],[rpt_login_search,rpt_log,rpt_login_name]]
+            lofh = [[rpt_appc_search,rpt_appc,rpt_appc_name],[rpt_evt_search,rpt_evt,rpt_evt_name],[rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name],[rpt_fsmft_search,rpt_fsmft,rpt_fsmft_name],[rpt_fsusnjrnl_search,rpt_fsusnjrnl,rpt_fsusnjrnl_name],[rpt_ih_search,rpt_ih,rpt_ih_name],[rpt_pf_search,rpt_pf,rpt_pf_name],[rpt_reg_search,rpt_reg,rpt_reg_name],[rpt_st_search,rpt_st,rpt_st_name],[rpt_per_search,rpt_per,rpt_per_name],[rpt_si_search,rpt_si,rpt_si_name],[rpt_av_search,rpt_av,rpt_av_name],[rpt_fw_search,rpt_fw,rpt_fw_name],[rpt_login_search,rpt_log,rpt_login_name]]
         else:
             # Open Mac / Linux report files for writing
             rpt_fsfs = open(rpt_fsfs_name,'a+', encoding='utf-8')
