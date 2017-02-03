@@ -487,7 +487,10 @@ if args:
     log_list.append("Source data: "+src_loc+"\n")
 
 # Set destination location/file
-    dst_loc = args.dst_location.strip("/")
+    if sys.platform[0:3] == "win":
+        dst_loc = args.dst_location.strip("/")
+    else:
+        dst_loc = args.dst_location
     if os.path.exists(dst_loc):
         if not query_yes_no("\n"+dst_loc+" already exists.  Would you like to use that directory anyway?","yes"):
             dst_loc = dst_loc+"_"+datetime.datetime.now().strftime("%d-%b-%y_%H-%M-%S")
