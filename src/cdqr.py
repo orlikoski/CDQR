@@ -2,7 +2,7 @@
 import io, os, sys, argparse, subprocess, csv, time, datetime, re, multiprocessing, gzip, shutil, zipfile
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 3.0"
+cdqr_version = "CDQR Version: 3.0.1"
 #
 ###############################################################################
 
@@ -487,7 +487,7 @@ if args:
     log_list.append("Source data: "+src_loc+"\n")
 
 # Set destination location/file
-    dst_loc = args.dst_location.strip("/")
+    dst_loc = args.dst_location.rstrip("/") # Thanks hookem94!
     if os.path.exists(dst_loc):
         if not query_yes_no("\n"+dst_loc+" already exists.  Would you like to use that directory anyway?","yes"):
             dst_loc = dst_loc+"_"+datetime.datetime.now().strftime("%d-%b-%y_%H-%M-%S")
