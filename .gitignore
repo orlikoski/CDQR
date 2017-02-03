@@ -1,0 +1,7 @@
+src/C/
+src/test/
+src/plaso/
+src/Results_new/
+*.zip
+*.exe
+src/Results/
