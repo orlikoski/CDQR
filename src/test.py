@@ -3,7 +3,7 @@ import io, os, sys, argparse, subprocess, csv, time, datetime, re, multiprocessi
 
 #lor = ['Results_new/Reports/Appcompat Report.csv','Results_new/Reports/Event Log Report.csv', 'Results_new/Reports/File System Report.csv', 'Results_new/Reports/MFT Report.csv', 'Results_new/Reports/UsnJrnl Report.csv', 'Results_new/Reports/Internet History Report.csv', 'Results_new/Reports/Prefetch Report.csv', 'Results_new/Reports/Registry Report.csv', 'Results_new/Reports/Scheduled Tasks Report.csv', 'Results_new/Reports/Persistence Report.csv', 'Results_new/Reports/System Information Report.csv', 'Results_new/Reports/AntiVirus Report.csv', 'Results_new/Reports/Firewall Report.csv', 'Results_new/Reports/Login Report.csv']
 #lor = ['Results_new/Reports/Event Log Report.csv']
-lor = ['Results_new/Reports/Event Log Report.csv']
+lor = ['Results_new/Reports/Appcompat Report.csv']
 
 
 report_header_dict = {
