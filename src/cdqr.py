@@ -3,7 +3,7 @@ import io, os, sys, argparse, subprocess, csv, time, datetime, re, multiprocessi
 ###############################################################################
 # Created by: Alan Orlikoski
 cdqr_version = "CDQR Version: 3.1"
-#
+# 
 ###############################################################################
 
 # Default Parser option
