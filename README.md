@@ -8,13 +8,13 @@ The CDQR tool uses Plaso to parse disk images with specific parsers and create e
 In addition to processing entire forensic images it also parses extracted forensic artifact(s) as an individual file or collection of files inside of a folder structure (or inside a .zip file).
 
 It creates up to 15 Reports (.csv files) based on triaging best practices and the parsing option selected
-*  15 Reports for DATT:  
+*  16 Reports for DATT:  
       ```
-      Login, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall, Mac, and Linux
+      Appcompat, Login, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall, Mac, and Linux
       ```
-*  13 Reports for Win:  
+*  14 Reports for Win:  
       ```
-      Login, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall
+      Appcompat, Login, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall
       ```
 *   8 Reports for Mac and Lin:  
       ```
@@ -24,11 +24,16 @@ It creates up to 15 Reports (.csv files) based on triaging best practices and th
 ## What's New
 *  Supports Plaso 1.5.x!!
 *  "Login" Report that incorporates login information for Windows and Linux
+*  "Appcompat" Report that seperates the Appcompat results into a dedicated report
+*  Improved report format for appcompat, event log, file system, mft, prefetch, and scheduled tasks reports
+    *   Easier to read
+    *   More pivot points
+    *   Allows additional sorting options (looking at you Appcompat entry order)
 *  ElasticSearch output mode supported
 *  Supports .zip file source input detection and handling
 *  Python version works on Windows, Linux and Mac
 *  Improvements to support the [CCF-VM](https://github.com/rough007/CCF-VM) release 
-*  NOTE: Ensure line endings are correct
+*  NOTE: Ensure line endings are correct for the OS it is running on
 
 ## Important Notes
 * Make sure account has permissions to create files and directories when running (when in doubt, run as administrator)
@@ -45,13 +50,13 @@ cdqr.[exe|py] [-h] [-p [PARSER]] [--nohash] [--max_cpu] [--export]
 ## DESCRIPTION
 
 This program uses [Plaso](https://github.com/log2timeline/plaso/wiki) and a streamlined list of its parsers to quickly analyze a forenisic image file (dd, E01, .vmdk, etc) or group of forensic artifacts.  The results are output in either ElasticSearch, JSON (line delimited), or the following report files in CSV format:
-*  15 Reports for DATT:  
+*  16 Reports for DATT:  
       ```
-      Login, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall, Mac, and Linux
+      Appcompat, Login, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall, Mac, and Linux
       ```
-*  13 Reports for Win:  
+*  14 Reports for Win:  
       ```
-      Login, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall
+      Appcompat, Login, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall
       ```
 *   8 Reports for Mac and Lin:  
       ```
