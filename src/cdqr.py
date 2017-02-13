@@ -38,16 +38,16 @@ report_header_dict = {
     'Event Log Report.csv':[[10,['event_id','record_number','event_level','source_name','computer_name','message']],[16,['md5_hash','message_id','recovered','strings_parsed','user_sid','xml_string']]],
     'File System Report.csv':[[10,['filename','Type']],[16,['file_size','file_system_type','is_allocated','md5_hash']]],
     'MFT Report.csv':[[10,['File_reference','Attribute_name','Name','Parent_file_reference','Log_info']],[16,['attribute_type','file_attribute_flags','file_system_type','is_allocated','md5_hash']]],
-    'UsnJrnl Report.csv':[],
-    'Internet History Report.csv':[],
+#    'UsnJrnl Report.csv':[],
+#    'Internet History Report.csv':[],
     'Prefetch Report.csv':[[10,['File_name','Run_count','path','hash','volume','Serial number','Device_path','Origin']],[16,['md5_hash','number_of_volumes','version','volume_device_paths','volume_serial_numbers']]],
-    'Registry Report.csv':[], # Do this one next
+#    'Registry Report.csv':[],
     'Scheduled Tasks Report.csv':[[10,['key','task','identification']],[16,['md5_hash']]],
-    'Persistence Report.csv':[],
-    'System Information Report.csv':[],
-    'AntiVirus Report.csv':[],
-    'Firewall Report.csv':[],
-    'Login Report.csv':[]
+#    'Persistence Report.csv':[],
+#    'System Information Report.csv':[],
+#    'AntiVirus Report.csv':[],
+#    'Firewall Report.csv':[],
+#    'Login Report.csv':[]
 }
 
 # Compatible Plaso versions
@@ -493,24 +493,27 @@ def scheduled_tasks_report_fix(row):
 
 
 def file_system_report_fix(row):
-    header_desc_rows = report_header_dict['File System Report.csv'][0][0]
-    FS_search_desc = re.compile(r'(..):(.{1,200})(Type):(.{1,100})')
+    if row[0] is not "" and row[0] is not "--":
+        header_desc_rows = report_header_dict['File System Report.csv'][0][0]
+        FS_search_desc = re.compile(r'(..):(.{1,500})(Type):(.{1,100})')
 
-    header_extra_rows = report_header_dict['File System Report.csv'][1][0]
-    FS_search_extra = re.compile(r'(file_size): \((\d{1,50}) \)  (file_system_type): (OS)  (is_allocated): (True|False)(  (md5_hash): (.+) |)')
+        header_extra_rows = report_header_dict['File System Report.csv'][1][0]
+        FS_search_extra = re.compile(r'(file_size): \((.{1,50}) \)  (file_system_type): (.{1,20})  (is_allocated): (True|False)(  (md5_hash): (.+) |)')
 
-    search_results_desc = re.search(FS_search_desc,row[header_desc_rows])
-    if search_results_desc:
-        row[header_desc_rows] = search_results_desc.group(2)+","+search_results_desc.group(4)
-    search_results_extra = re.search(FS_search_extra,row[header_extra_rows])
-    
-    if search_results_extra:
-        if search_results_extra.group(7) != '':
-            row[header_extra_rows] = search_results_extra.group(2)+","+search_results_extra.group(4)+","+search_results_extra.group(6)+","+search_results_extra.group(9)
-        else:
-            row[header_extra_rows] = search_results_extra.group(2)+","+search_results_extra.group(4)+","+search_results_extra.group(6)+","
+        search_results_desc = re.search(FS_search_desc,row[header_desc_rows])
+        if search_results_desc:
+            row[header_desc_rows] = search_results_desc.group(2)+","+search_results_desc.group(4)
+        search_results_extra = re.search(FS_search_extra,row[header_extra_rows])
 
-    return row
+        if search_results_extra:
+            if search_results_extra.group(7) != '':
+                row[header_extra_rows] = search_results_extra.group(2)+","+search_results_extra.group(4)+","+search_results_extra.group(6)+","+search_results_extra.group(9)
+            else:
+                row[header_extra_rows] = search_results_extra.group(2)+","+search_results_extra.group(4)+","+search_results_extra.group(6)+","
+        return row
+    else:
+        return ["","","","","","","","","","","","","","","","","","","","",""]
+
 
 def mft_report_fix(row):
     header_desc_rows = report_header_dict['MFT Report.csv'][0][0]
@@ -598,38 +601,40 @@ def report_improvements(lor):
         tmp_report_name = os.path.dirname(report)+"/tmp_report.csv"
         if tmp_report_name[0] == '/':
             tmp_report_name = tmp_report_name[1:]
-        if os.path.exists(report):
-            with io.open(report, 'r', encoding='utf-8') as csvfile:
-                print("Report Name:", report_name)
-                print("    Updating Report (This will take a long time for large files)")
-                for trow in csvfile:
-                    row = trow.split(',')
-                    if report_name == 'File System Report.csv':
-                        output_list.append((file_system_report_fix(row)))
-                    elif report_name == 'Scheduled Tasks Report.csv':
-                        output_list.append((scheduled_tasks_report_fix(row)))
-                    elif report_name == 'Event Log Report.csv':
-                        output_list.append((event_log_report_fix(row)))
-                    elif report_name == 'Appcompat Report.csv':
-                        output_list.append((appcompat_report_fix(row)))
-                    elif report_name == 'MFT Report.csv':
-                        output_list.append((mft_report_fix(row)))
-                    elif report_name == 'Prefetch Report.csv':
-                        output_list.append((prefetch_report_fix(row)))
-            # Print Report to file
-            newreport = open(tmp_report_name,'w', encoding='utf-8')
-            for line in output_list:
-                if line[10] == 'desc':
-                    for thing in report_header_dict[report_name]:
-                        line[thing[0]] = ','.join(thing[1])
-                newreport.writelines(','.join(fix_line(line,report_name))+"\n")
-            newreport.close()
-            if os.stat(tmp_report_name).st_size != 0:
-                shutil.copyfile(tmp_report_name,report)
-                os.remove(tmp_report_name)
-            print("    Complete")
+        if report_name in report_header_dict:
+            if os.path.exists(report):
+                with io.open(report, 'r', encoding='utf-8') as csvfile:
+                    print("Improving "+ str(report_name)+" (This will take a long time for large files)")
+                    mylogfile.writelines("Improving "+ str(report_name)+" (This will take a long time for large files)"+"\n")
+                    for trow in csvfile:
+                        row = trow.split(',')
+                        if report_name == 'File System Report.csv':
+                            output_list.append((file_system_report_fix(row)))
+                        elif report_name == 'Scheduled Tasks Report.csv':
+                            output_list.append((scheduled_tasks_report_fix(row)))
+                        elif report_name == 'Event Log Report.csv':
+                            output_list.append((event_log_report_fix(row)))
+                        elif report_name == 'Appcompat Report.csv':
+                            output_list.append((appcompat_report_fix(row)))
+                        elif report_name == 'MFT Report.csv':
+                            output_list.append((mft_report_fix(row)))
+                        elif report_name == 'Prefetch Report.csv':
+                            output_list.append((prefetch_report_fix(row)))
+                # Print Report to file
+                newreport = open(tmp_report_name,'w', encoding='utf-8')
 
+                for line in output_list:
+                    if line[10] == 'desc':
+                        for thing in report_header_dict[report_name]:
+                            line[thing[0]] = ','.join(thing[1])
+                    newreport.writelines(','.join(fix_line(line,report_name))+"\n")
+                newreport.close()
 
+                if os.stat(tmp_report_name).st_size != 0:
+                    shutil.copyfile(tmp_report_name,report)
+                    os.remove(tmp_report_name)
+                print("    Complete")
+                mylogfile.writelines("    Complete"+"\n")
 
 ####################### END FUNCTIONS ############################
 
@@ -725,7 +730,7 @@ if args:
 
 # Set source location/file
     src_loc = args.src_location[0]
-    src_loc = src_loc.replace("\"","/")
+    src_loc = src_loc.replace("\\\\","/").replace("\\","/").rstrip("/")
     if src_loc.count("/") > 1:
         src_loc = src_loc.rstrip("/")
 
@@ -747,7 +752,7 @@ if args:
     log_list.append("Source data: "+src_loc+"\n")
 
 # Set destination location/file
-    dst_loc = args.dst_location.rstrip("/")
+    dst_loc = args.dst_location.replace("\\\\","/").replace("\\","/").rstrip("/")
     if os.path.exists(dst_loc):
         if not query_yes_no("\n"+dst_loc+" already exists.  Would you like to use that directory anyway?","yes"):
             dst_loc = dst_loc+"_"+datetime.datetime.now().strftime("%d-%b-%y_%H-%M-%S")
