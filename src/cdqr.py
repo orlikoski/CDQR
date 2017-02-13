@@ -466,8 +466,9 @@ def event_log_report_fix(row):
         if search_results_extra:
             row[header_extra_rows] = search_results_extra.group(2)+","+search_results_extra.group(4)+","+search_results_extra.group(6)+","+search_results_extra.group(8)+","+str(search_results_extra.group(10))+","+((str(search_results_extra.group(12))).replace("\r", " ")).replace("\n", " ")
     else:
-        row[header_desc_rows] = ",,,,,"
-        row[header_extra_rows] = ",,,,,"
+        if row[header_desc_rows] != "desc":
+            row[header_desc_rows] = ",,,,,"
+            row[header_extra_rows] = ",,,,,"
     row[12] = row[12].replace('OS:','')
     return row
 
