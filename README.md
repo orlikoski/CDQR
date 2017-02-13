@@ -7,7 +7,7 @@ The CDQR tool uses Plaso to parse disk images with specific parsers and create e
 
 In addition to processing entire forensic images it also parses extracted forensic artifact(s) as an individual file or collection of files inside of a folder structure (or inside a .zip file).
 
-It creates up to 15 Reports (.csv files) based on triaging best practices and the parsing option selected
+It creates up to 16 Reports (.csv files) based on triaging best practices and the parsing option selected
 *  16 Reports for DATT:  
       ```
       Appcompat, Login, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall, Mac, and Linux
