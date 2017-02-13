@@ -1,8 +1,16 @@
-src/C/
+*.pyperf
 src/test/
 src/plaso/
-src/Results_new/
+src/Results/
 *.zip
 *.exe
-src/Results/
+src/C/
+src/Results_new/Reports/Original/AntiVirus Report.csv
+src/Results_new/
 src/Results_02-Feb-17_20-31-08/
+src/__pycache__/
+src/DESKTOP-BOS7EHN/
+src/Restults*
+src/Results_win_big/
+src/Results_mac/
+src/Results_Linux/
