@@ -2,7 +2,7 @@
 import io, os, sys, argparse, subprocess, csv, time, datetime, re, multiprocessing, gzip, shutil, zipfile
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 3.1"
+cdqr_version = "CDQR Version: 3.1.1"
 # 
 ###############################################################################
 
@@ -628,7 +628,7 @@ def report_improvements(lor):
                     if line[10] == 'desc':
                         for thing in report_header_dict[report_name]:
                             line[thing[0]] = ','.join(thing[1])
-                    newreport.writelines(','.join(fix_line(line,report_name))+"\n")
+                    newreport.writelines(','.join(fix_line(line,report_name)).replace("\n"," ").replace("\r"," ")+"\n")
                 newreport.close()
 
                 if os.stat(tmp_report_name).st_size != 0:
