@@ -33,23 +33,6 @@ create_st = True
 global_es_index = "case_cdqr-"
 unzipped_file = False
 
-report_header_dict = {
-    'Appcompat Report.csv':[[10,['source','cached_entry_order','full_path','filename']],[16,['md5_hash']]],
-    'Event Log Report.csv':[[10,['event_id','record_number','event_level','source_name','computer_name','message']],[16,['md5_hash','message_id','recovered','strings_parsed','user_sid','xml_string']]],
-    'File System Report.csv':[[10,['filename','Type']],[16,['file_size','file_system_type','is_allocated','md5_hash']]],
-    'MFT Report.csv':[[10,['File_reference','Attribute_name','Name','Parent_file_reference','Log_info']],[16,['attribute_type','file_attribute_flags','file_system_type','is_allocated','md5_hash']]],
-#    'UsnJrnl Report.csv':[],
-#    'Internet History Report.csv':[],
-    'Prefetch Report.csv':[[10,['File_name','Run_count','path','hash','volume','Serial number','Device_path','Origin']],[16,['md5_hash','number_of_volumes','version','volume_device_paths','volume_serial_numbers']]],
-#    'Registry Report.csv':[],
-    'Scheduled Tasks Report.csv':[[10,['key','task','identification']],[16,['md5_hash']]],
-#    'Persistence Report.csv':[],
-#    'System Information Report.csv':[],
-#    'AntiVirus Report.csv':[],
-#    'Firewall Report.csv':[],
-#    'Login Report.csv':[]
-}
-
 # Compatible Plaso versions
 p_compat = ["1.3","1.4","1.5"]
 
@@ -272,7 +255,7 @@ def create_reports(dst_loc, csv_file):
                     counter2 = True
             for terms in lofh:
                 if terms[0].search(line,re.I):
-                    terms[1].writelines(line)
+                    terms[1].writelines(line.replace("\n"," ").replace("\r"," ")+"\n")
             sys.stdout.flush()
             counter+=1
         # Close all report files
@@ -595,6 +578,25 @@ def fix_line(row, report_name):
         del row[10]
     return row
 
+# Report Dictionary
+report_header_dict = {
+    'Appcompat Report.csv':[[10,['source','cached_entry_order','full_path','filename']],[16,['md5_hash']],appcompat_report_fix],
+    'Event Log Report.csv':[[10,['event_id','record_number','event_level','source_name','computer_name','message']],[16,['md5_hash','message_id','recovered','strings_parsed','user_sid','xml_string']],event_log_report_fix],
+    'File System Report.csv':[[10,['filename','Type']],[16,['file_size','file_system_type','is_allocated','md5_hash']],file_system_report_fix],
+    'MFT Report.csv':[[10,['File_reference','Attribute_name','Name','Parent_file_reference','Log_info']],[16,['attribute_type','file_attribute_flags','file_system_type','is_allocated','md5_hash']],mft_report_fix],
+#    'UsnJrnl Report.csv':[],
+#    'Internet History Report.csv':[],
+    'Prefetch Report.csv':[[10,['File_name','Run_count','path','hash','volume','Serial number','Device_path','Origin']],[16,['md5_hash','number_of_volumes','version','volume_device_paths','volume_serial_numbers']],prefetch_report_fix],
+#    'Registry Report.csv':[],
+    'Scheduled Tasks Report.csv':[[10,['key','task','identification']],[16,['md5_hash']],scheduled_tasks_report_fix],
+#    'Persistence Report.csv':[],
+#    'System Information Report.csv':[],
+#    'AntiVirus Report.csv':[],
+#    'Firewall Report.csv':[],
+#    'Login Report.csv':[]
+}
+
+# Report Improvements Function
 def report_improvements(lor):
     for report in lor:
         output_list = []
@@ -609,25 +611,15 @@ def report_improvements(lor):
                     mylogfile.writelines("Improving "+ str(report_name)+" (This will take a long time for large files)"+"\n")
                     for trow in csvfile:
                         row = trow.split(',')
-                        if report_name == 'File System Report.csv':
-                            output_list.append((file_system_report_fix(row)))
-                        elif report_name == 'Scheduled Tasks Report.csv':
-                            output_list.append((scheduled_tasks_report_fix(row)))
-                        elif report_name == 'Event Log Report.csv':
-                            output_list.append((event_log_report_fix(row)))
-                        elif report_name == 'Appcompat Report.csv':
-                            output_list.append((appcompat_report_fix(row)))
-                        elif report_name == 'MFT Report.csv':
-                            output_list.append((mft_report_fix(row)))
-                        elif report_name == 'Prefetch Report.csv':
-                            output_list.append((prefetch_report_fix(row)))
+                        output_list.append((report_header_dict[report_name][2](row)))
+
                 # Print Report to file
                 newreport = open(tmp_report_name,'w', encoding='utf-8')
-
                 for line in output_list:
                     if line[10] == 'desc':
                         for thing in report_header_dict[report_name]:
-                            line[thing[0]] = ','.join(thing[1])
+                            if isinstance(thing, list):
+                                line[thing[0]] = ','.join(thing[1])
                     newreport.writelines(','.join(fix_line(line,report_name)).replace("\n"," ").replace("\r"," ")+"\n")
                 newreport.close()
 
