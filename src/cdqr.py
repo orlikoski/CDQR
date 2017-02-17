@@ -1016,8 +1016,11 @@ def event_log_report_fix(row): #'Event Log Report.csv':[[10,['event_id','EID_des
 
         search_results_desc = re.search(search_desc,row[header_desc_rows])
         if search_results_desc:
-            row[header_desc_rows] = search_results_desc.group(1)+","+eventlog_dict[search_results_desc.group(1)]+","+search_results_desc.group(3)+","+search_results_desc.group(5)+","+search_results_desc.group(7)+","+search_results_desc.group(9)+","+((str(search_results_desc.group(12))).replace("\r", " ")).replace("\n", " ")
-        
+            try:
+                eventlog_string = eventlog_dict[search_results_desc.group(1)]
+            except:
+                eventlog_string = ""
+            row[header_desc_rows] = search_results_desc.group(1)+","+eventlog_string+","+search_results_desc.group(3)+","+search_results_desc.group(5)+","+search_results_desc.group(7)+","+search_results_desc.group(9)+","+((str(search_results_desc.group(12))).replace("\r", " ")).replace("\n", " ")
         search_results_extra = re.search(search_extra,row[header_extra_rows])
         if search_results_extra:
             row[header_extra_rows] = search_results_extra.group(2)+","+search_results_extra.group(4)+","+search_results_extra.group(6)+","+search_results_extra.group(8)+","+str(search_results_extra.group(10))+","+((str(search_results_extra.group(12))).replace("\r", " ")).replace("\n", " ")
