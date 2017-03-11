@@ -2,7 +2,7 @@
 import io, os, sys, argparse, subprocess, csv, time, datetime, re, multiprocessing, gzip, shutil, zipfile
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 3.1.2"
+cdqr_version = "CDQR Version: 3.1.3"
 # 
 ###############################################################################
 
@@ -640,8 +640,8 @@ def query_plaso_location():
         sys.stdout.writelines("Please enter valid location for Plaso directory: ")
         p_path = input()
         # Verify files exist
-        l2t_loc = p_path.rstrip("/")+"/log2timeline.exe"
-        p_loc = p_path.rstrip("/")+"/psort.exe"
+        l2t_loc = p_path.rstrip("/").rstrip().strip("\"")+"/log2timeline.exe"
+        p_loc = p_path.rstrip("/").rstrip().strip("\"")+"/psort.exe"
         if not os.path.isfile(l2t_loc):
             print("ERROR: "+l2t_loc+" does not exist")
         else:
