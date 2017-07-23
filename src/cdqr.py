@@ -1,8 +1,8 @@
 #!/usr/bin/python3
-import io, os, sys, argparse, subprocess, csv, time, datetime, re, multiprocessing, gzip, shutil, zipfile
+import io, os, sys, argparse, subprocess, csv, time, datetime, re, multiprocessing, gzip, shutil, zipfile, queue, threading
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 3.1.3"
+cdqr_version = "CDQR Version: 3.1.4_BETA"
 # 
 ###############################################################################
 
@@ -688,6 +688,13 @@ def status_marker(myproc):
         print("\nExiting.......")
         sys.exit(1)
 
+def multi_thread_reports(mqueue,infile,terms):
+    for line in infile:
+        if terms[0].search(line,re.I):
+            mqueue.put(terms[1].writelines(line.replace("\n"," ").replace("\r"," ")+"\n"))
+    print("Report Created:",terms[2])
+
+
 def create_reports(dst_loc, csv_file):
     # Create report directory and file names
     rpt_dir_name = dst_loc+"/Reports"
@@ -815,22 +822,20 @@ def create_reports(dst_loc, csv_file):
             mylogfile.writelines("File not found " + csv_file+"\n")
             sys.exit(1)
 
-        # Run each search for each report (sequential) and write the results to the report CSV files
+        # Run each search for each report (in parallel) and write the results to the report CSV files
         counter = 1
         counter2 = True
-        for line in io.open(csv_file,'r', encoding='utf-8'):
-            if counter%1000 == 0:
-                if counter2:
-                    sys.stdout.writelines("| Still working...\r")
-                    counter2 = False
-                else:
-                    sys.stdout.writelines("- Still working...\r")
-                    counter2 = True
-            for terms in lofh:
-                if terms[0].search(line,re.I):
-                    terms[1].writelines(line.replace("\n"," ").replace("\r"," ")+"\n")
-            sys.stdout.flush()
-            counter+=1
+        mqueue = queue.Queue()
+        #Open file and read to memory
+        SuperTimeline_file = io.open(csv_file,'r', encoding='utf-8').readlines()
+        # Create all threads to start
+        threads =[]
+        for terms in lofh:
+            threads.append(threading.Thread(target = multi_thread_reports, args = (mqueue,SuperTimeline_file,terms)))
+
+        [t.start() for t in threads]
+        [t.join() for t in threads]
+
         # Close all report files
         for item in lofh:
             item[1].close()
@@ -870,8 +875,8 @@ def plaso_version(log2timeline_location):
 
 def output_elasticsearch(srcfilename,casename):
     # Run psort against plaso db file to output to an ElasticSearch server running on the localhost
-    print("Exporting results to the ElasticSearch server")
-    mylogfile.writelines("Exporting results to the ElasticSearch server\n")
+    print("Exporting results in Kibaana format to the ElasticSearch server")
+    mylogfile.writelines("Exporting results in Kibaana format to the ElasticSearch server\n")
 
     # Create command to run
     # SAMPLE: psort.py -o elastic --raw_fields --index_name case_test output.db 
@@ -885,6 +890,24 @@ def output_elasticsearch(srcfilename,casename):
     
     print("All entries have been inserted into database with case: "+global_es_index+casename.lower())
     mylogfile.writelines("All entries have been inserted into database with case: "+global_es_index+casename.lower()+"\n")
+
+def output_elasticsearch_ts(srcfilename,casename):
+    # Run psort against plaso db file to output to an ElasticSearch server running on the localhost
+    print("Exporting results in TimeSketch format to the ElasticSearch server")
+    mylogfile.writelines("Exporting results in TimeSketch format to the ElasticSearch server\n")
+
+    # Create command to run
+    # SAMPLE: psort.py -o timesketch --name demo --index case_cdqr-demo demo.db
+    command = [psort_location,"-o","timesketch","--name",casename.lower(),"--index",casename.lower(), srcfilename]
+
+    print("\""+"\" \"".join(command)+"\"")
+    mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
+
+    # Execute Command
+    status_marker(subprocess.Popen(command,stdout=mylogfile,stderr=mylogfile))
+
+    print("All entries have been inserted into TimeSketch database with case: "+casename.lower())
+    mylogfile.writelines("All entries have been inserted into TimeSketch database with case: "+casename.lower()+"\n")
 
 def unzip_source(src_loc_tmp):
     try:
@@ -1172,38 +1195,53 @@ report_header_dict = {
 #    'Login Report.csv':[]
 }
 
+# Report Improvement Multi-threading
+def multi_thread_report_improve(mqueue,report,report_name,tmp_report_name):
+    output_list = []
+    #mqueue.put(terms[1].writelines(line.replace("\n"," ").replace("\r"," ")+"\n"))
+    with io.open(report, 'r', encoding='utf-8') as csvfile:
+        print("Improving "+ str(report_name)+" (This will take a long time for large files)")
+        mylogfile.writelines("Improving "+ str(report_name)+" (This will take a long time for large files)"+"\n")
+        for trow in csvfile:
+            row = trow.split(',')
+            output_list.append((report_header_dict[report_name][2](row)))
+        # Print Report to file
+        newreport = open(tmp_report_name,'w', encoding='utf-8')
+        for line in output_list:
+            if line[10] == 'desc':
+                for thing in report_header_dict[report_name]:
+                    if isinstance(thing, list):
+                        line[thing[0]] = ','.join(thing[1])
+            mqueue.put(newreport.writelines(','.join(fix_line(line,report_name)).replace("\n"," ").replace("\r"," ")+"\n"))
+        newreport.close()
+
+        if os.stat(tmp_report_name).st_size != 0:
+            mqueue.put(shutil.copyfile(tmp_report_name,report))
+            mqueue.put(os.remove(tmp_report_name))
+        print("    Complete")
+        mylogfile.writelines("    Complete"+"\n")
+
 # Report Improvements Function
 def report_improvements(lor):
+    mqueue = queue.Queue()
+    threads = []
     for report in lor:
-        output_list = []
+        lonf = []
         report_name = report.split('/')[-1]
-        tmp_report_name = os.path.dirname(report)+"/tmp_report.csv"
+        tmp_report_name = os.path.dirname(report)+"/tmp_"+report_name+".csv"
         if tmp_report_name[0] == '/':
             tmp_report_name = tmp_report_name[1:]
         if report_name in report_header_dict:
             if os.path.exists(report):
-                with io.open(report, 'r', encoding='utf-8') as csvfile:
-                    print("Improving "+ str(report_name)+" (This will take a long time for large files)")
-                    mylogfile.writelines("Improving "+ str(report_name)+" (This will take a long time for large files)"+"\n")
-                    for trow in csvfile:
-                        row = trow.split(',')
-                        output_list.append((report_header_dict[report_name][2](row)))
+                lonf.append([report,report_name,tmp_report_name])
+        
+        for nfile in lonf:
+            threads.append(threading.Thread(target = multi_thread_report_improve, args = (mqueue,nfile[0],nfile[1],nfile[2])))
+            #threads.append(threading.Thread(target = multi_thread_reports, args = (mqueue,SuperTimeline_file,terms)))
 
-                # Print Report to file
-                newreport = open(tmp_report_name,'w', encoding='utf-8')
-                for line in output_list:
-                    if line[10] == 'desc':
-                        for thing in report_header_dict[report_name]:
-                            if isinstance(thing, list):
-                                line[thing[0]] = ','.join(thing[1])
-                    newreport.writelines(','.join(fix_line(line,report_name)).replace("\n"," ").replace("\r"," ")+"\n")
-                newreport.close()
+    [t.start() for t in threads]
+    [t.join() for t in threads]
 
-                if os.stat(tmp_report_name).st_size != 0:
-                    shutil.copyfile(tmp_report_name,report)
-                    os.remove(tmp_report_name)
-                print("    Complete")
-                mylogfile.writelines("    Complete"+"\n")
 
 ####################### END FUNCTIONS ############################
 
@@ -1217,7 +1255,8 @@ parser.add_argument('-p','--parser', nargs='?',help='Choose parser to use.  If n
 parser.add_argument('--nohash', action='store_true', default=False, help='Do not hash all the files as part of the processing of the image')
 parser.add_argument('--max_cpu', action='store_true', default=False, help='Use the maximum number of cpu cores to process the image')
 parser.add_argument('--export', action='store_true' , help='Creates gzipped, line delimited json export file')
-parser.add_argument('--es', nargs='?',help='Outputs to elasticsearch database (Default is to localhost)')
+parser.add_argument('--es_kb', nargs=1,help='Outputs Kibana format to local elasticsearch database')
+parser.add_argument('--es_ts', nargs=1,help='Outputs TimeSketch format to local elasticsearch database')
 parser.add_argument('-z',action='store_true', default=False, help='Indicates the input file is a zip file and needs to be decompressed')
 parser.add_argument('-v','--version', action='version', version=cdqr_version)
 
@@ -1407,11 +1446,14 @@ if create_db:
     print("Parsing duration was: "+str(duration01))
     mylogfile.writelines("Parsing duration was: "+str(duration01)+"\n")
 
-if args.es:
+if args.es_kb or args.es_ts:
     start_dt = datetime.datetime.now()
     print("\nProcess to export to ElasticSearch started")
     mylogfile.writelines("\nProcess to export to ElasticSearch started"+"\n")
-    output_elasticsearch(db_file,args.es)
+    if args.es_kb:
+        output_elasticsearch(db_file,args.es_kb)
+    else:
+        output_elasticsearch_ts(db_file,args.es_ts)
     end_dt = datetime.datetime.now()
     duration03 = end_dt - start_dt
     print("\nProcess to export to ElasticSearch completed")
