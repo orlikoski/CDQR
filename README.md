@@ -48,7 +48,7 @@ cdqr.py --plaso_db artifacts.db
 Windows 64-bit binary or Python 3.x
 ```
 cdqr.[exe|py] [-h] [-p [PARSER]] [--nohash] [--max_cpu] [--export]
-                [--es [ES]] [-z] [-v]
+                [--es_kb ES_KB] [--es_ts ES_TS] [--plaso_db] [-z] [-v]
                 src_location [dst_location]
 ```
 
@@ -80,7 +80,9 @@ This program uses [Plaso](https://github.com/log2timeline/plaso/wiki) and a stre
 * `--nohash` — Do not hash all the files as part of the processing of the image.
 * `--max_cpu` — Use the same number of workers as cpu cores
 * `--export` — Creates gzipped, line delimited json export file
-* `--es [ES]` — Outputs to elasticsearch database (Default is to localhost)
+* `--es_ts ES_TS` — Outputs TimeSketch format to local elasticsearch database. Requires index/timesketch name. Example: '--es_ts my_name'
+* `--es_kb ES_KB` — Outputs Kibana format to local elasticsearch database. Requires index name. Example: '--es_kb my_index'
+* `--plaso_db` — Process an existing Plaso DB file. Example: artifacts.db OR artifacts.plaso
 * `-z` — Indicates the input file is a zip file and needs to be decompressed
 * `-v : --version` — Show version
 
