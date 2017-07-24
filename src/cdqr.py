@@ -1,23 +1,20 @@
 #!/usr/bin/python3
-import io, os, sys, argparse, subprocess, csv, time, datetime, re, multiprocessing, gzip, shutil, zipfile, queue, threading
+import io, os, sys, argparse, subprocess, csv, time, datetime, re, multiprocessing, shutil, zipfile, queue, threading
+try:
+    import zlib
+    compression = zipfile.ZIP_DEFLATED
+except:
+    compression = zipfile.ZIP_STORED
+
+modes = {
+    zipfile.ZIP_DEFLATED: 'deflated',
+    zipfile.ZIP_STORED: 'stored',
+}
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 3.1.4_BETA"
+cdqr_version = "CDQR Version: 4.0.0"
 # 
 ###############################################################################
-
-# Default Parser option
-default_parser = "win"
-
-
-# Plaso Program Locations (default)
-if sys.platform[0:3] == "win":
-    log2timeline_location = r"plaso\log2timeline.exe"
-    psort_location = r"plaso\psort.exe"
-else:
-    log2timeline_location = r"log2timeline.py"
-    psort_location = r"psort.py"
-
 # Global Variables
 parser_opt = ""
 src_loc = ""
@@ -29,9 +26,7 @@ duration01 = end_dt - start_dt
 duration02 = end_dt - start_dt
 duration03 = end_dt - start_dt
 create_db = True
-create_st = True
-global_es_index = "case_cdqr-"
-unzipped_file = False
+
 
 # Compatible Plaso versions
 p_compat = ["1.3","1.4","1.5"]
@@ -671,7 +666,7 @@ def query_yes_no(question, default="yes"):
         else:
             sys.stdout.write("Please respond with 'yes' or 'no'")
 
-def status_marker(myproc):
+def status_marker(mylogfile,myproc):
     counter = 1
     while myproc.poll() is None:
         if counter%2 == 0:
@@ -695,7 +690,13 @@ def multi_thread_reports(mqueue,infile,terms):
     print("Report Created:",terms[2])
 
 
-def create_reports(dst_loc, csv_file):
+def create_reports(mylogfile,dst_loc, csv_file,parser_opt):
+    start_dt = datetime.datetime.now()
+    print("Reporting started at: "+str(start_dt))
+    mylogfile.writelines("Reporting started at: "+str(start_dt)+"\n")
+    # Create individual reports
+    print("\nCreating the individual reports (This will take a long time for large files)")
+    mylogfile.writelines("\nCreating the individual reports (This will take a long time for large files)\n")
     # Create report directory and file names
     rpt_dir_name = dst_loc+"/Reports"
     rpt_evt_name = rpt_dir_name+"/Event Log Report.csv"
@@ -759,112 +760,124 @@ def create_reports(dst_loc, csv_file):
             for rpt_name in lor:
                 os.remove(rpt_name)
         else:
-            create_rep = False
+            return
 
-    if create_rep:
-        # Create list of file handles + search terms based on the parser option selected
-        if parser_opt == "datt":
-            # Open all report files for writing
-            rpt_evt = open(rpt_evt_name,'a+', encoding='utf-8')
-            rpt_fsfs = open(rpt_fsfs_name,'a+', encoding='utf-8')
-            rpt_fsmft = open(rpt_fsmft_name,'a+', encoding='utf-8')
-            rpt_fsusnjrnl = open(rpt_fsusnjrnl_name,'a+', encoding='utf-8')
-            rpt_ih = open(rpt_ih_name,'a+', encoding='utf-8')
-            rpt_pf = open(rpt_pf_name,'a+', encoding='utf-8')
-            rpt_reg = open(rpt_reg_name,'a+', encoding='utf-8')
-            rpt_st = open(rpt_st_name,'a+', encoding='utf-8')
-            rpt_appc = open(rpt_appc_name,'a+', encoding='utf-8')
-            rpt_per = open(rpt_per_name,'a+', encoding='utf-8')
-            rpt_si = open(rpt_si_name,'a+', encoding='utf-8')
-            rpt_av = open(rpt_av_name,'a+', encoding='utf-8')
-            rpt_fw = open(rpt_fw_name,'a+', encoding='utf-8')
-            rpt_mac = open(rpt_mac_name,'a+', encoding='utf-8')
-            rpt_lin = open(rpt_lin_name,'a+', encoding='utf-8')
-            rpt_log = open(rpt_login_name,'a+', encoding='utf-8')
-            
-            lofh = [[rpt_appc_search,rpt_appc,rpt_appc_name],[rpt_evt_search,rpt_evt,rpt_evt_name],[rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name],[rpt_fsmft_search,rpt_fsmft,rpt_fsmft_name],[rpt_fsusnjrnl_search,rpt_fsusnjrnl,rpt_fsusnjrnl_name],[rpt_ih_search,rpt_ih,rpt_ih_name],[rpt_pf_search,rpt_pf,rpt_pf_name],[rpt_reg_search,rpt_reg,rpt_reg_name],[rpt_st_search,rpt_st,rpt_st_name],[rpt_per_search,rpt_per,rpt_per_name],[rpt_si_search,rpt_si,rpt_si_name],[rpt_av_search,rpt_av,rpt_av_name],[rpt_fw_search,rpt_fw,rpt_fw_name],[rpt_mac_search,rpt_mac,rpt_mac_name],[rpt_lin_search,rpt_lin,rpt_lin_name],[rpt_login_search,rpt_log,rpt_login_name]]
-        elif parser_opt == "win":
-            # Open windows report files for writing
-            rpt_evt = open(rpt_evt_name,'a+', encoding='utf-8')
-            rpt_fsfs = open(rpt_fsfs_name,'a+', encoding='utf-8')
-            rpt_fsmft = open(rpt_fsmft_name,'a+', encoding='utf-8')
-            rpt_fsusnjrnl = open(rpt_fsusnjrnl_name,'a+', encoding='utf-8')
-            rpt_ih = open(rpt_ih_name,'a+', encoding='utf-8')
-            rpt_pf = open(rpt_pf_name,'a+', encoding='utf-8')
-            rpt_appc = open(rpt_appc_name,'a+', encoding='utf-8')
-            rpt_reg = open(rpt_reg_name,'a+', encoding='utf-8')
-            rpt_st = open(rpt_st_name,'a+', encoding='utf-8')
-            rpt_per = open(rpt_per_name,'a+', encoding='utf-8')
-            rpt_si = open(rpt_si_name,'a+', encoding='utf-8')
-            rpt_av = open(rpt_av_name,'a+', encoding='utf-8')
-            rpt_fw = open(rpt_fw_name,'a+', encoding='utf-8')
-            rpt_log = open(rpt_login_name,'a+', encoding='utf-8')
-            lofh = [[rpt_appc_search,rpt_appc,rpt_appc_name],[rpt_evt_search,rpt_evt,rpt_evt_name],[rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name],[rpt_fsmft_search,rpt_fsmft,rpt_fsmft_name],[rpt_fsusnjrnl_search,rpt_fsusnjrnl,rpt_fsusnjrnl_name],[rpt_ih_search,rpt_ih,rpt_ih_name],[rpt_pf_search,rpt_pf,rpt_pf_name],[rpt_reg_search,rpt_reg,rpt_reg_name],[rpt_st_search,rpt_st,rpt_st_name],[rpt_per_search,rpt_per,rpt_per_name],[rpt_si_search,rpt_si,rpt_si_name],[rpt_av_search,rpt_av,rpt_av_name],[rpt_fw_search,rpt_fw,rpt_fw_name],[rpt_login_search,rpt_log,rpt_login_name]]
+
+    # Create list of file handles + search terms based on the parser option selected
+    if parser_opt == "datt":
+        # Open all report files for writing
+        rpt_evt = open(rpt_evt_name,'a+', encoding='utf-8')
+        rpt_fsfs = open(rpt_fsfs_name,'a+', encoding='utf-8')
+        rpt_fsmft = open(rpt_fsmft_name,'a+', encoding='utf-8')
+        rpt_fsusnjrnl = open(rpt_fsusnjrnl_name,'a+', encoding='utf-8')
+        rpt_ih = open(rpt_ih_name,'a+', encoding='utf-8')
+        rpt_pf = open(rpt_pf_name,'a+', encoding='utf-8')
+        rpt_reg = open(rpt_reg_name,'a+', encoding='utf-8')
+        rpt_st = open(rpt_st_name,'a+', encoding='utf-8')
+        rpt_appc = open(rpt_appc_name,'a+', encoding='utf-8')
+        rpt_per = open(rpt_per_name,'a+', encoding='utf-8')
+        rpt_si = open(rpt_si_name,'a+', encoding='utf-8')
+        rpt_av = open(rpt_av_name,'a+', encoding='utf-8')
+        rpt_fw = open(rpt_fw_name,'a+', encoding='utf-8')
+        rpt_mac = open(rpt_mac_name,'a+', encoding='utf-8')
+        rpt_lin = open(rpt_lin_name,'a+', encoding='utf-8')
+        rpt_log = open(rpt_login_name,'a+', encoding='utf-8')
+        
+        lofh = [[rpt_appc_search,rpt_appc,rpt_appc_name],[rpt_evt_search,rpt_evt,rpt_evt_name],[rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name],[rpt_fsmft_search,rpt_fsmft,rpt_fsmft_name],[rpt_fsusnjrnl_search,rpt_fsusnjrnl,rpt_fsusnjrnl_name],[rpt_ih_search,rpt_ih,rpt_ih_name],[rpt_pf_search,rpt_pf,rpt_pf_name],[rpt_reg_search,rpt_reg,rpt_reg_name],[rpt_st_search,rpt_st,rpt_st_name],[rpt_per_search,rpt_per,rpt_per_name],[rpt_si_search,rpt_si,rpt_si_name],[rpt_av_search,rpt_av,rpt_av_name],[rpt_fw_search,rpt_fw,rpt_fw_name],[rpt_mac_search,rpt_mac,rpt_mac_name],[rpt_lin_search,rpt_lin,rpt_lin_name],[rpt_login_search,rpt_log,rpt_login_name]]
+    elif parser_opt == "win":
+        # Open windows report files for writing
+        rpt_evt = open(rpt_evt_name,'a+', encoding='utf-8')
+        rpt_fsfs = open(rpt_fsfs_name,'a+', encoding='utf-8')
+        rpt_fsmft = open(rpt_fsmft_name,'a+', encoding='utf-8')
+        rpt_fsusnjrnl = open(rpt_fsusnjrnl_name,'a+', encoding='utf-8')
+        rpt_ih = open(rpt_ih_name,'a+', encoding='utf-8')
+        rpt_pf = open(rpt_pf_name,'a+', encoding='utf-8')
+        rpt_appc = open(rpt_appc_name,'a+', encoding='utf-8')
+        rpt_reg = open(rpt_reg_name,'a+', encoding='utf-8')
+        rpt_st = open(rpt_st_name,'a+', encoding='utf-8')
+        rpt_per = open(rpt_per_name,'a+', encoding='utf-8')
+        rpt_si = open(rpt_si_name,'a+', encoding='utf-8')
+        rpt_av = open(rpt_av_name,'a+', encoding='utf-8')
+        rpt_fw = open(rpt_fw_name,'a+', encoding='utf-8')
+        rpt_log = open(rpt_login_name,'a+', encoding='utf-8')
+        lofh = [[rpt_appc_search,rpt_appc,rpt_appc_name],[rpt_evt_search,rpt_evt,rpt_evt_name],[rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name],[rpt_fsmft_search,rpt_fsmft,rpt_fsmft_name],[rpt_fsusnjrnl_search,rpt_fsusnjrnl,rpt_fsusnjrnl_name],[rpt_ih_search,rpt_ih,rpt_ih_name],[rpt_pf_search,rpt_pf,rpt_pf_name],[rpt_reg_search,rpt_reg,rpt_reg_name],[rpt_st_search,rpt_st,rpt_st_name],[rpt_per_search,rpt_per,rpt_per_name],[rpt_si_search,rpt_si,rpt_si_name],[rpt_av_search,rpt_av,rpt_av_name],[rpt_fw_search,rpt_fw,rpt_fw_name],[rpt_login_search,rpt_log,rpt_login_name]]
+    else:
+        # Open Mac / Linux report files for writing
+        rpt_fsfs = open(rpt_fsfs_name,'a+', encoding='utf-8')
+        rpt_ih = open(rpt_ih_name,'a+', encoding='utf-8')
+        rpt_si = open(rpt_si_name,'a+', encoding='utf-8')
+        rpt_av = open(rpt_av_name,'a+', encoding='utf-8')
+        rpt_fw = open(rpt_fw_name,'a+', encoding='utf-8')
+        rpt_mac = open(rpt_mac_name,'a+', encoding='utf-8')
+        rpt_lin = open(rpt_lin_name,'a+', encoding='utf-8')
+        rpt_log = open(rpt_login_name,'a+', encoding='utf-8')
+        lofh = [[rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name],[rpt_ih_search,rpt_ih,rpt_ih_name],[rpt_si_search,rpt_si,rpt_si_name],[rpt_av_search,rpt_av,rpt_av_name],[rpt_fw_search,rpt_fw,rpt_fw_name],[rpt_mac_search,rpt_mac,rpt_mac_name],[rpt_lin_search,rpt_lin,rpt_lin_name],[rpt_login_search,rpt_log,rpt_login_name]]
+
+    # Write the header line in each new report file
+    for item in lofh:
+        if os.stat(item[2]).st_size == 0:
+            item[1].writelines("date,time,timezone,MACB,source,sourcetype,type,user,host,short,desc,version,filename,inode,notes,format,extra\n")
+
+    if not os.path.isfile(csv_file):
+        print("File not found", csv_file)
+        mylogfile.writelines("File not found " + csv_file+"\n")
+        sys.exit(1)
+
+    # Run each search for each report (in parallel) and write the results to the report CSV files
+    counter = 1
+    counter2 = True
+    mqueue = queue.Queue()
+    #Open file and read to memory
+    SuperTimeline_file = io.open(csv_file,'r', encoding='utf-8').readlines()
+    # Create all threads to start
+    threads =[]
+    for terms in lofh:
+        threads.append(threading.Thread(target = multi_thread_reports, args = (mqueue,SuperTimeline_file,terms)))
+
+    [t.start() for t in threads]
+    [t.join() for t in threads]
+
+    # Close all report files
+    for item in lofh:
+        item[1].close()
+
+    # Removing files with no output
+    final_lor = []
+    final_lor_nodata = []
+    for i_filename in lor:
+        if os.stat(i_filename).st_size == 111:
+            os.remove(i_filename)
+            final_lor_nodata.append(i_filename)
         else:
-            # Open Mac / Linux report files for writing
-            rpt_fsfs = open(rpt_fsfs_name,'a+', encoding='utf-8')
-            rpt_ih = open(rpt_ih_name,'a+', encoding='utf-8')
-            rpt_si = open(rpt_si_name,'a+', encoding='utf-8')
-            rpt_av = open(rpt_av_name,'a+', encoding='utf-8')
-            rpt_fw = open(rpt_fw_name,'a+', encoding='utf-8')
-            rpt_mac = open(rpt_mac_name,'a+', encoding='utf-8')
-            rpt_lin = open(rpt_lin_name,'a+', encoding='utf-8')
-            rpt_log = open(rpt_login_name,'a+', encoding='utf-8')
-            lofh = [[rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name],[rpt_ih_search,rpt_ih,rpt_ih_name],[rpt_si_search,rpt_si,rpt_si_name],[rpt_av_search,rpt_av,rpt_av_name],[rpt_fw_search,rpt_fw,rpt_fw_name],[rpt_mac_search,rpt_mac,rpt_mac_name],[rpt_lin_search,rpt_lin,rpt_lin_name],[rpt_login_search,rpt_log,rpt_login_name]]
+            final_lor.append(i_filename)
 
-        # Write the header line in each new report file
-        for item in lofh:
-            if os.stat(item[2]).st_size == 0:
-                item[1].writelines("date,time,timezone,MACB,source,sourcetype,type,user,host,short,desc,version,filename,inode,notes,format,extra\n")
+    # Print report not created messages
+    print("\nDid not keep "+str(len(final_lor_nodata))+" Reports due to no matching data from SuperTimeline")
+    mylogfile.writelines("\nDid not keep "+str(len(final_lor_nodata))+" Reports due to no matching data from SuperTimeline\n")
+    for item in final_lor_nodata:
+        print("Report not kept: "+ item)
+        mylogfile.writelines("Report not kept:" + item + "\n")
 
-        if not os.path.isfile(csv_file):
-            print("File not found", csv_file)
-            mylogfile.writelines("File not found " + csv_file+"\n")
-            sys.exit(1)
-
-        # Run each search for each report (in parallel) and write the results to the report CSV files
-        counter = 1
-        counter2 = True
-        mqueue = queue.Queue()
-        #Open file and read to memory
-        SuperTimeline_file = io.open(csv_file,'r', encoding='utf-8').readlines()
-        # Create all threads to start
-        threads =[]
-        for terms in lofh:
-            threads.append(threading.Thread(target = multi_thread_reports, args = (mqueue,SuperTimeline_file,terms)))
-
-        [t.start() for t in threads]
-        [t.join() for t in threads]
-
-        # Close all report files
-        for item in lofh:
-            item[1].close()
-
-        # Removing files with no output
-        final_lor = []
-        final_lor_nodata = []
-        for i_filename in lor:
-            if os.stat(i_filename).st_size == 111:
-                os.remove(i_filename)
-                final_lor_nodata.append(i_filename)
-            else:
-                final_lor.append(i_filename)
+    # Print report created messages
+    print("\nCreated "+str(len(final_lor))+" Reports.  Now improving them")
+    mylogfile.writelines("\nCreated "+str(len(final_lor))+" Reports.")
 
 
-        report_improvements(lor)
 
-        # Print report created messages
-        print("Created "+str(len(final_lor))+" Reports")
-        mylogfile.writelines("Created "+str(len(final_lor))+" Reports\n")
-        for item in final_lor:
-            print("Report Created: "+ item)
-            mylogfile.writelines("Report Created:" + item + "\n")
-        # Print report not created messages
-        print("\nDid not keep "+str(len(final_lor_nodata))+" Reports due to no matching data from SuperTimeline")
-        mylogfile.writelines("\nDid not keep "+str(len(final_lor_nodata))+" Reports due to no matching data from SuperTimeline\n")
-        for item in final_lor_nodata:
-            print("Report not kept: "+ item)
-            mylogfile.writelines("Report not kept:" + item + "\n")
+    # Function to improve reports (in parallel)
+    if parser_opt == "win":
+        report_improvements(lor,mylogfile)
+
+
+    print("\nAll reporting complete")
+    mylogfile.writelines("\nAll reporting complete\n")
+    end_dt = datetime.datetime.now()
+    duration02 = end_dt - start_dt
+    print("Reporting ended at: "+str(end_dt))
+    print("Reporting duration was: "+str(duration02))
+    mylogfile.writelines("Reporting ended at: "+str(end_dt)+"\n")
+    mylogfile.writelines("Reporting duration was: "+str(duration02)+"\n")
+    return
 
 
 def plaso_version(log2timeline_location):
@@ -873,25 +886,25 @@ def plaso_version(log2timeline_location):
     pver = ".".join(str(err).split(" ")[-1].split(".")[0:2])
     return(pver)
 
-def output_elasticsearch(srcfilename,casename):
+def output_elasticsearch(mylogfile,srcfilename,casename,psort_location):
     # Run psort against plaso db file to output to an ElasticSearch server running on the localhost
-    print("Exporting results in Kibaana format to the ElasticSearch server")
-    mylogfile.writelines("Exporting results in Kibaana format to the ElasticSearch server\n")
+    print("Exporting results in Kibana format to the ElasticSearch server")
+    mylogfile.writelines("Exporting results in Kibana format to the ElasticSearch server\n")
 
     # Create command to run
     # SAMPLE: psort.py -o elastic --raw_fields --index_name case_test output.db 
-    command = [psort_location,"-o","elastic","--raw_fields","--index_name",global_es_index+casename.lower(), srcfilename]
+    command = [psort_location,"-o","elastic","--raw_fields","--index_name","case_cdqr-"+casename.lower(), srcfilename]
     
     print("\""+"\" \"".join(command)+"\"")
     mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
 
     # Execute Command
-    status_marker(subprocess.Popen(command,stdout=mylogfile,stderr=mylogfile))
+    status_marker(mylogfile,subprocess.Popen(command,stdout=mylogfile,stderr=mylogfile))
     
-    print("All entries have been inserted into database with case: "+global_es_index+casename.lower())
-    mylogfile.writelines("All entries have been inserted into database with case: "+global_es_index+casename.lower()+"\n")
+    print("All entries have been inserted into database with case: "+"case_cdqr-"+casename.lower())
+    mylogfile.writelines("All entries have been inserted into database with case: "+"case_cdqr-"+casename.lower()+"\n")
 
-def output_elasticsearch_ts(srcfilename,casename):
+def output_elasticsearch_ts(mylogfile,srcfilename,casename,psort_location):
     # Run psort against plaso db file to output to an ElasticSearch server running on the localhost
     print("Exporting results in TimeSketch format to the ElasticSearch server")
     mylogfile.writelines("Exporting results in TimeSketch format to the ElasticSearch server\n")
@@ -904,47 +917,54 @@ def output_elasticsearch_ts(srcfilename,casename):
     mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
 
     # Execute Command
-    status_marker(subprocess.Popen(command,stdout=mylogfile,stderr=mylogfile))
+    status_marker(mylogfile,subprocess.Popen(command,stdout=mylogfile,stderr=mylogfile))
 
     print("All entries have been inserted into TimeSketch database with case: "+casename.lower())
     mylogfile.writelines("All entries have been inserted into TimeSketch database with case: "+casename.lower()+"\n")
 
-def unzip_source(src_loc_tmp):
+def zip_source(inputfile,outputzip):
     try:
-        outputzipfolder = src_loc_tmp[0:-4]
-        print("Attempting to extract .zip file source file: "+src_loc_tmp)
-        log_list.append("Attempting to extract .zip file source file: "+src_loc_tmp+"\n")
-        with zipfile.ZipFile(src_loc_tmp,"r") as zip_ref:
-            zip_ref.extractall(outputzipfolder)
-        print("All files extracted to folder: "+outputzipfolder)
-        log_list.append("All files extracted to folder: "+outputzipfolder+"\n")
-        return outputzipfolder
-    except:
-        print("Unable to extract file: "+src_loc_tmp)
-        log_list.append("Unable to extract file: "+src_loc_tmp+"\n")
+        with zipfile.ZipFile(outputzip,"w") as zip_ref:
+            zip_ref.write(inputfile, compress_type=compression)
+        return
+    except Exception as e: 
+        print("Unable to compress file: "+inputfile)
+        print(e)
+        sys.exit(1)
 
-def create_export(srcfilename):
+def unzip_source(src_loc_tmp,outputzipfolder):
+    try:
+        with zipfile.ZipFile(src_loc_tmp,"r") as zip_ref:
+            if sys.platform[0:3] == "win":
+                zip_ref.extractall(u'\\\\?\\'+os.path.abspath(outputzipfolder))
+            else:
+                zip_ref.extractall(os.path.abspath(outputzipfolder))
+        return outputzipfolder
+    except Exception as e: 
+        print("Unable to extract file: "+src_loc_tmp)
+        print(e)
+        sys.exit(1)
+
+def create_export(dst_loc,srcfilename,mylogfile,db_file,psort_location):
     # Create Output filenames
-    dstrawfilename = srcfilename[:-3]+"_export.json"
-    dstfilename = srcfilename[:-3]+".json.gz"
+    dstrawfilename = dst_loc+"/"+srcfilename.split("/")[-1]+".json"
+    dstfilename = dst_loc+"/"+srcfilename.split("/")[-1]+".json.zip"
     if os.path.exists(dstfilename):
         if query_yes_no("\n"+dstfilename+" already exists.  Would you like to delete that file?","no"):
             os.remove(dstfilename)
-        else:
-            return dstfilename
 
     # Run psort against plaso db file to output a file in line delimited json format
     print("Creating json line delimited file")
     mylogfile.writelines("Creating json line delimited file\n")
 
     # Create command to run
-    command = [psort_location,"-o","json_line", srcfilename,"-w",dstrawfilename]
+    command = [psort_location,"-o","json_line", db_file,"-w",dstrawfilename]
     
     print("\""+"\" \"".join(command)+"\"")
     mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
 
     # Execute Command
-    status_marker(subprocess.Popen(command,stdout=mylogfile,stderr=mylogfile))
+    status_marker(mylogfile,subprocess.Popen(command,stdout=mylogfile,stderr=mylogfile))
     
     print("Json line delimited file created")
     mylogfile.writelines("Json line delimited file created"+"\n")
@@ -953,11 +973,7 @@ def create_export(srcfilename):
     mylogfile.writelines("Adding " + dstrawfilename + " to "+ dstfilename +"\n")
 
     # Compresse the file for export
-    with io.open(dstrawfilename, 'rb') as f_in:
-        with gzip.open(dstfilename, 'wb') as f_out:
-            shutil.copyfileobj(f_in,f_out)
-    f_in.close()
-    f_out.close()
+    zip_source(dstrawfilename,dstfilename)
     os.remove(dstrawfilename)
     print("Cleaning up temporary file: Removed "+ dstrawfilename)
     mylogfile.writelines("Cleaning up temporary file: Removed "+ dstrawfilename +"\n")
@@ -1007,9 +1023,7 @@ def prefetch_report_fix(row):
         if search_results_extra:
             row[header_extra_rows] = search_results_extra.group(2)+",,,,"
 
-
     row[12] = row[12].replace('OS:','')
-
     return row
 
 def appcompat_report_fix(row):
@@ -1025,7 +1039,6 @@ def appcompat_report_fix(row):
     search_results_extra = re.search(search_extra,row[header_extra_rows])
     if search_results_extra:
         row[header_extra_rows] = search_results_extra.group(2).strip()
-
 
     row[12] = row[12].replace('OS:','')
     return row
@@ -1177,7 +1190,9 @@ def fix_line(row, report_name):
         del row[10]
     return row
 
-# Report Dictionary
+# Report Dictionary (by OS)
+
+
 report_header_dict = {
     'Appcompat Report.csv':[[10,['source','cached_entry_order','full_path','filename']],[16,['md5_hash']],appcompat_report_fix],
     'Event Log Report.csv':[[10,['event_id','EID_desc','record_number','event_level','source_name','computer_name','message']],[16,['md5_hash','message_id','recovered','strings_parsed','user_sid','xml_string']],event_log_report_fix],
@@ -1195,13 +1210,14 @@ report_header_dict = {
 #    'Login Report.csv':[]
 }
 
+
 # Report Improvement Multi-threading
-def multi_thread_report_improve(mqueue,report,report_name,tmp_report_name):
+def multi_thread_report_improve(mqueue,mylogfile,report,report_name,tmp_report_name):
     output_list = []
     #mqueue.put(terms[1].writelines(line.replace("\n"," ").replace("\r"," ")+"\n"))
     with io.open(report, 'r', encoding='utf-8') as csvfile:
         print("Improving "+ str(report_name)+" (This will take a long time for large files)")
-        mylogfile.writelines("Improving "+ str(report_name)+" (This will take a long time for large files)"+"\n")
+        mqueue.put(mylogfile.writelines("Improving "+ str(report_name)+" (This will take a long time for large files)"+"\n"))
         for trow in csvfile:
             row = trow.split(',')
             output_list.append((report_header_dict[report_name][2](row)))
@@ -1218,11 +1234,12 @@ def multi_thread_report_improve(mqueue,report,report_name,tmp_report_name):
         if os.stat(tmp_report_name).st_size != 0:
             mqueue.put(shutil.copyfile(tmp_report_name,report))
             mqueue.put(os.remove(tmp_report_name))
-        print("    Complete")
-        mylogfile.writelines("    Complete"+"\n")
+        print(str(report_name)+":    Complete")
+        mqueue.put(mylogfile.writelines(str(report_name)+":    Complete"+"\n"))
+    return
 
 # Report Improvements Function
-def report_improvements(lor):
+def report_improvements(lor,mylogfile):
     mqueue = queue.Queue()
     threads = []
     for report in lor:
@@ -1236,208 +1253,48 @@ def report_improvements(lor):
                 lonf.append([report,report_name,tmp_report_name])
         
         for nfile in lonf:
-            threads.append(threading.Thread(target = multi_thread_report_improve, args = (mqueue,nfile[0],nfile[1],nfile[2])))
-            #threads.append(threading.Thread(target = multi_thread_reports, args = (mqueue,SuperTimeline_file,terms)))
+            threads.append(threading.Thread(target = multi_thread_report_improve, args = (mqueue,mylogfile,nfile[0],nfile[1],nfile[2])))
 
     [t.start() for t in threads]
     [t.join() for t in threads]
+    return
 
 
-####################### END FUNCTIONS ############################
-
-# Parsing begins
-parser_list = ["win","lin","mac","datt"]
-
-parser = argparse.ArgumentParser(description='Cold Disk Quick Response Tool (CDQR)')
-parser.add_argument('src_location',nargs=1,help='Source File location: Y:/Case/Tag009/sample.E01')
-parser.add_argument('dst_location',nargs='?',default='Results',help='Destination Folder location. If nothing is supplied then the default is \'Results\'')
-parser.add_argument('-p','--parser', nargs='?',help='Choose parser to use.  If nothing chosen then \'win\' is used.  Options are: '+', '.join(parser_list))
-parser.add_argument('--nohash', action='store_true', default=False, help='Do not hash all the files as part of the processing of the image')
-parser.add_argument('--max_cpu', action='store_true', default=False, help='Use the maximum number of cpu cores to process the image')
-parser.add_argument('--export', action='store_true' , help='Creates gzipped, line delimited json export file')
-parser.add_argument('--es_kb', nargs=1,help='Outputs Kibana format to local elasticsearch database')
-parser.add_argument('--es_ts', nargs=1,help='Outputs TimeSketch format to local elasticsearch database')
-parser.add_argument('-z',action='store_true', default=False, help='Indicates the input file is a zip file and needs to be decompressed')
-parser.add_argument('-v','--version', action='version', version=cdqr_version)
-
-args=parser.parse_args()
-
-# List to help with logging
-log_list = [cdqr_version+"\n"]
-print(cdqr_version)
-
-# Parsing the input from the command line and building log2timeline command
-if args:
-    # Validate log2timeline.exe and psort.exe locations
-    if sys.platform[0:3] == "win":
-        if not os.path.isfile(log2timeline_location):
-          log2timeline_location,psort_location = query_plaso_location()
-        # Default log2timeline command
-    command1 = [log2timeline_location,"-p","--partition","all","--vss_stores","all"]
-
-# Set log2timeline parsing option(s)
-    if args.parser:
-        if args.parser not in parser_list:
-            print("ERROR: \""+args.parser+ "\" is not a valid parser selection.")
-            print("ERROR: Valid parser options are: " + ', '.join(parser_list))
-            print("ERROR: Please verify your command and try again.")
-            print("Exiting...")
-            sys.exit(1)
-        parser_opt = args.parser
-        # if parser_opt == "datt":
-        #     command1 = [log2timeline_location, "-p"]
-        if parser_opt == "lin" or parser_opt == "mac":
-            command1 = [log2timeline_location,"-p","--partition","all"]
-    else:
-        # Set Default parser value to "datt"
-        parser_opt = default_parser
-
-
-
-# Determine if Plaso version is compatible
-    # Determine Plaso version and use correct version
-    p_ver = plaso_version(log2timeline_location)
-    print("Plaso Version: "+p_ver)
-    log_list.append("Plaso Version: "+p_ver+"\n")
-
-
-    plaso_ver = plaso_version(log2timeline_location)
-    if plaso_ver not in p_compat:
-        print("Plaso version "+plaso_ver+" not supported.....Exiting")
-        sys.exit(1)
-
-# Determine if Export is being used and option is valid
-    if args.export:
-            print("Export data option selected")
-            log_list.append("Export data option selected\n")
-    # add parsing options to the command
-    command1.append("--parsers")
-    command1.append(get_parser_list(parser_opt, plaso_ver))
-    print("Using parser: "+parser_opt)
-    log_list.append("Using parser: " + parser_opt+"\n")
-
-# Set Hashing variable
-    if args.nohash:
-        command1.append("--hashers")
-        command1.append("none")
-    else:
-        command1.append("--hashers")
-        command1.append("md5")
-
-# Set Number of CPU cores to use
-    if args.max_cpu:
-        num_cpus = multiprocessing.cpu_count()
-    else:
-        num_cpus = multiprocessing.cpu_count() -3
-        if num_cpus <= 0:
-            num_cpus = 1
-    command1.append("--workers")
-    command1.append(str(num_cpus))
-    print("Number of cpu cores to use: "+str(num_cpus))
-    log_list.append("Number of cpu cores to use: "+str(num_cpus)+"\n")
-
-# Set source location/file
-    src_loc = args.src_location[0]
-    src_loc = src_loc.replace("\\\\","/").replace("\\","/").rstrip("/")
-    if src_loc.count("/") > 1:
-        src_loc = src_loc.rstrip("/")
-
-    if not os.path.exists(src_loc):
-        print("ERROR: \""+src_loc+"\" cannot be found by the system.  Please verify command.")
-        print("Exiting...")
-        sys.exit(1)
-    
-    if args.z:
-        unzipped_file = True
-        src_loc = unzip_source(src_loc)
-
-    if src_loc[-4:].lower() == ".zip":
-        if query_yes_no("\n"+src_loc+" appears to be a zip file.  Would you like CDQR to unzip it and process the contents?","yes"):
-            unzipped_file = True
-            src_loc = unzip_source(src_loc)
-
-    print("Source data: "+src_loc)
-    log_list.append("Source data: "+src_loc+"\n")
-
-# Set destination location/file
-    dst_loc = args.dst_location.replace("\\\\","/").replace("\\","/").rstrip("/")
-
-    if os.path.exists(dst_loc):
-        if not query_yes_no("\n"+dst_loc+" already exists.  Would you like to use that directory anyway?","yes"):
-            dst_loc = dst_loc+"_"+datetime.datetime.now().strftime("%d-%b-%y_%H-%M-%S")
-            os.makedirs(dst_loc)
-    else:
-        os.makedirs(dst_loc)
-
-    print("Destination Folder: "+dst_loc)
-    log_list.append("Destination Folder: "+dst_loc+"\n")
-
-# Create DB Filename
-db_file = dst_loc+"/"+src_loc.split("/")[-1]+".db"
-if db_file == dst_loc+"/.db":
-    db_file = dst_loc+"/"+"mounted_image.db"
-print("Database File: "+ db_file)
-log_list.append("Database File: "+db_file+"\n")
-
-# Create SuperTimeline filename
-csv_file = dst_loc+"/"+src_loc.split("/")[-1]+".SuperTimeline.csv"
-if csv_file == dst_loc+"/.SuperTimeline.csv":
-    csv_file = dst_loc+"/"+"mounted_image.SuperTimeline.csv"
-print("SuperTimeline CSV File: "+ csv_file)
-
-# Finalize the log2timeline command with DB file and source data file location
-command1.append(db_file)
-command1.append(src_loc)
-
-#  Create space in output
-print("\n")
-log_list.append("")
-
-# Open Log Files
-logfilename = dst_loc+"/"+src_loc.split("/")[-1]+".log"
-if logfilename == dst_loc+"/.log":
-    logfilename = dst_loc+"/"+"mounted_image.log"
-
-if os.path.isfile(logfilename):
-    os.remove(logfilename)
-
-print(logfilename)
-mylogfile = open(logfilename,'w')
-mylogfile.writelines("".join(log_list))
-print("Processing started at: "+str(start_dt))
-mylogfile.writelines("Processing started at: "+str(start_dt)+"\n")
-
-# Check if the database and supertimeline files already exists and ask to keep or delete them if they do
-if os.path.isfile(db_file):
-    if query_yes_no("\n"+db_file+" already exists.  Would you like to delete this file?","no"):
-        print("Removing the existing file: "+db_file)
-        mylogfile.writelines("Removing the existing file: "+db_file+"\n")
-        os.remove(db_file)
-        if os.path.isfile(csv_file):
-            print("Removing the existing file: "+csv_file)
-            mylogfile.writelines("Removing the existing file: "+csv_file+"\n")
-            os.remove(csv_file)
-            rpt_dir_name = dst_loc+"/Reports"
-            if os.path.isdir(rpt_dir_name):
-                print("Removing the existing report directory: "+rpt_dir_name)
-                mylogfile.writelines("Removing the existing report directory: "+rpt_dir_name+"\n")
-                shutil.rmtree(rpt_dir_name)
-    else:
-        print("Keeping the existing file: "+db_file)
-        create_db = False
-
-
-
-##################  EXECTUTION SECTION ############################
 # This processes the image using parser option selected and creates .db file
-if create_db:
+def parse_the_things(mylogfile,command1,db_file,unzipped_file,unzipped_file_loc,csv_file):
+    # Check if the database and supertimeline files already exists and ask to keep or delete them if they do
+    if os.path.isfile(db_file):
+        if query_yes_no("\n"+db_file+" already exists.  Would you like to delete this file?","no"):
+            print("Removing the existing file: "+db_file)
+            mylogfile.writelines("Removing the existing file: "+db_file+"\n")
+            os.remove(db_file)
+            if os.path.isfile(csv_file):
+                print("Removing the existing file: "+csv_file)
+                mylogfile.writelines("Removing the existing file: "+csv_file+"\n")
+                os.remove(csv_file)
+                rpt_dir_name = dst_loc+"/Reports"
+                if os.path.isdir(rpt_dir_name):
+                    print("Removing the existing report directory: "+rpt_dir_name)
+                    mylogfile.writelines("Removing the existing report directory: "+rpt_dir_name+"\n")
+                    if sys.platform[0:3] == "win":
+                        shutil.rmtree(u'\\\\?\\'+os.path.abspath(rpt_dir_name))
+                    else:
+                        shutil.rmtree(rpt_dir_name)
+        else:
+            print("Keeping the existing file: "+db_file)
+            mylogfile.writelines("Keeping the existing file: "+db_file)
+            return
+
     # Process image with log2timeline
+    start_dt = datetime.datetime.now()
+    print("Processing started at: "+str(start_dt))
+    mylogfile.writelines("Processing started at: "+str(start_dt)+"\n")
     print("Parsing image")
     mylogfile.writelines("Parsing image"+"\n")
     print("\""+"\" \"".join(command1)+"\"")
     mylogfile.writelines("\""+"\" \"".join(command1)+"\""+"\n")
     ######################  Log2timeline Command Execute  ##########################
-    status_marker(subprocess.Popen(command1,stdout=mylogfile,stderr=mylogfile))
+    status_marker(mylogfile,subprocess.Popen(command1,stdout=mylogfile,stderr=mylogfile))
 
     end_dt = datetime.datetime.now()
     duration01 = end_dt - start_dt
@@ -1445,90 +1302,284 @@ if create_db:
     mylogfile.writelines("Parsing ended at: "+str(end_dt)+"\n")
     print("Parsing duration was: "+str(duration01))
     mylogfile.writelines("Parsing duration was: "+str(duration01)+"\n")
+    # Removing uncompressed file(s)
+    if unzipped_file:
+        print("\nRemoving uncompressed files in directory: "+unzipped_file_loc)
+        mylogfile.writelines("\nRemoving uncompressed files in directory: "+unzipped_file_loc+"\n")
+        if sys.platform[0:3] == "win":
+            shutil.rmtree(u'\\\\?\\'+os.path.abspath(unzipped_file_loc))
+        else:
+            shutil.rmtree(unzipped_file_loc)
 
-if args.es_kb or args.es_ts:
+    return
+
+def create_supertimeline(mylogfile,csv_file,psort_location,db_file):
+    # This processes the .db file creates the SuperTimeline
+    if os.path.isfile(csv_file):
+        if query_yes_no("\n"+csv_file+" already exists.  Would you like to delete this file?","no"):
+            print("Removing the existing file: "+csv_file)
+            mylogfile.writelines("Removing the existing file: "+csv_file+"\n")
+            os.remove(csv_file)
+            rpt_dir_name = dst_loc+"/Reports"
+            if os.path.isdir(rpt_dir_name):
+                print("Removing the existing report directory: "+rpt_dir_name)
+                mylogfile.writelines("Removing the existing file: "+rpt_dir_name+"\n")
+        else:
+            print("Keeping the existing file: "+csv_file)
+            mylogfile.writelines("Keeping the existing file: "+csv_file)
+            return
+    command2 = [psort_location,"-o","l2tcsv","--status_view","linear",db_file,"-w",csv_file]
+    # Create SuperTimeline
+    print("\nCreating the SuperTimeline CSV file")
+    mylogfile.writelines("\nCreating the SuperTimeline CSV file"+"\n")
+    print("\""+"\" \"".join(command2)+"\"")
+    mylogfile.writelines("\""+"\" \"".join(command2)+"\""+"\n")
+    ######################  Psort Command Execute  ##########################
+    status_marker(mylogfile,subprocess.Popen(command2,stdout=mylogfile,stderr=mylogfile))
+    print("SuperTimeline CSV file is created")
+    mylogfile.writelines("SuperTimeline CSV file is created\n")
+    return
+
+def export_to_elasticsearch(mylogfile,args,db_file,psort_location):
     start_dt = datetime.datetime.now()
     print("\nProcess to export to ElasticSearch started")
     mylogfile.writelines("\nProcess to export to ElasticSearch started"+"\n")
     if args.es_kb:
-        output_elasticsearch(db_file,args.es_kb)
+        output_elasticsearch(mylogfile,db_file,args.es_kb[0],psort_location)
     else:
-        output_elasticsearch_ts(db_file,args.es_ts)
+        output_elasticsearch_ts(mylogfile,db_file,args.es_ts[0],psort_location)
     end_dt = datetime.datetime.now()
     duration03 = end_dt - start_dt
     print("\nProcess to export to ElasticSearch completed")
     mylogfile.writelines("\nProcess to export to ElasticSearch completed"+"\n")
     print("ElasticSearch export process duration was: "+str(duration03))
     mylogfile.writelines("ElasticSearch export process duration was: "+str(duration03)+"\n")
-else:
-    if os.path.isfile(csv_file):
-        if query_yes_no("\n"+csv_file+" already exists.  Would you like to delete this file?","no"):
-                print("Removing the existing file: "+csv_file)
-                mylogfile.writelines("Removing the existing file: "+csv_file+"\n")
-                os.remove(csv_file)
-                rpt_dir_name = dst_loc+"/Reports"
-                if os.path.isdir(rpt_dir_name):
-                    print("Removing the existing report directory: "+rpt_dir_name)
-                    mylogfile.writelines("Removing the existing file: "+rpt_dir_name+"\n")
-        else:
-            print("Keeping the existing file: "+csv_file)
-            create_st = False
-    # This processes the .db file creates the SuperTimeline
-    if create_st:
-        command2 = [psort_location,"-o","l2tcsv",db_file,"-w",csv_file]
-        # Create SuperTimeline
-        start_dt = datetime.datetime.now()
-        print("\nCreating the SuperTimeline CSV file")
-        mylogfile.writelines("\nCreating the SuperTimeline CSV file"+"\n")
-        print("\""+"\" \"".join(command2)+"\"")
-        mylogfile.writelines("\""+"\" \"".join(command2)+"\""+"\n")
-        ######################  Psort Command Execute  ##########################
-        status_marker(subprocess.Popen(command2,stdout=mylogfile,stderr=mylogfile))
-        print("SuperTimeline CSV file is created")
-        mylogfile.writelines("SuperTimeline CSV file is created\n")
+    return
 
-    # Create individual reports
-    print("\nCreating the individual reports")
-    mylogfile.writelines("\nCreating the individual reports\n")
-    create_reports(dst_loc,csv_file)
-
-
-
-    print("All reporting complete")
-    mylogfile.writelines("All reporting complete\n")
+def export_to_json(dst_loc,srcfilename,mylogfile,db_file,psort_location):
+    # Export Data (if selected)
+    print("\nProcess to create export document started")
+    mylogfile.writelines("\nProcess to create export document started"+"\n")
+    # Create the file for export 
+    exportfname = create_export(dst_loc,srcfilename,mylogfile,db_file,psort_location)
+    print("Process to create export document complete")
+    mylogfile.writelines("Process to create export document complete"+"\n")
 
     end_dt = datetime.datetime.now()
-    duration02 = end_dt - start_dt
-    print("Reporting ended at: "+str(end_dt))
-    print("Reporting  duration was: "+str(duration02))
-    mylogfile.writelines("Reporting ended at: "+str(end_dt)+"\n")
-    mylogfile.writelines("Reporting duration was: "+str(duration02)+"\n")
+    duration03 = end_dt - start_dt
+    print("Creating export document process duration was: "+str(duration03))
+    mylogfile.writelines("Creating export document process duration was: "+str(duration03)+"\n")
+    return
+
+def unzip_files(dst_loc,src_loc):
+    unzipped_file_loc = dst_loc+"/artifacts/"+src_loc.split("/")[-1][:-4]
+    print("Attempting to extract source file: "+src_loc)
+    src_loc = unzip_source(src_loc,unzipped_file_loc)
+    print("All files extracted to folder: "+src_loc)
+    return src_loc
+
+####################### END FUNCTIONS ############################
+
+##################  EXECTUTION SECTION ############################
+def main():
+    # Default Parser option
+    default_parser = "win"
+    unzipped_file = False
+    unzipped_file_loc = ""
+
+
+    # Plaso Program Locations (default)
+    if sys.platform[0:3] == "win":
+        log2timeline_location = r"plaso\log2timeline.exe"
+        psort_location = r"plaso\psort.exe"
+    else:
+        log2timeline_location = r"log2timeline.py"
+        psort_location = r"psort.py"
+
+    # Parsing begins
+    parser_list = ["win","lin","mac","datt"]
+
+    parser = argparse.ArgumentParser(description='Cold Disk Quick Response Tool (CDQR)')
+    parser.add_argument('src_location',nargs=1,help='Source File location: Y:/Case/Tag009/sample.E01')
+    parser.add_argument('dst_location',nargs='?',default='Results',help='Destination Folder location. If nothing is supplied then the default is \'Results\'')
+    parser.add_argument('-p','--parser', nargs=1,help='Choose parser to use.  If nothing chosen then \'win\' is used.  The parsing options are: '+', '.join(parser_list))
+    parser.add_argument('--nohash', action='store_true', default=False, help='Do not hash all the files as part of the processing of the image')
+    parser.add_argument('--max_cpu', action='store_true', default=False, help='Use the maximum number of cpu cores to process the image')
+    parser.add_argument('--export', action='store_true' , help='Creates zipped, line delimited json export file')
+    parser.add_argument('--es_kb', nargs=1,help='Outputs Kibana format to local elasticsearch database. Requires index name. Example: \'--es_kb my_index\'')
+    parser.add_argument('--es_ts', nargs=1,help='Outputs TimeSketch format to local elasticsearch database. Requires index/timesketch name. Example: \'--es_ts my_name\'')
+    parser.add_argument('--plaso_db', action='store_true', default=False,help='Process an existing Plaso DB file. Example: artifacts.db OR artifacts.plaso')
+    parser.add_argument('-z',action='store_true', default=False, help='Indicates the input file is a zip file and needs to be decompressed')
+    parser.add_argument('-v','--version', action='version', version=cdqr_version)
+
+    args=parser.parse_args()
+
+    # List to help with logging
+    log_list = [cdqr_version+"\n"]
+    print(cdqr_version)
+
+
+    # Parsing the input from the command line and building log2timeline command
+    if args:
+        # Validate log2timeline.exe and psort.exe locations
+        if sys.platform[0:3] == "win":
+            if not os.path.isfile(log2timeline_location):
+              log2timeline_location,psort_location = query_plaso_location()
+            # Default log2timeline command
+        command1 = [log2timeline_location,"-p","--partition","all","--vss_stores","all","--status_view","linear"]
+
+    # Set log2timeline parsing option(s)
+        if args.parser:
+            if args.parser[0] not in parser_list:
+                print("ERROR: \""+args.parser[0]+ "\" is not a valid parser selection.")
+                print("ERROR: Valid parser options are: " + ', '.join(parser_list))
+                print("ERROR: Please verify your command and try again.")
+                print("Exiting...")
+                sys.exit(1)
+            parser_opt = args.parser[0]
+            # if parser_opt == "datt":
+            #     command1 = [log2timeline_location, "-p"]
+            if parser_opt == "lin" or parser_opt == "mac":
+                command1 = [log2timeline_location,"-p","--partition","all","--status_view","linear"]
+        else:
+            # Set Default parser value to "datt"
+            parser_opt = default_parser
+
+    # Determine if Plaso version is compatible
+        # Determine Plaso version and use correct version
+        p_ver = plaso_version(log2timeline_location)
+        print("Plaso Version: "+p_ver)
+        log_list.append("Plaso Version: "+p_ver+"\n")
+
+        plaso_ver = plaso_version(log2timeline_location)
+        if plaso_ver not in p_compat:
+            print("Plaso version "+plaso_ver+" not supported.....Exiting")
+            sys.exit(1)
+
+    # Determine if Export is being used and option is valid
+        if args.export:
+                print("Export data option selected")
+                log_list.append("Export data option selected\n")
+        # add parsing options to the command
+        command1.append("--parsers")
+        command1.append(get_parser_list(parser_opt, plaso_ver))
+        print("Using parser: "+parser_opt)
+        log_list.append("Using parser: " + parser_opt+"\n")
+
+    # Set Hashing variable
+        if args.nohash:
+            command1.append("--hashers")
+            command1.append("none")
+        else:
+            command1.append("--hashers")
+            command1.append("md5")
+
+    # Set Number of CPU cores to use
+        if args.max_cpu:
+            num_cpus = multiprocessing.cpu_count()
+        else:
+            num_cpus = multiprocessing.cpu_count() -3
+            if num_cpus <= 0:
+                num_cpus = 1
+        command1.append("--workers")
+        command1.append(str(num_cpus))
+        print("Number of cpu cores to use: "+str(num_cpus))
+        log_list.append("Number of cpu cores to use: "+str(num_cpus)+"\n")
+
+    # Set source location/file
+        src_loc = args.src_location[0]
+        src_loc = src_loc.replace("\\\\","/").replace("\\","/").rstrip("/")
+        if src_loc.count("/") > 1:
+            src_loc = src_loc.rstrip("/")
+
+        if not os.path.exists(src_loc):
+            print("ERROR: \""+src_loc+"\" cannot be found by the system.  Please verify command.")
+            print("Exiting...")
+            sys.exit(1)
+        
+    # Set destination location/file
+        dst_loc = args.dst_location.replace("\\\\","/").replace("\\","/").rstrip("/")
+
+        if os.path.exists(dst_loc):
+            if not query_yes_no("\n"+dst_loc+" already exists.  Would you like to use that directory anyway?","yes"):
+                dst_loc = dst_loc+"_"+datetime.datetime.now().strftime("%d-%b-%y_%H-%M-%S")
+                os.makedirs(dst_loc)
+        else:
+            os.makedirs(dst_loc)
+
+        print("Destination Folder: "+dst_loc)
+        log_list.append("Destination Folder: "+dst_loc+"\n")
+
+        if args.z:
+            unzipped_file = True
+            src_loc = unzip_files(dst_loc,src_loc)
+            unzipped_file_loc = dst_loc+"/artifacts/"
+        elif src_loc[-4:].lower() == ".zip":
+            if query_yes_no("\n"+src_loc+" appears to be a zip file.  Would you like CDQR to unzip it and process the contents?","yes"):
+                unzipped_file = True
+                src_loc = unzip_files(dst_loc,src_loc)
+                unzipped_file_loc = dst_loc+"/artifacts/"
+
+        print("Source data: "+src_loc)
+        log_list.append("Source data: "+src_loc+"\n")
+
+    # Create DB, CSV and Log Filenames
+    if args.plaso_db:
+        db_file = dst_loc+"/"+src_loc
+    else:
+        db_file = dst_loc+"/"+src_loc.split("/")[-1]+".db"
+    csv_file = dst_loc+"/"+src_loc.split("/")[-1]+".SuperTimeline.csv"
+    logfilename = dst_loc+"/"+src_loc.split("/")[-1]+".log"
+
+    # Check to see if it's a mounted drive and update filename if so
+    if db_file == dst_loc+"/.db" or db_file[-4:] == ":.db":
+        db_file = dst_loc+"/"+"mounted_image.db"
+        csv_file = dst_loc+"/"+"mounted_image.SuperTimeline.csv"
+        logfilename = dst_loc+"/"+"mounted_image.log"
+
+    print("Log File: "+ logfilename)
+    print("Database File: "+ db_file)
+    print("SuperTimeline CSV File: "+ csv_file)
+
+    log_list.append("Log File: "+ logfilename+"\n")
+    log_list.append("Database File: "+db_file+"\n")
+    log_list.append("SuperTimeline CSV File: "+ csv_file+"\n")
+
+    command1.append(db_file)
+    command1.append(src_loc)
+
+    if os.path.isfile(logfilename):
+        os.remove(logfilename)
+
+    mylogfile = open(logfilename,'w')
+    mylogfile.writelines("".join(log_list))
 
     start_dt = datetime.datetime.now()
-    
-    # Export Data (if selected)
+    print("\nTotal start time was: "+str(start_dt))
+    mylogfile.writelines("\nStart time  was: "+str(start_dt)+"\n")
+
+    # If this is plaso database file, skip parsing
+    if args.plaso_db:
+        print("WARNING: File must be plaso database file otherwise it will not work.  Example: artifact.db (from CDQR)")
+        mylogfile.writelines("\nWARNING: File must be plaso database file otherwise it will not work.  Example: artifact.db (from CDQR)"+"\n")
+        db_file = src_loc
+    else:
+        parse_the_things(mylogfile,command1,db_file,unzipped_file,unzipped_file_loc,csv_file)
+
     if args.export:
-        print("\nProcess to create export document started")
-        mylogfile.writelines("\nProcess to create export document started"+"\n")
-        # Create the file for export 
-        exportfname = create_export(db_file)
-        print("Process to create export document complete")
-        mylogfile.writelines("Process to create export document complete"+"\n")
+        export_to_json(dst_loc,src_loc,mylogfile,db_file,psort_location)
+    elif args.es_kb or args.es_ts:
+        export_to_elasticsearch(mylogfile,args,db_file,psort_location)
+    else:
+        create_supertimeline(mylogfile,csv_file,psort_location,db_file)
+        create_reports(mylogfile,dst_loc,csv_file,parser_opt)
 
-        end_dt = datetime.datetime.now()
-        duration03 = end_dt - start_dt
-        print("Creating export document process duration was: "+str(duration03))
-        mylogfile.writelines("Creating export document process duration was: "+str(duration03)+"\n")
+    end_dt = datetime.datetime.now()
+    duration_full = end_dt - start_dt
+    print("\nTotal duration was: "+str(duration_full))
+    mylogfile.writelines("\nTotal duration was: "+str(duration_full)+"\n")
+    mylogfile.close()
 
 
-
-# Closing log file and cleaning up
-if unzipped_file:
-    print("\nRemoving uncompressed files in directory: "+src_loc)
-    mylogfile.writelines("\nRemoving uncompressed files in directory: "+src_loc+"\n")
-    shutil.rmtree(src_loc)
-
-print("\nTotal  duration was: "+str(duration01+duration02+duration03))
-mylogfile.writelines("\nTotal duration was: "+str(duration01+duration02+duration03)+"\n")
-mylogfile.close()
-
+if __name__ == "__main__":
+    main()

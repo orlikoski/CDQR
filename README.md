@@ -2,6 +2,8 @@
 
 CDQR — Cold Disk Quick Response tool by Alan Orlikoski
 
+For latest release click [here](https://github.com/rough007/CDQR/releases/latest)
+
 ## What is CDQR?
 The CDQR tool uses Plaso to parse disk images with specific parsers and create easy to analyze custom reports. The parsers were chosen based triaging best practices and the custom reports group like items together to make analysis easier. The design came from the Live Response Model of investigating the important artifacts first. This is meant to be a starting point for investigations, not the complete investigation.
 
@@ -22,21 +24,24 @@ It creates up to 16 Reports (.csv files) based on triaging best practices and th
       ```
 
 ## What's New
-*  Supports Plaso 1.5.x!!
-*  "Login" Report that incorporates login information for Windows and Linux
-*  "Appcompat" Report that seperates the Appcompat results into a dedicated report
-*  Improved report format for appcompat, event log, file system, mft, prefetch, and scheduled tasks reports
-    *   Easier to read
-    *   More pivot points
-    *   Allows additional sorting options (looking at you Appcompat entry order)
-*  ElasticSearch output mode supported
-*  Supports .zip file source input detection and handling
-*  Python version works on Windows, Linux and Mac
-*  Improvements to support the [CCF-VM](https://github.com/rough007/CCF-VM) release 
-*  NOTE: Ensure line endings are correct for the OS it is running on
+*  More Output Options than ever
+  *  2 ElasticSearch outputs
+      *  TimeSketch
+      *  Kibana
+      *  Compressed line delimited JSON file
+*  Now faster than ever with new Multi-Threading support for all reports
+*  Additional improvements to support the [CCF-VM](https://github.com/rough007/CCF-VM) release
+*  Easier to use
+  *  Better accepts .zip files as input
+  *  Easier to read and more detailed logging enabled
+  *  Direct Plaso Database file support (User the --plaso_db function to read directly from Plaso Database file)
+```
+cdqr.py --plaso_db artifacts.db
+```
 
 ## Important Notes
 * Make sure account has permissions to create files and directories when running (when in doubt, run as administrator)
+*  Ensure line endings are correct for the OS it is running on
 
 ## SYNOPSIS
 
