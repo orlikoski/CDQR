@@ -34,7 +34,7 @@ It creates up to 16 Reports (.csv files) based on triaging best practices and th
 *  Easier to use
   *  Better accepts .zip files as input
   *  Easier to read and more detailed logging enabled
-  *  Direct Plaso Database file support (User the --plaso_db function to read directly from Plaso Database file)
+  *  Direct Plaso Database file support (Use the --plaso_db function to read directly from Plaso Database file)
 ```
 cdqr.py --plaso_db artifacts.db
 ```
