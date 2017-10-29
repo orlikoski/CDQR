@@ -24,6 +24,7 @@ It creates up to 16 Reports (.csv files) based on triaging best practices and th
       ```
 
 ## What's New
+*  Now Supports Plaso v20170930
 *  More Output Options than ever
   *  2 ElasticSearch outputs
       *  TimeSketch
