@@ -12,7 +12,7 @@ modes = {
 }
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 4.0.1"
+cdqr_version = "CDQR Version: 4.1.0 Beta"
 # 
 ###############################################################################
 # Global Variables
@@ -889,7 +889,7 @@ def create_reports(mylogfile,dst_loc, csv_file,parser_opt):
 def plaso_version(log2timeline_location):
     myproc = subprocess.Popen([log2timeline_location,"--version"],stderr=subprocess.PIPE)
     output,err = myproc.communicate()
-    pver = ".".join(str(err).split(" ")[-1].split(".")[0:2]).rstrip("\\n\'")
+    pver = ".".join(str(err).split(" ")[-1].split(".")[0:2]).rstrip("\\n\'").rstrip("\\r")
     return(pver)
 
 def output_elasticsearch(mylogfile,srcfilename,casename,psort_location):
