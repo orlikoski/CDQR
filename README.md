@@ -24,7 +24,7 @@ It creates up to 16 Reports (.csv files) based on triaging best practices and th
       ```
 
 ## What's New
-*  Now Supports Plaso v20170930
+*  Now Supports Plaso v20171231
 *  More Output Options than ever
   *  2 ElasticSearch outputs
       *  TimeSketch
@@ -189,6 +189,37 @@ cdqr.exe -z --max_cpu C:\artifacts\tag009\artifacts.zip --es myindexname
 1. From Plaso's site [Windows Installation Guide](https://github.com/log2timeline/plaso/wiki/Windows-Packaged-Release)
 2. From Plaso's site [Ubuntu and SIFT Installation Guide](https://github.com/log2timeline/plaso/wiki/Ubuntu-Packaged-Release)
 3. From Plaso's site [Mac OS X Installation Guide](https://github.com/log2timeline/plaso/wiki/Development-release-Mac-OS-X)
+
+## Upgrade Plaso from 1.5.1 to 20170930 (or higher) script for CCF-VM 2.x:
+```
+sudo add-apt-repository -y universe
+sudo add-apt-repository -y ppa:gift/stable
+sudo apt -y purge python-artifacts python3-artifacts plaso plaso-data plaso-tools python-plaso forensics-all
+sudo rm -rf /usr/lib/python2.7/dist-packages/plaso
+sudo apt -y -f install
+sudo apt -y autoremove
+sudo apt -y autoclean
+sudo -H pip uninstall PyYAML
+sudo -H pip uninstall artifacts
+
+sudo apt -y update;sudo apt-get -y dist-upgrade
+sudo apt -y install python-plaso plaso-tools
+sudo shutdown -r "now"
+```
+
+## Upgrade Plaso from 1.5.1 to 20170930 (or higher) script for non-CCF-VM Ubuntu 16.04 installations:
+```
+sudo add-apt-repository -y universe
+sudo add-apt-repository -y ppa:gift/stable
+sudo apt -y purge python-artifacts python3-artifacts plaso plaso-data plaso-tools python-plaso forensics-all
+sudo apt -y -f install
+sudo apt -y autoremove
+sudo apt -y autoclean
+
+sudo apt -y update;sudo apt-get -y dist-upgrade
+sudo apt -y install python-plaso plaso-tools
+sudo shutdown -r "now"
+```
 
 ## AUTHOR
 
