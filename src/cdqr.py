@@ -878,6 +878,8 @@ def create_reports(mylogfile,dst_loc, csv_file,parser_opt):
 
     # Function to improve reports (in parallel)
     if parser_opt == "win":
+        print("Improving Reports (This will take a long time for large files)")
+        mqueue.put(mylogfile.writelines("Improving Reports (This will take a long time for large files)"+"\n"))
         report_improvements(lor,mylogfile)
 
 
@@ -904,7 +906,7 @@ def output_elasticsearch(mylogfile,srcfilename,casename,psort_location):
     mylogfile.writelines("Exporting results in Kibana format to the ElasticSearch server\n")
 
     # Create command to run
-    # SAMPLE: psort.py -o elastic --raw_fields --index_name case_test output.db 
+    # SAMPLE: psort.py -o elastic --raw_fields --index_name case_test output.plaso 
     command = [psort_location,"-o","elastic","--raw_fields","--index_name","case_cdqr-"+casename.lower(), srcfilename]
     
     print("\""+"\" \"".join(command)+"\"")
@@ -922,7 +924,7 @@ def output_elasticsearch_ts(mylogfile,srcfilename,casename,psort_location):
     mylogfile.writelines("Exporting results in TimeSketch format to the ElasticSearch server\n")
 
     # Create command to run
-    # SAMPLE: psort.py -o timesketch --name demo --index case_cdqr-demo demo.db
+    # SAMPLE: psort.py -o timesketch --name demo --index case_cdqr-demo demo.plaso
     command = [psort_location,"-o","timesketch","--name",casename.lower(),"--index",casename.lower(), srcfilename]
 
     print("\""+"\" \"".join(command)+"\"")
@@ -1232,8 +1234,6 @@ def multi_thread_report_improve(mqueue,mylogfile,report,report_name,tmp_report_n
     output_list = []
     #mqueue.put(terms[1].writelines(line.replace("\n"," ").replace("\r"," ")+"\n"))
     with io.open(report, 'r', encoding='utf-8') as csvfile:
-        print("Improving "+ str(report_name)+" (This will take a long time for large files)")
-        mqueue.put(mylogfile.writelines("Improving "+ str(report_name)+" (This will take a long time for large files)"+"\n"))
         for trow in csvfile:
             row = trow.split(',')
             output_list.append((report_header_dict[report_name][2](row)))
@@ -1267,7 +1267,6 @@ def report_improvements(lor,mylogfile):
         if report_name in report_header_dict:
             if os.path.exists(report):
                 lonf.append([report,report_name,tmp_report_name])
-        
         for nfile in lonf:
             threads.append(threading.Thread(target = multi_thread_report_improve, args = (mqueue,mylogfile,nfile[0],nfile[1],nfile[2])))
 
@@ -1276,7 +1275,7 @@ def report_improvements(lor,mylogfile):
     return
 
 
-# This processes the image using parser option selected and creates .db file
+# This processes the image using parser option selected and creates .plaso file
 def parse_the_things(mylogfile,command1,db_file,unzipped_file,unzipped_file_loc,csv_file):
     # Check if the database and supertimeline files already exists and ask to keep or delete them if they do
     if os.path.isfile(db_file):
@@ -1330,7 +1329,7 @@ def parse_the_things(mylogfile,command1,db_file,unzipped_file,unzipped_file_loc,
     return
 
 def create_supertimeline(mylogfile,csv_file,psort_location,db_file):
-    # This processes the .db file creates the SuperTimeline
+    # This processes the .plaso file creates the SuperTimeline
     if os.path.isfile(csv_file):
         if query_yes_no("\n"+csv_file+" already exists.  Would you like to delete this file?","no"):
             print("Removing the existing file: "+csv_file)
@@ -1424,7 +1423,7 @@ def main():
     parser.add_argument('--export', action='store_true' , help='Creates zipped, line delimited json export file')
     parser.add_argument('--es_kb', nargs=1,help='Outputs Kibana format to local elasticsearch database. Requires index name. Example: \'--es_kb my_index\'')
     parser.add_argument('--es_ts', nargs=1,help='Outputs TimeSketch format to local elasticsearch database. Requires index/timesketch name. Example: \'--es_ts my_name\'')
-    parser.add_argument('--plaso_db', action='store_true', default=False,help='Process an existing Plaso DB file. Example: artifacts.db OR artifacts.plaso')
+    parser.add_argument('--plaso_db', action='store_true', default=False,help='Process an existing Plaso DB file. Example: artifacts.plaso')
     parser.add_argument('-z',action='store_true', default=False, help='Indicates the input file is a zip file and needs to be decompressed')
     parser.add_argument('-v','--version', action='version', version=cdqr_version)
 
@@ -1541,13 +1540,13 @@ def main():
     if args.plaso_db:
         db_file = dst_loc+"/"+src_loc
     else:
-        db_file = dst_loc+"/"+src_loc.split("/")[-1]+".db"
+        db_file = dst_loc+"/"+src_loc.split("/")[-1]+".plaso"
     csv_file = dst_loc+"/"+src_loc.split("/")[-1]+".SuperTimeline.csv"
     logfilename = dst_loc+"/"+src_loc.split("/")[-1]+".log"
 
     # Check to see if it's a mounted drive and update filename if so
-    if db_file == dst_loc+"/.db" or db_file[-4:] == ":.db":
-        db_file = dst_loc+"/"+"mounted_image.db"
+    if db_file == dst_loc+"/.plaso" or db_file[-7:] == ":.plaso":
+        db_file = dst_loc+"/"+"mounted_image.plaso"
         csv_file = dst_loc+"/"+"mounted_image.SuperTimeline.csv"
         logfilename = dst_loc+"/"+"mounted_image.log"
 
@@ -1574,8 +1573,8 @@ def main():
 
     # If this is plaso database file, skip parsing
     if args.plaso_db:
-        print("WARNING: File must be plaso database file otherwise it will not work.  Example: artifact.db (from CDQR)")
-        mylogfile.writelines("\nWARNING: File must be plaso database file otherwise it will not work.  Example: artifact.db (from CDQR)"+"\n")
+        print("WARNING: File must be plaso database file otherwise it will not work.  Example: artifact.plaso (from CDQR)")
+        mylogfile.writelines("\nWARNING: File must be plaso database file otherwise it will not work.  Example: artifact.plaso (from CDQR)"+"\n")
         db_file = src_loc
     else:
         parse_the_things(mylogfile,command1,db_file,unzipped_file,unzipped_file_loc,csv_file)

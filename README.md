@@ -25,20 +25,8 @@ It creates up to 16 Reports (.csv files) based on triaging best practices and th
 
 ## What's New
 *  Now Supports Plaso v20171231
-*  More Output Options than ever
-  *  2 ElasticSearch outputs
-      *  TimeSketch
-      *  Kibana
-      *  Compressed line delimited JSON file
-*  Now faster than ever with new Multi-Threading support for all reports
-*  Additional improvements to support the [CCF-VM](https://github.com/rough007/CCF-VM) release
-*  Easier to use
-  *  Better accepts .zip files as input
-  *  Easier to read and more detailed logging enabled
-  *  Direct Plaso Database file support (Use the --plaso_db function to read directly from Plaso Database file)
-```
-cdqr.py --plaso_db artifacts.db
-```
+*  Now using ".plaso" extention to match TimeSketch output (makes it easier to import into TimeSketch through its web UI)
+*  Improved logging
 
 ## Important Notes
 * Make sure account has permissions to create files and directories when running (when in doubt, run as administrator)
