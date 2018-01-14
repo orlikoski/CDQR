@@ -12,7 +12,7 @@ modes = {
 }
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 4.1.0 Beta"
+cdqr_version = "CDQR Version: 4.1.1"
 # 
 ###############################################################################
 # Global Variables
@@ -29,9 +29,15 @@ create_db = True
 
 
 # Compatible Plaso versions
-p_compat = ["1.3","1.4","1.5","20170930"]
+p_compat = ["1.3","1.4","1.5","20170930","20171231"]
 
 # Dictionary of parsing options from command line to log2timeline
+parse_options20171231 = {
+    'win' : "sqlite,appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,java_idx,mcafee_protection,mft,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,network_drives,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,symantec_scanlog,userassist,usnjrnl,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winjob,winlogon,winrar_mru,winreg,winreg_default",
+    'lin' : "sqlite,binary_cookies,bsm_log,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cron,dockerjson,dpkg,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,imessage,java_idx,mac_appfirewall_log,mcafee_protection,opera_global,opera_typed_history,popularity_contest,safari_history,selinux,ssh,symantec_scanlog,utmp,utmpx,zsh_extended_history",
+    'mac' : "sqlite,airport,apple_id,appusage,binary_cookies,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cron,dockerjson,dpkg,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,imessage,ipod_device,java_idx,mac_appfirewall_log,mac_keychain,mac_securityd,mackeeper_cache,macosx_bluetooth,macosx_install_history,mactime,macuser,maxos_software_update,mcafee_protection,opera_global,opera_typed_history,plist,plist_default,popularity_contest,safari_history,spotlight,spotlight_volume,ssh,symantec_scanlog,time_machine,utmp,utmpx,zsh_extended_history",
+    'datt' : "airport,android_app_usage,android_calls,android_sms,appcompatcache,apple_id,appusage,asl_log,bagmru,bencode,bencode_transmission,bencode_utorrent,binary_cookies,bsm_log,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cron,cups_ipp,custom_destinations,dockerjson,dpkg,esedb,esedb_file_history,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,imessage,ipod_device,java_idx,kik_messenger,lnk,ls_quarantine,mac_appfirewall_log,mac_document_versions,mac_keychain,mac_securityd,mackeeper_cache,macosx_bluetooth,macosx_install_history,mactime,macuser,macwifi,maxos_software_update,mcafee_protection,mft,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_webcache,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,network_drives,olecf,olecf_automatic_destinations,olecf_default,olecf_document_summary,olecf_summary,openxml,opera_global,opera_typed_history,pe,plist,plist_default,pls_recall,popularity_contest,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,sccm,selinux,skydrive_log,skydrive_log_old,skype,spotlight,spotlight_volume,sqlite,ssh,symantec_scanlog,syslog,time_machine,twitter_ios,userassist,usnjrnl,utmp,utmpx,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winlogon,winrar_mru,winreg,winreg_default,xchatlog,xchatscrollback,zeitgeist,zsh_extended_history",
+}
 parse_options20170930 = {
     'win' : "sqlite,appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,java_idx,mcafee_protection,mft,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,network_drives,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,symantec_scanlog,userassist,usnjrnl,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winjob,winlogon,winrar_mru,winreg,winreg_default",
     'lin' : "sqlite,binary_cookies,bsm_log,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cron,dockerjson,dpkg,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,imessage,java_idx,mac_appfirewall_log,mcafee_protection,opera_global,opera_typed_history,popularity_contest,safari_history,selinux,ssh,symantec_scanlog,utmp,utmpx,zsh_extended_history",
@@ -988,6 +994,8 @@ def create_export(dst_loc,srcfilename,mylogfile,db_file,psort_location):
     return dstfilename
 
 def get_parser_list(parser_opt,plaso_ver):
+    if plaso_ver == "20171231":
+        parserlist = parse_options20171231[parser_opt]
     if plaso_ver == "20170930":
         parserlist = parse_options20170930[parser_opt]
     if plaso_ver == "1.5":
@@ -1410,7 +1418,7 @@ def main():
     parser = argparse.ArgumentParser(description='Cold Disk Quick Response Tool (CDQR)')
     parser.add_argument('src_location',nargs=1,help='Source File location: Y:/Case/Tag009/sample.E01')
     parser.add_argument('dst_location',nargs='?',default='Results',help='Destination Folder location. If nothing is supplied then the default is \'Results\'')
-    parser.add_argument('-p','--parser', nargs=1,help='Choose parser to use.  If nothing chosen then \'win\' is used.  The parsing options are: '+', '.join(parser_list))
+    parser.add_argument('--parser', nargs=1,help='Choose parser to use.  If nothing chosen then \'win\' is used.  The parsing options are: '+', '.join(parser_list))
     parser.add_argument('--nohash', action='store_true', default=False, help='Do not hash all the files as part of the processing of the image')
     parser.add_argument('--max_cpu', action='store_true', default=False, help='Use the maximum number of cpu cores to process the image')
     parser.add_argument('--export', action='store_true' , help='Creates zipped, line delimited json export file')
@@ -1434,7 +1442,7 @@ def main():
             if not os.path.isfile(log2timeline_location):
               log2timeline_location,psort_location = query_plaso_location()
             # Default log2timeline command
-        command1 = [log2timeline_location,"-p","--partition","all","--vss_stores","all","--status_view","linear"]
+        command1 = [log2timeline_location,"--partition","all","--vss_stores","all","--status_view","linear"]
 
     # Set log2timeline parsing option(s)
         if args.parser:
@@ -1445,10 +1453,8 @@ def main():
                 print("Exiting...")
                 sys.exit(1)
             parser_opt = args.parser[0]
-            # if parser_opt == "datt":
-            #     command1 = [log2timeline_location, "-p"]
             if parser_opt == "lin" or parser_opt == "mac":
-                command1 = [log2timeline_location,"-p","--partition","all","--status_view","linear"]
+                command1 = [log2timeline_location,"--partition","all","--status_view","linear"]
         else:
             # Set Default parser value to "datt"
             parser_opt = default_parser
