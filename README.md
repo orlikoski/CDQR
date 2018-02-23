@@ -3,6 +3,9 @@
 CDQR — Cold Disk Quick Response tool by Alan Orlikoski
 
 For latest release click [here](https://github.com/rough007/CDQR/releases/latest)
+## Videos and Media
+*  [RAPID INCIDENT RESPONSE 2017](http://www.osdfcon.org/presentations/2017/Asif-Matadar_Rapid-Incident-Response.pdf) Slides: Walk-through different techniques that are required to provide forensics results for Windows and *nix environments (Including CyLR and CDQR)
+
 
 ## What is CDQR?
 The CDQR tool uses Plaso to parse disk images with specific parsers and create easy to analyze custom reports. The parsers were chosen based triaging best practices and the custom reports group like items together to make analysis easier. The design came from the Live Response Model of investigating the important artifacts first. This is meant to be a starting point for investigations, not the complete investigation.
