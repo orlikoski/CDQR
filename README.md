@@ -4,7 +4,7 @@ CDQR — Cold Disk Quick Response tool by Alan Orlikoski
 
 For latest release click [here](https://github.com/rough007/CDQR/releases/latest)
 ## Videos and Media
-*  [RAPID INCIDENT RESPONSE 2017](http://www.osdfcon.org/presentations/2017/Asif-Matadar_Rapid-Incident-Response.pdf) Slides: Walk-through different techniques that are required to provide forensics results for Windows and *nix environments (Including CyLR and CDQR)
+*  [OSDFCON 2017](http://www.osdfcon.org/presentations/2017/Asif-Matadar_Rapid-Incident-Response.pdf) Slides: Walk-through different techniques that are required to provide forensics results for Windows and *nix environments (Including CyLR and CDQR)
 
 
 ## What is CDQR?
