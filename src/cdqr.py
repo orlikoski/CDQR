@@ -1417,7 +1417,7 @@ def main():
     parser = argparse.ArgumentParser(description='Cold Disk Quick Response Tool (CDQR)')
     parser.add_argument('src_location',nargs=1,help='Source File location: Y:/Case/Tag009/sample.E01')
     parser.add_argument('dst_location',nargs='?',default='Results',help='Destination Folder location. If nothing is supplied then the default is \'Results\'')
-    parser.add_argument('--parser', nargs=1,help='Choose parser to use.  If nothing chosen then \'win\' is used.  The parsing options are: '+', '.join(parser_list))
+    parser.add_argument('-p','--parser', nargs=1,help='Choose parser to use.  If nothing chosen then \'win\' is used.  The parsing options are: '+', '.join(parser_list))
     parser.add_argument('--nohash', action='store_true', default=False, help='Do not hash all the files as part of the processing of the image')
     parser.add_argument('--max_cpu', action='store_true', default=False, help='Use the maximum number of cpu cores to process the image')
     parser.add_argument('--export', action='store_true' , help='Creates zipped, line delimited json export file')
