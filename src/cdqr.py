@@ -929,7 +929,7 @@ def output_elasticsearch_ts(mylogfile,srcfilename,casename,psort_location):
     mylogfile.writelines("Exporting results in TimeSketch format to the ElasticSearch server\n")
 
     # Create command to run
-    command = [psort_location,"-o","timesketch","--status_view","--name",casename.lower(),"--index",casename.lower(), srcfilename]
+    command = [psort_location,"-o","timesketch","--status_view","linear","--name",casename.lower(),"--index",casename.lower(), srcfilename]
 
     print("\""+"\" \"".join(command)+"\"")
     mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
@@ -976,7 +976,7 @@ def create_export(dst_loc,srcfilename,mylogfile,db_file,psort_location):
     mylogfile.writelines("Creating json line delimited file\n")
 
     # Create command to run
-    command = [psort_location,"-o","json_line","--status_view", db_file,"-w",dstrawfilename]
+    command = [psort_location,"-o","json_line","--status_view","linear", db_file,"-w",dstrawfilename]
     
     print("\""+"\" \"".join(command)+"\"")
     mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
