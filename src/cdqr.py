@@ -12,7 +12,7 @@ modes = {
 }
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 4.1.2"
+cdqr_version = "CDQR Version: 4.1.3"
 # 
 ###############################################################################
 # Global Variables
@@ -911,9 +911,8 @@ def output_elasticsearch(mylogfile,srcfilename,casename,psort_location):
     print("Exporting results in Kibana format to the ElasticSearch server")
     mylogfile.writelines("Exporting results in Kibana format to the ElasticSearch server\n")
 
-    # Create command to run
-    # SAMPLE: psort.py -o elastic --raw_fields --index_name case_test output.plaso 
-    command = [psort_location,"-o","elastic","--raw_fields","--index_name","case_cdqr-"+casename.lower(), srcfilename]
+    # Create psort command to run
+    command = [psort_location,"-o","elastic","--status_view","linear","--index_name","case_cdqr-"+casename.lower(), srcfilename]
     
     print("\""+"\" \"".join(command)+"\"")
     mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
@@ -930,8 +929,7 @@ def output_elasticsearch_ts(mylogfile,srcfilename,casename,psort_location):
     mylogfile.writelines("Exporting results in TimeSketch format to the ElasticSearch server\n")
 
     # Create command to run
-    # SAMPLE: psort.py -o timesketch --name demo --index case_cdqr-demo demo.plaso
-    command = [psort_location,"-o","timesketch","--name",casename.lower(),"--index",casename.lower(), srcfilename]
+    command = [psort_location,"-o","timesketch","--status_view","linear","--name",casename.lower(),"--index",casename.lower(), srcfilename]
 
     print("\""+"\" \"".join(command)+"\"")
     mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
@@ -978,7 +976,7 @@ def create_export(dst_loc,srcfilename,mylogfile,db_file,psort_location):
     mylogfile.writelines("Creating json line delimited file\n")
 
     # Create command to run
-    command = [psort_location,"-o","json_line", db_file,"-w",dstrawfilename]
+    command = [psort_location,"-o","json_line","--status_view","linear", db_file,"-w",dstrawfilename]
     
     print("\""+"\" \"".join(command)+"\"")
     mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
@@ -1449,7 +1447,7 @@ def main():
             if not os.path.isfile(log2timeline_location):
               log2timeline_location,psort_location = query_plaso_location()
             # Default log2timeline command
-        command1 = [log2timeline_location,"--partition","all","--vss_stores","all","--status_view","linear"]
+        command1 = [log2timeline_location,"--partition","all","--vss_stores","all","--status_view","linear","--process_archives"]
 
     # Set log2timeline parsing option(s)
         if args.parser:
@@ -1461,7 +1459,7 @@ def main():
                 sys.exit(1)
             parser_opt = args.parser[0]
             if parser_opt == "lin" or parser_opt == "mac":
-                command1 = [log2timeline_location,"--partition","all","--status_view","linear"]
+                command1 = [log2timeline_location,"--partition","all","--status_view","linear","--process_archives"]
         else:
             # Set Default parser value to "datt"
             parser_opt = default_parser
