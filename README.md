@@ -27,7 +27,7 @@ It creates up to 16 Reports (.csv files) based on triaging best practices and th
       ```
 
 ## What's New
-*  Now Supports Plaso v20171231
+*  Now Supports Plaso 20180127
 *  Now using ".plaso" extention to match TimeSketch output (makes it easier to import into TimeSketch through its web UI)
 *  Improved logging
 
