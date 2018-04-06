@@ -12,7 +12,7 @@ modes = {
 }
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 4.1.4"
+cdqr_version = "CDQR Version: 4.1.5"
 # 
 ###############################################################################
 # Global Variables
@@ -724,29 +724,77 @@ def create_reports(mylogfile,dst_loc, csv_file,parser_opt):
     rpt_login_name = rpt_dir_name+"/Login Report.csv"
 
     # RC1 search strings for each report
-    rpt_evt_search = re.compile(r'winevt,|winevtx,')
-    rpt_fsfs_search = re.compile(r'filestat,|recycle_bin')
+    rpt_evt_search = re.compile(r'winevt')
+    rpt_fsfs_search = re.compile(r'filestat|recycle_bin')
     rpt_fsmft_search = re.compile(r',mft,')
     rpt_fsusnjrnl_search = re.compile(r',usnjrnl,')
-    rpt_ih_search = re.compile(r'sqlite,|binary_cookies,|chrome_cache,|chrome_preferences,|,firefox_cache,|firefox_cache2,|java_idx,|msiecf,|opera_global,|opera_typed_history,|safari_history,|chrome_cookies,|chrome_extension_activity,|chrome_history,|firefox_cookies,|firefox_downloads,|firefox_history,|google_drive,|windows_typed_urls,')
-    rpt_pf_search = re.compile(r'prefetch,')
-    rpt_appc_search = re.compile(r'appcompatcache,')
-    rpt_reg_search = re.compile(r'winreg,|winreg_default,')
-    rpt_st_search = re.compile(r'winjob,|windows_task_cache,|cron,')
-    rpt_per_search = re.compile(r'bagmru,|mrulist_shell_item_list,|mrulist_string,|mrulistex_shell_item_list,|mrulistex_string,|mrulistex_string_and_shell_item,|mrulistex_string_and_shell_item_list,|msie_zone,|mstsc_rdp,|mstsc_rdp_mru,|userassist,|windows_boot_execute,|windows_boot_verify,|windows_run,|windows_sam_users,|windows_services,|winrar_mru,')
-    rpt_si_search = re.compile(r'rplog,|explorer_mountpoints2,|explorer_programscache,|windows_shutdown,|windows_timezone,|windows_usb_devices,|windows_usbstor_devices,|windows_version,|network_drives,|dpkg,')
-    rpt_av_search = re.compile(r'mcafee_protection,|symantec_scanlog,|winfirewall,|ccleaner,|sophos_av,')
-    rpt_fw_search = re.compile(r'winfirewall,|mac_appfirewall_log,')
-    rpt_mac_search = re.compile(r'airport|,apple_id|,bash|,bash_history|,bencode_transmission|,bencode_utorrent|,binary_cookies|,bsm_log|,chrome_cache|,chrome_cookies|,chrome_extension_activity|,chrome_history|,chrome_preferences|,cron|,cups_ipp|,dockerjson|,dpkg|,filestat|,firefox_cache|,firefox_cache2|,firefox_cookies|,firefox_downloads|,firefox_history|,fsevents|,google_drive|,hachoir|,imessage|,ipod_device|,java_idx|,mac_appfirewall_log|,mac_document_versions|,mac_keychain|,mac_securityd|,mackeeper_cache|,macosx_bluetooth|,macosx_install_history|,mactime|,macuser|,macwifi|,maxos_software_update|,mcafee_protection|,olecf|,openxml|,opera_global|,opera_typed_history|,pe|,plist|,plist_default|,popularity_contest|,safari_history|,selinux|,sophos_av|,spotlight|,spotlight_volume|,sqlite|,ssh|,symantec_scanlog|,syslog|,systemd_journal|,time_machine|,utmp|,utmpx|,xchatlog|,xchatscrollback|,zeitgeist|,zsh_extended_history')
-    rpt_lin_search = re.compile(r'bash|,bash_history|,bencode_transmission|,bencode_utorrent|,binary_cookies|,bsm_log|,chrome_cache|,chrome_cookies|,chrome_extension_activity|,chrome_history|,chrome_preferences|,cron|,cups_ipp|,dockerjson|,dpkg|,filestat|,firefox_cache|,firefox_cache2|,firefox_cookies|,firefox_downloads|,firefox_history|,fsevents|,google_drive|,hachoir|,imessage|,java_idx|,mac_appfirewall_log|,mcafee_protection|,olecf|,openxml|,opera_global|,opera_typed_history|,pe|,popularity_contest|,safari_history|,selinux|,sophos_av|,sqlite|,ssh|,symantec_scanlog|,syslog|,systemd_journal|,utmp|,utmpx|,xchatlog|,xchatscrollback|,zsh_extended_history')
-    rpt_login_search = re.compile(r'dockerjson,|ssh,|winlogon,|utmp,|utmpx,')
+    rpt_ih_search = re.compile(r'bencode|binary_cookies|chrome_|firefox_|google_drive|java_idx|msiecf|opera_|safari_|sqlite|windows_typed_urls')
+    rpt_pf_search = re.compile(r'prefetch')
+    rpt_appc_search = re.compile(r'appcompatcache')
+    rpt_reg_search = re.compile(r'winreg')
+    rpt_st_search = re.compile(r'winjob|windows_task_cache|cron')
+    rpt_per_search = re.compile(r'bagmru|bencode|mrulist|msie_zone|mstsc_rdp|userassist|windows_bootwindows_run|windows_sam_users|windows_services|winrar_mru')
+    rpt_si_search = re.compile(r'dockerjson|dpkg|explorer_|fsevents|mac_keychain|mac_securityd|mackeeper_cache|macosx_bluetooth|macosx_install_history|mactime|macuser|macwifi|network_drives|rplog|windows_shutdown|windows_timezone|windows_usb_devices|windows_usbstor_devices|windows_version')
+    rpt_av_search = re.compile(r'mcafee_protection|symantec_scanlog|winfirewall|ccleaner|sophos_av')
+    rpt_fw_search = re.compile(r'winfirewall|mac_appfirewall_log')
+    rpt_mac_search = re.compile(r'airport|apple_id|bash|bash_history|bsm_log|cron|cups_ipp|dockerjson|dpkg|fsevents|google_drive|hachoir|imessage|ipod_device|java_idx|mac_document_versions|mac_keychain|mac_securityd|mackeeper_cache|macosx_bluetooth|macosx_install_history|mactime|macuser|macwifi|maxos_software_update|mcafee_protection|olecf|openxml|,pe,|plist|plist_default|popularity_contest|selinux|spotlight|sqlite|ssh|syslog|systemd_journal|time_machine|utmp|xchatlog|xchatscrollback|zeitgeist|zsh_extended_history')
+    rpt_lin_search = re.compile(r'bash|bash_history|binary_cookies|bsm_log|cron|cups_ipp|dockerjson|dpkg|fsevents|google_drive|hachoir|java_idx|olecf|openxml|,pe,|popularity_contest|selinux|sqlite|ssh|syslog|systemd_journal|utmp|utmpx|xchatlog|xchatscrollback|zsh_extended_history')
+    rpt_login_search = re.compile(r'dockerjson|ssh|winlogon|utmp')
     # Create a list of the report names
     if parser_opt == "datt":
-        lor = [rpt_appc_name,rpt_evt_name,rpt_fsfs_name,rpt_fsmft_name,rpt_fsusnjrnl_name,rpt_ih_name,rpt_pf_name,rpt_reg_name,rpt_st_name,rpt_per_name,rpt_si_name,rpt_av_name,rpt_fw_name,rpt_mac_name,rpt_lin_name,rpt_login_name]
+        lor = [\
+                rpt_appc_name, \
+                rpt_evt_name, \
+                rpt_fsfs_name, \
+                rpt_fsmft_name, \
+                rpt_fsusnjrnl_name, \
+                rpt_ih_name, \
+                rpt_pf_name, \
+                rpt_reg_name, \
+                rpt_st_name, \
+                rpt_per_name, \
+                rpt_si_name, \
+                rpt_av_name, \
+                rpt_fw_name, \
+                rpt_mac_name, \
+                rpt_lin_name, \
+                rpt_login_name]
     elif parser_opt == "win":
-        lor = [rpt_appc_name,rpt_evt_name,rpt_fsfs_name,rpt_fsmft_name,rpt_fsusnjrnl_name,rpt_ih_name,rpt_pf_name,rpt_reg_name,rpt_st_name,rpt_per_name,rpt_si_name,rpt_av_name,rpt_fw_name,rpt_login_name]
+        lor = [\
+                rpt_appc_name, \
+                rpt_evt_name, \
+                rpt_fsfs_name, \
+                rpt_fsmft_name, \
+                rpt_fsusnjrnl_name, \
+                rpt_ih_name, \
+                rpt_pf_name, \
+                rpt_reg_name, \
+                rpt_st_name, \
+                rpt_per_name, \
+                rpt_si_name, \
+                rpt_av_name, \
+                rpt_fw_name, \
+                rpt_login_name]
+    elif parser_opt == "mac":
+        lor = [\
+                rpt_fsfs_name, \
+                rpt_ih_name, \
+                rpt_per_name, \
+                rpt_si_name, \
+                rpt_av_name, \
+                rpt_fw_name, \
+                rpt_mac_name, \
+                rpt_login_name]
     else:
-        lor = [rpt_fsfs_name,rpt_ih_name,rpt_si_name,rpt_av_name,rpt_fw_name,rpt_mac_name,rpt_lin_name,rpt_login_name]
+        lor = [\
+                rpt_fsfs_name, \
+                rpt_ih_name, \
+                rpt_per_name, \
+                rpt_si_name, \
+                rpt_av_name, \
+                rpt_fw_name, \
+                rpt_lin_name, \
+                rpt_login_name]
 
     # Create Report directory
     if not os.path.isdir(rpt_dir_name):
@@ -773,6 +821,7 @@ def create_reports(mylogfile,dst_loc, csv_file,parser_opt):
     # Create list of file handles + search terms based on the parser option selected
     if parser_opt == "datt":
         # Open all report files for writing
+        rpt_appc = open(rpt_appc_name,'a+', encoding='utf-8')
         rpt_evt = open(rpt_evt_name,'a+', encoding='utf-8')
         rpt_fsfs = open(rpt_fsfs_name,'a+', encoding='utf-8')
         rpt_fsmft = open(rpt_fsmft_name,'a+', encoding='utf-8')
@@ -781,7 +830,6 @@ def create_reports(mylogfile,dst_loc, csv_file,parser_opt):
         rpt_pf = open(rpt_pf_name,'a+', encoding='utf-8')
         rpt_reg = open(rpt_reg_name,'a+', encoding='utf-8')
         rpt_st = open(rpt_st_name,'a+', encoding='utf-8')
-        rpt_appc = open(rpt_appc_name,'a+', encoding='utf-8')
         rpt_per = open(rpt_per_name,'a+', encoding='utf-8')
         rpt_si = open(rpt_si_name,'a+', encoding='utf-8')
         rpt_av = open(rpt_av_name,'a+', encoding='utf-8')
@@ -789,17 +837,32 @@ def create_reports(mylogfile,dst_loc, csv_file,parser_opt):
         rpt_mac = open(rpt_mac_name,'a+', encoding='utf-8')
         rpt_lin = open(rpt_lin_name,'a+', encoding='utf-8')
         rpt_log = open(rpt_login_name,'a+', encoding='utf-8')
-        
-        lofh = [[rpt_appc_search,rpt_appc,rpt_appc_name],[rpt_evt_search,rpt_evt,rpt_evt_name],[rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name],[rpt_fsmft_search,rpt_fsmft,rpt_fsmft_name],[rpt_fsusnjrnl_search,rpt_fsusnjrnl,rpt_fsusnjrnl_name],[rpt_ih_search,rpt_ih,rpt_ih_name],[rpt_pf_search,rpt_pf,rpt_pf_name],[rpt_reg_search,rpt_reg,rpt_reg_name],[rpt_st_search,rpt_st,rpt_st_name],[rpt_per_search,rpt_per,rpt_per_name],[rpt_si_search,rpt_si,rpt_si_name],[rpt_av_search,rpt_av,rpt_av_name],[rpt_fw_search,rpt_fw,rpt_fw_name],[rpt_mac_search,rpt_mac,rpt_mac_name],[rpt_lin_search,rpt_lin,rpt_lin_name],[rpt_login_search,rpt_log,rpt_login_name]]
+        lofh = [\
+                [rpt_appc_search,rpt_appc,rpt_appc_name], \
+                [rpt_evt_search,rpt_evt,rpt_evt_name], \
+                [rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name], \
+                [rpt_fsmft_search,rpt_fsmft,rpt_fsmft_name], \
+                [rpt_fsusnjrnl_search,rpt_fsusnjrnl,rpt_fsusnjrnl_name], \
+                [rpt_ih_search,rpt_ih,rpt_ih_name], \
+                [rpt_pf_search,rpt_pf,rpt_pf_name], \
+                [rpt_reg_search,rpt_reg,rpt_reg_name], \
+                [rpt_st_search,rpt_st,rpt_st_name], \
+                [rpt_per_search,rpt_per,rpt_per_name], \
+                [rpt_si_search,rpt_si,rpt_si_name], \
+                [rpt_av_search,rpt_av,rpt_av_name], \
+                [rpt_fw_search,rpt_fw,rpt_fw_name], \
+                [rpt_mac_search,rpt_mac,rpt_mac_name], \
+                [rpt_lin_search,rpt_lin,rpt_lin_name], \
+                [rpt_login_search,rpt_log,rpt_login_name]]
     elif parser_opt == "win":
         # Open windows report files for writing
+        rpt_appc = open(rpt_appc_name,'a+', encoding='utf-8')
         rpt_evt = open(rpt_evt_name,'a+', encoding='utf-8')
         rpt_fsfs = open(rpt_fsfs_name,'a+', encoding='utf-8')
         rpt_fsmft = open(rpt_fsmft_name,'a+', encoding='utf-8')
         rpt_fsusnjrnl = open(rpt_fsusnjrnl_name,'a+', encoding='utf-8')
         rpt_ih = open(rpt_ih_name,'a+', encoding='utf-8')
         rpt_pf = open(rpt_pf_name,'a+', encoding='utf-8')
-        rpt_appc = open(rpt_appc_name,'a+', encoding='utf-8')
         rpt_reg = open(rpt_reg_name,'a+', encoding='utf-8')
         rpt_st = open(rpt_st_name,'a+', encoding='utf-8')
         rpt_per = open(rpt_per_name,'a+', encoding='utf-8')
@@ -807,18 +870,60 @@ def create_reports(mylogfile,dst_loc, csv_file,parser_opt):
         rpt_av = open(rpt_av_name,'a+', encoding='utf-8')
         rpt_fw = open(rpt_fw_name,'a+', encoding='utf-8')
         rpt_log = open(rpt_login_name,'a+', encoding='utf-8')
-        lofh = [[rpt_appc_search,rpt_appc,rpt_appc_name],[rpt_evt_search,rpt_evt,rpt_evt_name],[rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name],[rpt_fsmft_search,rpt_fsmft,rpt_fsmft_name],[rpt_fsusnjrnl_search,rpt_fsusnjrnl,rpt_fsusnjrnl_name],[rpt_ih_search,rpt_ih,rpt_ih_name],[rpt_pf_search,rpt_pf,rpt_pf_name],[rpt_reg_search,rpt_reg,rpt_reg_name],[rpt_st_search,rpt_st,rpt_st_name],[rpt_per_search,rpt_per,rpt_per_name],[rpt_si_search,rpt_si,rpt_si_name],[rpt_av_search,rpt_av,rpt_av_name],[rpt_fw_search,rpt_fw,rpt_fw_name],[rpt_login_search,rpt_log,rpt_login_name]]
-    else:
-        # Open Mac / Linux report files for writing
+        lofh = [ \
+                [rpt_appc_search,rpt_appc,rpt_appc_name], \
+                [rpt_evt_search,rpt_evt,rpt_evt_name], \
+                [rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name], \
+                [rpt_fsmft_search,rpt_fsmft,rpt_fsmft_name], \
+                [rpt_fsusnjrnl_search,rpt_fsusnjrnl,rpt_fsusnjrnl_name], \
+                [rpt_ih_search,rpt_ih,rpt_ih_name], \
+                [rpt_pf_search,rpt_pf,rpt_pf_name], \
+                [rpt_reg_search,rpt_reg,rpt_reg_name], \
+                [rpt_st_search,rpt_st,rpt_st_name], \
+                [rpt_per_search,rpt_per,rpt_per_name], \
+                [rpt_si_search,rpt_si,rpt_si_name], \
+                [rpt_av_search,rpt_av,rpt_av_name], \
+                [rpt_fw_search,rpt_fw,rpt_fw_name], \
+                [rpt_login_search,rpt_log,rpt_login_name]]
+    elif parser_opt == "mac":
+        # Open Mac report files for writing
         rpt_fsfs = open(rpt_fsfs_name,'a+', encoding='utf-8')
         rpt_ih = open(rpt_ih_name,'a+', encoding='utf-8')
+        rpt_per = open(rpt_per_name,'a+', encoding='utf-8')
         rpt_si = open(rpt_si_name,'a+', encoding='utf-8')
         rpt_av = open(rpt_av_name,'a+', encoding='utf-8')
         rpt_fw = open(rpt_fw_name,'a+', encoding='utf-8')
         rpt_mac = open(rpt_mac_name,'a+', encoding='utf-8')
+        rpt_log = open(rpt_login_name,'a+', encoding='utf-8')
+        
+        lofh = [\
+                [rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name], \
+                [rpt_ih_search,rpt_ih,rpt_ih_name], \
+                [rpt_per_search,rpt_per,rpt_per_name], \
+                [rpt_si_search,rpt_si,rpt_si_name], \
+                [rpt_av_search,rpt_av,rpt_av_name], \
+                [rpt_fw_search,rpt_fw,rpt_fw_name], \
+                [rpt_mac_search,rpt_mac,rpt_mac_name], \
+                [rpt_login_search,rpt_log,rpt_login_name]]
+    else:
+        # Open Linux report files for writing
+        rpt_fsfs = open(rpt_fsfs_name,'a+', encoding='utf-8')
+        rpt_ih = open(rpt_ih_name,'a+', encoding='utf-8')
+        rpt_per = open(rpt_per_name,'a+', encoding='utf-8')
+        rpt_si = open(rpt_si_name,'a+', encoding='utf-8')
+        rpt_av = open(rpt_av_name,'a+', encoding='utf-8')
+        rpt_fw = open(rpt_fw_name,'a+', encoding='utf-8')
         rpt_lin = open(rpt_lin_name,'a+', encoding='utf-8')
         rpt_log = open(rpt_login_name,'a+', encoding='utf-8')
-        lofh = [[rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name],[rpt_ih_search,rpt_ih,rpt_ih_name],[rpt_si_search,rpt_si,rpt_si_name],[rpt_av_search,rpt_av,rpt_av_name],[rpt_fw_search,rpt_fw,rpt_fw_name],[rpt_mac_search,rpt_mac,rpt_mac_name],[rpt_lin_search,rpt_lin,rpt_lin_name],[rpt_login_search,rpt_log,rpt_login_name]]
+        lofh = [\
+                [rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name], \
+                [rpt_ih_search,rpt_ih,rpt_ih_name], \
+                [rpt_per_search,rpt_per,rpt_per_name], \
+                [rpt_si_search,rpt_si,rpt_si_name], \
+                [rpt_av_search,rpt_av,rpt_av_name], \
+                [rpt_fw_search,rpt_fw,rpt_fw_name], \
+                [rpt_lin_search,rpt_lin,rpt_lin_name], \
+                [rpt_login_search,rpt_log,rpt_login_name]]
 
     # Write the header line in each new report file
     for item in lofh:
@@ -872,10 +977,9 @@ def create_reports(mylogfile,dst_loc, csv_file,parser_opt):
 
 
     # Function to improve reports (in parallel)
-    if parser_opt == "win":
-        print("Improving Reports (This will take a long time for large files)")
-        mqueue.put(mylogfile.writelines("Improving Reports (This will take a long time for large files)"+"\n"))
-        report_improvements(lor,mylogfile)
+    print("Improving Reports if possible (This will take a long time for large files)")
+    mqueue.put(mylogfile.writelines("Improving Reports if possible (This will take a long time for large files)"+"\n"))
+    report_improvements(lor,mylogfile)
 
 
     print("\nAll reporting complete")
