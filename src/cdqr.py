@@ -12,8 +12,8 @@ modes = {
 }
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 4.1.5"
-# 
+cdqr_version = "CDQR Version: 4.1.6"
+#
 ###############################################################################
 # Global Variables
 parser_opt = ""
@@ -29,7 +29,7 @@ create_db = True
 
 
 # Compatible Plaso versions
-p_compat = ["1.3","1.4","1.5","20170930","20171231","20180127"]
+p_compat = ["1.3","1.4","1.5","20170930","20171231","20180127", "20180524"]
 
 # Dictionary of parsing options from command line to log2timeline
 parse_optionslatest = {
@@ -895,7 +895,7 @@ def create_reports(mylogfile,dst_loc, csv_file,parser_opt):
         rpt_fw = open(rpt_fw_name,'a+', encoding='utf-8')
         rpt_mac = open(rpt_mac_name,'a+', encoding='utf-8')
         rpt_log = open(rpt_login_name,'a+', encoding='utf-8')
-        
+
         lofh = [\
                 [rpt_fsfs_search,rpt_fsfs,rpt_fsfs_name], \
                 [rpt_ih_search,rpt_ih,rpt_ih_name], \
@@ -1006,13 +1006,13 @@ def output_elasticsearch(mylogfile,srcfilename,casename,psort_location):
 
     # Create psort command to run
     command = [psort_location,"-o","elastic","--status_view","linear","--index_name","case_cdqr-"+casename.lower(), srcfilename]
-    
+
     print("\""+"\" \"".join(command)+"\"")
     mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
 
     # Execute Command
     status_marker(mylogfile,subprocess.Popen(command,stdout=mylogfile,stderr=mylogfile))
-    
+
     print("All entries have been inserted into database with case: "+"case_cdqr-"+casename.lower())
     mylogfile.writelines("All entries have been inserted into database with case: "+"case_cdqr-"+casename.lower()+"\n")
 
@@ -1038,7 +1038,7 @@ def zip_source(inputfile,outputzip):
         with zipfile.ZipFile(outputzip,"w") as zip_ref:
             zip_ref.write(inputfile, compress_type=compression)
         return
-    except Exception as e: 
+    except Exception as e:
         print("Unable to compress file: "+inputfile)
         print(e)
         sys.exit(1)
@@ -1051,7 +1051,7 @@ def unzip_source(src_loc_tmp,outputzipfolder):
             else:
                 zip_ref.extractall(os.path.abspath(outputzipfolder))
         return outputzipfolder
-    except Exception as e: 
+    except Exception as e:
         print("Unable to extract file: "+src_loc_tmp)
         print(e)
         sys.exit(1)
@@ -1070,13 +1070,13 @@ def create_export(dst_loc,srcfilename,mylogfile,db_file,psort_location):
 
     # Create command to run
     command = [psort_location,"-o","json_line","--status_view","linear", db_file,"-w",dstrawfilename]
-    
+
     print("\""+"\" \"".join(command)+"\"")
     mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
 
     # Execute Command
     status_marker(mylogfile,subprocess.Popen(command,stdout=mylogfile,stderr=mylogfile))
-    
+
     print("Json line delimited file created")
     mylogfile.writelines("Json line delimited file created"+"\n")
     print("Adding Json line delimited file to "+dstfilename)
@@ -1096,23 +1096,7 @@ def get_parser_list(parser_opt,plaso_ver):
     parserlist = parse_optionslatest[parser_opt]
     unknownversion = True
 
-    if plaso_ver == "20180127":
-        parserlist = parse_optionslatest[parser_opt]
-        unknownversion = False
-    if plaso_ver == "20171231":
-        parserlist = parse_optionslatest[parser_opt]
-        unknownversion = False
-    if plaso_ver == "20170930":
-        parserlist = parse_optionslatest[parser_opt]
-        unknownversion = False
-    if plaso_ver == "1.5":
-        parserlist = parse_options15[parser_opt]
-        unknownversion = False
-    if plaso_ver == "1.4":
-        parserlist = parse_options14[parser_opt]
-        unknownversion = False
-    if plaso_ver == "1.3":
-        parserlist = parse_options13[parser_opt]
+    if plaso_ver in p_compat:
         unknownversion = False
 
     if unknownversion:
@@ -1132,10 +1116,10 @@ def prefetch_report_fix(row):
     else:
         search_desc = re.compile(r'(.{1,200}) (Serial number): (.{1,15}) (Origin): (.+)')
         search_extra = re.compile(r'(md5_hash): (.+) ')
-    
+
     search_results_desc = re.search(search_desc,row[header_desc_rows])
 
-    if row[5] == "WinPrefetch": 
+    if row[5] == "WinPrefetch":
         if search_results_desc:
             if search_results_desc.group(4) == '':
                 row[header_desc_rows] = search_results_desc.group(1)+","+search_results_desc.group(3)+",,"+search_results_desc.group(8)+","+search_results_desc.group(10)+","+search_results_desc.group(12)+","+search_results_desc.group(14)+","
@@ -1146,7 +1130,7 @@ def prefetch_report_fix(row):
         if search_results_extra:
             row[header_extra_rows] = search_results_extra.group(2)+","+search_results_extra.group(4)+","+search_results_extra.group(6)+","+search_results_extra.group(8)+","+search_results_extra.group(10)
     else:
-        if search_results_desc: 
+        if search_results_desc:
             row[header_desc_rows] = ",,,,"+search_results_desc.group(1)+","+search_results_desc.group(3)+",,"+search_results_desc.group(5)
 
         search_results_extra = re.search(search_extra,row[header_extra_rows])
@@ -1210,11 +1194,11 @@ def scheduled_tasks_report_fix(row):
             row[header_desc_rows] = ","+search_results_desc.group(8)+","+search_results_desc.group(10)
         else:
             row[header_desc_rows] = search_results_desc.group(2)+","+search_results_desc.group(4)+","+search_results_desc.group(6)
-    
+
     search_results_extra = re.search(search_extra,row[header_extra_rows])
     if search_results_extra:
         row[header_extra_rows] = search_results_extra.group(2)
-    
+
     return row
 
 
@@ -1251,7 +1235,7 @@ def mft_report_fix(row):
     else:
         search_desc = re.compile(r'((.{1,100}) (MAC address): (.{1,20}) (Origin): (.+))')
         search_extra = re.compile(r'(md5_hash): (.+) ')
-    
+
     search_results_desc = re.search(search_desc,row[header_desc_rows])
 
     if row[4] == "FILE":
@@ -1487,7 +1471,7 @@ def export_to_json(dst_loc,srcfilename,mylogfile,db_file,psort_location):
     # Export Data (if selected)
     print("\nProcess to create export document started")
     mylogfile.writelines("\nProcess to create export document started"+"\n")
-    # Create the file for export 
+    # Create the file for export
     exportfname = create_export(dst_loc,srcfilename,mylogfile,db_file,psort_location)
     print("Process to create export document complete")
     mylogfile.writelines("Process to create export document complete"+"\n")
@@ -1622,7 +1606,7 @@ def main():
             print("ERROR: \""+src_loc+"\" cannot be found by the system.  Please verify command.")
             print("Exiting...")
             sys.exit(1)
-        
+
     # Set destination location/file
         dst_loc = args.dst_location.replace("\\\\","/").replace("\\","/").rstrip("/")
 
