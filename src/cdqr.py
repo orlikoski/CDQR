@@ -12,7 +12,7 @@ modes = {
 }
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 4.1.6"
+cdqr_version = "CDQR Version: 4.1.7"
 #
 ###############################################################################
 # Global Variables
@@ -1101,7 +1101,6 @@ def get_parser_list(parser_opt,plaso_ver):
 
     if unknownversion:
         print("WARNING!! Known compatible version of Plaso NOT detected. Attempting to use default parser list.")
-        mylogfile.writelines("WARNING!! Known compatible version of Plaso NOT detected. Attempting to use default parser list." + "\n")
     return parserlist
 
 ###################### REPORT FIXING SECTION ###############################
