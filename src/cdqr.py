@@ -1005,7 +1005,7 @@ def output_elasticsearch(mylogfile,srcfilename,casename,psort_location,server,po
     mylogfile.writelines("Exporting results in Kibana format to the ElasticSearch server\n")
 
     # Create psort command to run
-    if user != "":
+    if user == "":
         command = [psort_location,"-o","elastic","--status_view","linear","--index_name","case_cdqr-"+casename.lower(), "--server", server, "--port", port, srcfilename]
     else:
         command = [psort_location,"-o","elastic","--status_view","linear","--index_name","case_cdqr-"+casename.lower(), "--server", server, "--port", port, "--elastic_user", user, srcfilename]
@@ -1025,7 +1025,7 @@ def output_elasticsearch_ts(mylogfile,srcfilename,casename,psort_location,server
     mylogfile.writelines("Exporting results in TimeSketch format to the ElasticSearch server\n")
 
     # Create command to run
-    if user != "":
+    if user == "":
         command = [psort_location,"-o","timesketch","--status_view","linear","--name",casename.lower(),"--index",casename.lower(), "--server", server, "--port", port, srcfilename]
         command = [psort_location,"-o","timesketch","--status_view","linear","--name",casename.lower(),"--index",casename.lower(), "--server", server, "--port", port, "--elastic_user", user, srcfilename]
 
