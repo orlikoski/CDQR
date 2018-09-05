@@ -1692,7 +1692,7 @@ def main():
     command1.append(db_file)
     command1.append(src_loc)
 
-    if skipdeps:
+    if args.es_no_dependencies_check:
         command1.append("--no_dependencies_check")
 
     if os.path.isfile(logfilename):
