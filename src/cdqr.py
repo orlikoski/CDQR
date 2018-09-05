@@ -29,7 +29,7 @@ create_db = True
 
 
 # Compatible Plaso versions
-p_compat = ["1.3","1.4","1.5","20170930","20171231","20180127", "20180524", "20180630", "20180818"]
+p_compat = ["1.3","1.4","1.5","20170930","20171231","20180127", "20180524"]
 
 # Dictionary of parsing options from command line to log2timeline
 parse_optionslatest = {
@@ -999,16 +999,18 @@ def plaso_version(log2timeline_location):
     pver = ".".join(str(err).split(" ")[-1].split(".")[0:2]).rstrip("\\n\'").rstrip("\\r")
     return(pver)
 
-def output_elasticsearch(mylogfile,srcfilename,casename,psort_location,server,port,user):
+def output_elasticsearch(mylogfile,srcfilename,casename,psort_location,server,port,user,skipdeps):
     # Run psort against plaso db file to output to an ElasticSearch server running on the localhost
     print("Exporting results in Kibana format to the ElasticSearch server")
     mylogfile.writelines("Exporting results in Kibana format to the ElasticSearch server\n")
 
     # Create psort command to run
-    if user == "":
-        command = [psort_location,"-o","elastic","--status_view","linear","--index_name","case_cdqr-"+casename.lower(), "--server", server, "--port", port, srcfilename]
-    else:
-        command = [psort_location,"-o","elastic","--status_view","linear","--index_name","case_cdqr-"+casename.lower(), "--server", server, "--port", port, "--elastic_user", user, srcfilename]
+    command = [psort_location,"-o","elastic","--status_view","linear","--index_name","case_cdqr-"+casename.lower(), "--server", server, "--port", port, srcfilename]
+    if user != "":
+        command.append("--elastic_user")
+        command.append(user)
+    if skipdeps:
+        command.append("--no_dependencies_check")
 
     print("\""+"\" \"".join(command)+"\"")
     mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
@@ -1019,13 +1021,16 @@ def output_elasticsearch(mylogfile,srcfilename,casename,psort_location,server,po
     print("All entries have been inserted into database with case: "+"case_cdqr-"+casename.lower())
     mylogfile.writelines("All entries have been inserted into database with case: "+"case_cdqr-"+casename.lower()+"\n")
 
-def output_elasticsearch_ts(mylogfile,srcfilename,casename,psort_location):
+def output_elasticsearch_ts(mylogfile,srcfilename,casename,psort_location,skipdeps):
     # Run psort against plaso db file to output to an ElasticSearch server running on the localhost
     print("Exporting results in TimeSketch format to the ElasticSearch server")
     mylogfile.writelines("Exporting results in TimeSketch format to the ElasticSearch server\n")
 
     # Create command to run
     command = [psort_location,"-o","timesketch","--status_view","linear","--name",casename.lower(),"--index",casename.lower(), srcfilename]
+
+    if skipdeps:
+        command.append("--no_dependencies_check")
 
     print("\""+"\" \"".join(command)+"\"")
     mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
@@ -1103,7 +1108,7 @@ def get_parser_list(parser_opt,plaso_ver):
         unknownversion = False
 
     if unknownversion:
-        print("WARNING!! Known compatible version of Plaso NOT detected. Attempting to use default parser list.")
+        print("WARNING!! Known compatible version of Plaso NOT detected. Attempting to use default parser list. Try using the --no_dependencies_check if Plaso dependancies are the issue.")
     return parserlist
 
 ###################### REPORT FIXING SECTION ###############################
@@ -1458,6 +1463,8 @@ def get_es_info(args):
     user = ""
     server = "127.0.0.1"
     port = "9200"
+    skipdeps = args.es_no_dependencies_check[0]
+
     if args.es_kb:
         casename = args.es_kb[0]
     if args.es_kb_user:
@@ -1466,24 +1473,27 @@ def get_es_info(args):
         server = args.es_kb_server[0]
     if args.es_kb_port:
         port = args.es_kb_port[0]
-    return casename,server,port,user
+
+    return casename,server,port,user,skipdeps
 
 def get_ts_es_info(args):
     casename = "default"
+    skipdeps = args.es_no_dependencies_check[0]
+
     if args.es_ts:
         casename = args.es_ts[0]
-    return casename
+    return casename,skipdeps
 
 def export_to_elasticsearch(mylogfile,args,db_file,psort_location):
     start_dt = datetime.datetime.now()
     print("\nProcess to export to ElasticSearch started")
     mylogfile.writelines("\nProcess to export to ElasticSearch started"+"\n")
     if args.es_kb:
-        casename,server,port,user = get_es_info(args)
-        output_elasticsearch(mylogfile,db_file,casename,psort_location,server,port,user)
+        casename,server,port,user,skipdeps = get_es_info(args)
+        output_elasticsearch(mylogfile,db_file,casename,psort_location,server,port,user,skipdeps)
     else:
-        casename = get_ts_es_info(args)
-        output_elasticsearch_ts(mylogfile,db_file,casename,psort_location)
+        casename,skipdeps = get_ts_es_info(args)
+        output_elasticsearch_ts(mylogfile,db_file,casename,psort_location,skipdeps)
     end_dt = datetime.datetime.now()
     duration03 = end_dt - start_dt
     print("\nProcess to export to ElasticSearch completed")
@@ -1549,6 +1559,7 @@ def main():
     parser.add_argument('--es_ts', nargs=1,help='Outputs TimeSketch format to elasticsearch database. Requires index/timesketch name. Example: \'--es_ts my_name\'')
     parser.add_argument('--plaso_db', action='store_true', default=False,help='Process an existing Plaso DB file. Example: artifacts.plaso')
     parser.add_argument('-z',action='store_true', default=False, help='Indicates the input file is a zip file and needs to be decompressed')
+    parser.add_argument('--no_dependencies_check',action='store_true', default=False, help='Add the option to the log2timeline component that skips the dependencies check')
     parser.add_argument('-v','--version', action='version', version=cdqr_version)
 
     args=parser.parse_args()
