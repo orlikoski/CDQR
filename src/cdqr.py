@@ -12,7 +12,7 @@ modes = {
 }
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 4.1.7"
+cdqr_version = "CDQR Version: 4.1.8"
 #
 ###############################################################################
 # Global Variables
@@ -1455,7 +1455,7 @@ def create_supertimeline(mylogfile,csv_file,psort_location,db_file):
     mylogfile.writelines("SuperTimeline CSV file is created\n")
     return
 
-def get_remote_es_info():
+def get_remote_es_info(args):
     user = ""
     server = "127.0.0.1"
     port = "9200"
@@ -1471,7 +1471,7 @@ def export_to_elasticsearch(mylogfile,args,db_file,psort_location):
     start_dt = datetime.datetime.now()
     print("\nProcess to export to ElasticSearch started")
     mylogfile.writelines("\nProcess to export to ElasticSearch started"+"\n")
-    server,port,user = get_remote_es_info()
+    server,port,user = get_remote_es_info(args)
     if args.es_kb:
         output_elasticsearch(mylogfile,db_file,args.es_kb[0],psort_location,server,port,user)
     else:
