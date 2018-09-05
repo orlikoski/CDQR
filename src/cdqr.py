@@ -999,7 +999,7 @@ def plaso_version(log2timeline_location):
     pver = ".".join(str(err).split(" ")[-1].split(".")[0:2]).rstrip("\\n\'").rstrip("\\r")
     return(pver)
 
-def output_elasticsearch(mylogfile,srcfilename,casename,psort_location,server,port,user,skipdeps):
+def output_elasticsearch(mylogfile,srcfilename,casename,psort_location,server,port,user):
     # Run psort against plaso db file to output to an ElasticSearch server running on the localhost
     print("Exporting results in Kibana format to the ElasticSearch server")
     mylogfile.writelines("Exporting results in Kibana format to the ElasticSearch server\n")
@@ -1019,7 +1019,7 @@ def output_elasticsearch(mylogfile,srcfilename,casename,psort_location,server,po
     print("All entries have been inserted into database with case: "+"case_cdqr-"+casename.lower())
     mylogfile.writelines("All entries have been inserted into database with case: "+"case_cdqr-"+casename.lower()+"\n")
 
-def output_elasticsearch_ts(mylogfile,srcfilename,casename,psort_location,skipdeps):
+def output_elasticsearch_ts(mylogfile,srcfilename,casename,psort_location):
     # Run psort against plaso db file to output to an ElasticSearch server running on the localhost
     print("Exporting results in TimeSketch format to the ElasticSearch server")
     mylogfile.writelines("Exporting results in TimeSketch format to the ElasticSearch server\n")
@@ -1458,7 +1458,6 @@ def get_es_info(args):
     user = ""
     server = "127.0.0.1"
     port = "9200"
-    skipdeps = args.es_no_dependencies_check[0]
 
     if args.es_kb:
         casename = args.es_kb[0]
@@ -1469,26 +1468,25 @@ def get_es_info(args):
     if args.es_kb_port:
         port = args.es_kb_port[0]
 
-    return casename,server,port,user,skipdeps
+    return casename,server,port,user
 
 def get_ts_es_info(args):
     casename = "default"
-    skipdeps = args.es_no_dependencies_check[0]
 
     if args.es_ts:
         casename = args.es_ts[0]
-    return casename,skipdeps
+    return casename
 
 def export_to_elasticsearch(mylogfile,args,db_file,psort_location):
     start_dt = datetime.datetime.now()
     print("\nProcess to export to ElasticSearch started")
     mylogfile.writelines("\nProcess to export to ElasticSearch started"+"\n")
     if args.es_kb:
-        casename,server,port,user,skipdeps = get_es_info(args)
-        output_elasticsearch(mylogfile,db_file,casename,psort_location,server,port,user,skipdeps)
+        casename,server,port,user = get_es_info(args)
+        output_elasticsearch(mylogfile,db_file,casename,psort_location,server,port,user)
     else:
-        casename,skipdeps = get_ts_es_info(args)
-        output_elasticsearch_ts(mylogfile,db_file,casename,psort_location,skipdeps)
+        casename = get_ts_es_info(args)
+        output_elasticsearch_ts(mylogfile,db_file,casename,psort_location)
     end_dt = datetime.datetime.now()
     duration03 = end_dt - start_dt
     print("\nProcess to export to ElasticSearch completed")
@@ -1692,7 +1690,7 @@ def main():
     command1.append(db_file)
     command1.append(src_loc)
 
-    if args.es_no_dependencies_check[0]:
+    if args.no_dependencies_check[0]:
         command1.append("--no_dependencies_check")
 
     if os.path.isfile(logfilename):
