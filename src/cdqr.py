@@ -29,7 +29,7 @@ create_db = True
 
 
 # Compatible Plaso versions
-p_compat = ["1.3","1.4","1.5","20170930","20171231","20180127", "20180524"]
+p_compat = ["1.3","1.4","1.5","20170930","20171231","20180127", "20180524", "20180630", "20180818"]
 
 # Dictionary of parsing options from command line to log2timeline
 parse_optionslatest = {
