@@ -1454,27 +1454,37 @@ def create_supertimeline(mylogfile,csv_file,psort_location,db_file):
     mylogfile.writelines("SuperTimeline CSV file is created\n")
     return
 
-def get_remote_es_info(args):
+def get_es_info(args):
+    casename = "default"
     user = ""
     server = "127.0.0.1"
     port = "9200"
-    if args.es_user:
-        user = args.es_user[0]
-    if args.es_server:
-        server = args.es_server[0]
-    if args.es_port:
-        port = args.es_port[0]
-    return server,port,user
+    if args.es_kb:
+        casename = args.es_kb[0]
+    if args.es_kb_user:
+        user = args.es_kb_user[0]
+    if args.es_kb_server:
+        server = args.es_kb_server[0]
+    if args.es_kb_port:
+        port = args.es_kb_port[0]
+    return casename,server,port,user
+
+def get_ts_es_info(args):
+    casename = "default"
+    if args.es_ts:
+        casename = args.es_ts[0]
+    return casename
 
 def export_to_elasticsearch(mylogfile,args,db_file,psort_location):
     start_dt = datetime.datetime.now()
     print("\nProcess to export to ElasticSearch started")
     mylogfile.writelines("\nProcess to export to ElasticSearch started"+"\n")
     if args.es_kb:
-        server,port,user = get_remote_es_info(args)
-        output_elasticsearch(mylogfile,db_file,args.es_kb[0],psort_location,server,port,user)
+        casename,server,port,user = get_es_info(args)
+        output_elasticsearch(mylogfile,db_file,casename,psort_location,server,port,user)
     else:
-        output_elasticsearch_ts(mylogfile,db_file,args.es_ts[0],psort_location)
+        casename = get_ts_es_info(args)
+        output_elasticsearch_ts(mylogfile,db_file,casename,psort_location)
     end_dt = datetime.datetime.now()
     duration03 = end_dt - start_dt
     print("\nProcess to export to ElasticSearch completed")
