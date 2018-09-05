@@ -1009,8 +1009,6 @@ def output_elasticsearch(mylogfile,srcfilename,casename,psort_location,server,po
     if user != "":
         command.append("--elastic_user")
         command.append(user)
-    if skipdeps:
-        command.append("--no_dependencies_check")
 
     print("\""+"\" \"".join(command)+"\"")
     mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
@@ -1028,9 +1026,6 @@ def output_elasticsearch_ts(mylogfile,srcfilename,casename,psort_location,skipde
 
     # Create command to run
     command = [psort_location,"-o","timesketch","--status_view","linear","--name",casename.lower(),"--index",casename.lower(), srcfilename]
-
-    if skipdeps:
-        command.append("--no_dependencies_check")
 
     print("\""+"\" \"".join(command)+"\"")
     mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
@@ -1696,6 +1691,9 @@ def main():
 
     command1.append(db_file)
     command1.append(src_loc)
+
+    if skipdeps:
+        command1.append("--no_dependencies_check")
 
     if os.path.isfile(logfilename):
         os.remove(logfilename)
