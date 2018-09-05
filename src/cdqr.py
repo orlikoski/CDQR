@@ -1460,11 +1460,11 @@ def get_remote_es_info(args):
     server = "127.0.0.1"
     port = "9200"
     if args.es_user:
-        user = args.es_user
+        user = args.es_user[0]
     if args.es_server:
-        server = args.es_server
+        server = args.es_server[0]
     if args.es_port:
-        port = args.es_port
+        port = args.es_port[0]
     return server,port,user
 
 def export_to_elasticsearch(mylogfile,args,db_file,psort_location):
