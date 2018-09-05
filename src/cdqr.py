@@ -1019,15 +1019,14 @@ def output_elasticsearch(mylogfile,srcfilename,casename,psort_location,server,po
     print("All entries have been inserted into database with case: "+"case_cdqr-"+casename.lower())
     mylogfile.writelines("All entries have been inserted into database with case: "+"case_cdqr-"+casename.lower()+"\n")
 
-def output_elasticsearch_ts(mylogfile,srcfilename,casename,psort_location,server,port,user):
+def output_elasticsearch_ts(mylogfile,srcfilename,casename,psort_location):
     # Run psort against plaso db file to output to an ElasticSearch server running on the localhost
     print("Exporting results in TimeSketch format to the ElasticSearch server")
     mylogfile.writelines("Exporting results in TimeSketch format to the ElasticSearch server\n")
 
     # Create command to run
     if user == "":
-        command = [psort_location,"-o","timesketch","--status_view","linear","--name",casename.lower(),"--index",casename.lower(), "--server", server, "--port", port, srcfilename]
-        command = [psort_location,"-o","timesketch","--status_view","linear","--name",casename.lower(),"--index",casename.lower(), "--server", server, "--port", port, "--elastic_user", user, srcfilename]
+        command = [psort_location,"-o","timesketch","--status_view","linear","--name",casename.lower(),"--index",casename.lower(), srcfilename]
 
     print("\""+"\" \"".join(command)+"\"")
     mylogfile.writelines("\""+"\" \"".join(command)+"\""+"\n")
@@ -1471,11 +1470,11 @@ def export_to_elasticsearch(mylogfile,args,db_file,psort_location):
     start_dt = datetime.datetime.now()
     print("\nProcess to export to ElasticSearch started")
     mylogfile.writelines("\nProcess to export to ElasticSearch started"+"\n")
-    server,port,user = get_remote_es_info(args)
     if args.es_kb:
+        server,port,user = get_remote_es_info(args)
         output_elasticsearch(mylogfile,db_file,args.es_kb[0],psort_location,server,port,user)
     else:
-        output_elasticsearch_ts(mylogfile,db_file,args.es_ts[0],psort_location,server,port,user)
+        output_elasticsearch_ts(mylogfile,db_file,args.es_ts[0],psort_location)
     end_dt = datetime.datetime.now()
     duration03 = end_dt - start_dt
     print("\nProcess to export to ElasticSearch completed")
@@ -1535,10 +1534,10 @@ def main():
     parser.add_argument('--max_cpu', action='store_true', default=False, help='Use the maximum number of cpu cores to process the image')
     parser.add_argument('--export', action='store_true' , help='Creates zipped, line delimited json export file')
     parser.add_argument('--es_kb', nargs=1,help='Outputs Kibana format to elasticsearch database. Requires index name. Example: \'--es_kb my_index\'')
+    parser.add_argument('--es_kb_server', nargs=1,help='Kibana Format Only: Exports to remote (default is 127.0.0.1) elasticsearch database. Requires Server name or IP address Example: \'--es_kb_server myserver.elk.go\' or \'--es_kb_server 192.168.1.10\'')
+    parser.add_argument('--es_kb_port', nargs=1,help='Kibana Format Only: Port (default is 9200) for remote elasticsearch database. Requires port number Example: \'--es_kb_port 9200 \'')
+    parser.add_argument('--es_kb_user', nargs=1,help='Kibana Format Only: Username (default is none) for remote elasticsearch database. Requires port number Example: \'--es_kb_user skadi \'')
     parser.add_argument('--es_ts', nargs=1,help='Outputs TimeSketch format to elasticsearch database. Requires index/timesketch name. Example: \'--es_ts my_name\'')
-    parser.add_argument('--es_server', nargs=1,help='Exports to remote (default is 127.0.0.1) elasticsearch database. Requires Server name or IP address Example: \'--es_server myserver.elk.go\' or \'--es_server 192.168.1.10\'')
-    parser.add_argument('--es_port', nargs=1,help='Port (default is 9200) for remote elasticsearch database. Requires port number Example: \'--es_port 9200 \'')
-    parser.add_argument('--es_user', nargs=1,help='Username (default is none) for remote elasticsearch database. Requires port number Example: \'--es_user skadi \'')
     parser.add_argument('--plaso_db', action='store_true', default=False,help='Process an existing Plaso DB file. Example: artifacts.plaso')
     parser.add_argument('-z',action='store_true', default=False, help='Indicates the input file is a zip file and needs to be decompressed')
     parser.add_argument('-v','--version', action='version', version=cdqr_version)
