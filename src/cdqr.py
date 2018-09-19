@@ -12,7 +12,7 @@ modes = {
 }
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 4.1.8"
+cdqr_version = "CDQR Version: 4.1.9"
 #
 ###############################################################################
 # Global Variables
@@ -1552,7 +1552,7 @@ def main():
     parser.add_argument('--es_ts', nargs=1,help='Outputs TimeSketch format to elasticsearch database. Requires index/timesketch name. Example: \'--es_ts my_name\'')
     parser.add_argument('--plaso_db', action='store_true', default=False,help='Process an existing Plaso DB file. Example: artifacts.plaso')
     parser.add_argument('-z',action='store_true', default=False, help='Indicates the input file is a zip file and needs to be decompressed')
-    parser.add_argument('--no_dependencies_check',action='store_true', default=False, help='Add the option to the log2timeline component that skips the dependencies check')
+    parser.add_argument('--no_dependencies_check',action='store_false', default=True, help='Re-enables the log2timeline the dependencies check. It is skipped by default')
     parser.add_argument('-v','--version', action='version', version=cdqr_version)
 
     args=parser.parse_args()
