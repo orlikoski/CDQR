@@ -1628,7 +1628,7 @@ def main():
         print("Number of cpu cores to use: "+str(num_cpus))
         log_list.append("Number of cpu cores to use: "+str(num_cpus)+"\n")
 
-    # Determine if Export is being used and option is valid
+    # Set filter file location
         if args.f:
             filter_file_loc = args.f[0]
             filter_file_loc = filter_file_loc.replace("\\\\","/").replace("\\","/").rstrip("/")
