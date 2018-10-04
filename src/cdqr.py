@@ -12,7 +12,7 @@ modes = {
 }
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 4.1.9"
+cdqr_version = "CDQR Version: 4.2.0"
 #
 ###############################################################################
 # Global Variables
@@ -1554,7 +1554,7 @@ def main():
     parser.add_argument('-z',action='store_true', default=False, help='Indicates the input file is a zip file and needs to be decompressed')
     parser.add_argument('--no_dependencies_check',action='store_false', default=True, help='Re-enables the log2timeline the dependencies check. It is skipped by default')
     parser.add_argument('-v','--version', action='version', version=cdqr_version)
-
+    parser.add_argument('-f', nargs=1, action="store", help='Include a filter file to filter log2timeline output. List of files to include for targeted collection of files to parse, one line per file path')
     args=parser.parse_args()
 
     # List to help with logging
@@ -1627,6 +1627,22 @@ def main():
         command1.append(str(num_cpus))
         print("Number of cpu cores to use: "+str(num_cpus))
         log_list.append("Number of cpu cores to use: "+str(num_cpus)+"\n")
+
+    # Set filter file location
+        if args.f:
+            filter_file_loc = args.f[0]
+            filter_file_loc = filter_file_loc.replace("\\\\","/").replace("\\","/").rstrip("/")
+            if filter_file_loc.count("/") > 1:
+                filter_file_loc = filter_file_loc.rstrip("/")
+
+            if not os.path.exists(filter_file_loc):
+                print("ERROR: \""+filter_file_loc+"\" cannot be found by the system.  Please verify command.")
+                print("Exiting...")
+                sys.exit(1)
+            command1.append("-f")
+            command1.append(filter_file_loc)
+            print("Filter file being used is: " + filter_file_loc)
+            log_list.append("Filter file to use is: " + filter_file_loc)
 
     # Set source location/file
         src_loc = args.src_location[0]
