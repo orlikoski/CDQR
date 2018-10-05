@@ -1573,7 +1573,7 @@ def main():
         command1 = [log2timeline_location,"--partition","all","--vss_stores","all","--status_view","linear"]
 
     # If ignore archive is not explicitly selected process them
-        if not arg.ignore_archives:
+        if not args.ignore_archives:
             command1.append("--process_archives")
 
     # Set log2timeline parsing option(s)
