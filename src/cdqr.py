@@ -12,7 +12,7 @@ modes = {
 }
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 4.2.0"
+cdqr_version = "CDQR Version: 4.2.1"
 #
 ###############################################################################
 # Global Variables
@@ -1539,23 +1539,24 @@ def main():
     parser_list = ["win","lin","mac","datt"]
 
     parser = argparse.ArgumentParser(description='Cold Disk Quick Response Tool (CDQR)')
-    parser.add_argument('src_location',nargs=1,help='Source File location: Y:/Case/Tag009/sample.E01')
-    parser.add_argument('dst_location',nargs='?',default='Results',help='Destination Folder location. If nothing is supplied then the default is \'Results\'')
-    parser.add_argument('-p','--parser', nargs=1,help='Choose parser to use.  If nothing chosen then \'win\' is used.  The parsing options are: '+', '.join(parser_list))
+    parser.add_argument('src_location', nargs=1, help='Source File location: Y:/Case/Tag009/sample.E01')
+    parser.add_argument('dst_location', nargs='?', default='Results', help='Destination Folder location. If nothing is supplied then the default is \'Results\'')
+    parser.add_argument('-p','--parser', nargs=1, help='Choose parser to use.  If nothing chosen then \'win\' is used.  The parsing options are: '+', '.join(parser_list))
     parser.add_argument('--nohash', action='store_true', default=False, help='Do not hash all the files as part of the processing of the image')
     parser.add_argument('--max_cpu', action='store_true', default=False, help='Use the maximum number of cpu cores to process the image')
-    parser.add_argument('--export', action='store_true' , help='Creates zipped, line delimited json export file')
-    parser.add_argument('--es_kb', nargs=1,help='Outputs Kibana format to elasticsearch database. Requires index name. Example: \'--es_kb my_index\'')
-    parser.add_argument('--es_kb_server', nargs=1,help='Kibana Format Only: Exports to remote (default is 127.0.0.1) elasticsearch database. Requires Server name or IP address Example: \'--es_kb_server myserver.elk.go\' or \'--es_kb_server 192.168.1.10\'')
-    parser.add_argument('--es_kb_port', nargs=1,help='Kibana Format Only: Port (default is 9200) for remote elasticsearch database. Requires port number Example: \'--es_kb_port 9200 \'')
-    parser.add_argument('--es_kb_user', nargs=1,help='Kibana Format Only: Username (default is none) for remote elasticsearch database. Requires port number Example: \'--es_kb_user skadi \'')
-    parser.add_argument('--es_ts', nargs=1,help='Outputs TimeSketch format to elasticsearch database. Requires index/timesketch name. Example: \'--es_ts my_name\'')
-    parser.add_argument('--plaso_db', action='store_true', default=False,help='Process an existing Plaso DB file. Example: artifacts.plaso')
+    parser.add_argument('--export', action='store_true', help='Creates zipped, line delimited json export file')
+    parser.add_argument('--es_kb', nargs=1, help='Outputs Kibana format to elasticsearch database. Requires index name. Example: \'--es_kb my_index\'')
+    parser.add_argument('--es_kb_server', nargs=1, help='Kibana Format Only: Exports to remote (default is 127.0.0.1) elasticsearch database. Requires Server name or IP address Example: \'--es_kb_server myserver.elk.go\' or \'--es_kb_server 192.168.1.10\'')
+    parser.add_argument('--es_kb_port', nargs=1, help='Kibana Format Only: Port (default is 9200) for remote elasticsearch database. Requires port number Example: \'--es_kb_port 9200 \'')
+    parser.add_argument('--es_kb_user', nargs=1, help='Kibana Format Only: Username (default is none) for remote elasticsearch database. Requires port number Example: \'--es_kb_user skadi \'')
+    parser.add_argument('--es_ts', nargs=1, help='Outputs TimeSketch format to elasticsearch database. Requires index/timesketch name. Example: \'--es_ts my_name\'')
+    parser.add_argument('--plaso_db', action='store_true', default=False, help='Process an existing Plaso DB file. Example: artifacts.plaso')
     parser.add_argument('-z',action='store_true', default=False, help='Indicates the input file is a zip file and needs to be decompressed')
-    parser.add_argument('--no_dependencies_check',action='store_false', default=True, help='Re-enables the log2timeline the dependencies check. It is skipped by default')
+    parser.add_argument('--no_dependencies_check', action='store_false', default=True, help='Re-enables the log2timeline the dependencies check. It is skipped by default')
+    parser.add_argument('--ignore_archives', action='store_true', default=False, help='Do not extract and inspect contents of archives found inside of artifacts list or disk image')
     parser.add_argument('-v','--version', action='version', version=cdqr_version)
     parser.add_argument('-f', nargs=1, action="store", help='Include a filter file to filter log2timeline output. List of files to include for targeted collection of files to parse, one line per file path')
-    args=parser.parse_args()
+    args = parser.parse_args()
 
     # List to help with logging
     log_list = [cdqr_version+"\n"]
@@ -1569,7 +1570,11 @@ def main():
             if not os.path.isfile(log2timeline_location):
               log2timeline_location,psort_location = query_plaso_location()
             # Default log2timeline command
-        command1 = [log2timeline_location,"--partition","all","--vss_stores","all","--status_view","linear","--process_archives"]
+        command1 = [log2timeline_location,"--partition","all","--vss_stores","all","--status_view","linear"]
+
+    # If ignore archive is not explicitly selected process them
+        if not args.ignore_archives:
+            command1.append("--process_archives")
 
     # Set log2timeline parsing option(s)
         if args.parser:
