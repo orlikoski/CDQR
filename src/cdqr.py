@@ -1553,7 +1553,7 @@ def main():
     parser.add_argument('--plaso_db', action='store_true', default=False, help='Process an existing Plaso DB file. Example: artifacts.plaso')
     parser.add_argument('-z',action='store_true', default=False, help='Indicates the input file is a zip file and needs to be decompressed')
     parser.add_argument('--no_dependencies_check', action='store_false', default=True, help='Re-enables the log2timeline the dependencies check. It is skipped by default')
-    parser.add_argument('--ignore_archives', action='store_true', default=False, help='Ignore file in archives.')
+    parser.add_argument('--ignore_archives', action='store_true', default=False, help='Do not extract and inspect contents of archives found inside of artifacts list or disk image')
     parser.add_argument('-v','--version', action='version', version=cdqr_version)
     parser.add_argument('-f', nargs=1, action="store", help='Include a filter file to filter log2timeline output. List of files to include for targeted collection of files to parse, one line per file path')
     args = parser.parse_args()
