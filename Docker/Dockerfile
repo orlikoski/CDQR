@@ -9,6 +9,7 @@ RUN add-apt-repository ppa:gift/stable
 RUN apt-get update && apt-get -y install \
   python-plaso \
   plaso-tools \
+  psycopg2 \
   python-pip
 
 # Use pip to install Timesketch
