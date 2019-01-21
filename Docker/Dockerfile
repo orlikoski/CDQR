@@ -37,6 +37,7 @@ RUN pip install /tmp/timesketch/
 RUN git clone https://github.com/orlikoski/CDQR.git /tmp/CDQR
 RUN cd /tmp/CDQR && git checkout tags/4.2.2
 RUN cp /tmp/CDQR/src/cdqr.py /usr/local/bin/cdqr.py
+
 RUN chmod a+x /usr/local/bin/cdqr.py
 
 # Cleanup apt cache
