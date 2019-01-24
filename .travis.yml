@@ -8,8 +8,8 @@ deploy:
   provider: releases
   api_key:
     secure:
-  file_glob: true
-  file: archive/**/*
+  file:
+    - cdqr.exe
   name: Draft Release
   draft: true
   skip_cleanup: true
