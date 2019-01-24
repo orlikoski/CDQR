@@ -1,0 +1,17 @@
+os: windows
+before_install:
+  - choco install python 3.7.1
+  - C:\python37\scripts\pip install pyinstaller
+script:
+  - build.sh
+deploy:
+  provider: releases
+  api_key:
+    secure:
+  file_glob: true
+  file: archive/**/*
+  name: Draft Release
+  draft: true
+  skip_cleanup: true
+  on:
+    tags: true
