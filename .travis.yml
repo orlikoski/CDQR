@@ -6,7 +6,7 @@ before_install:
   - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
   - python -m pip install --upgrade pip pyinstaller
 script:
-  - build.bat
+  - /c/Python37/Scripts/pyinstaller.exe -F --clean -c "src\cdqr.py" -n cdqr.exe -i "Icons\Martin-Berube-Character-Knight.ico"
 deploy:
   provider: releases
   api_key:
