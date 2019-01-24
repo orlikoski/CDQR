@@ -1,8 +1,8 @@
 os: windows
 language: go
 before_install:
-  - choco install python3
-  - pip install pyinstaller
+  - choco install python3 --params "/InstallDir:C:\Python37\"
+  - C:\Python37\Scripts\pip install pyinstaller
 script:
   - build.sh
 deploy:
