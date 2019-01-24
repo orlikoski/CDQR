@@ -1006,10 +1006,9 @@ def create_reports(mylogfile,dst_loc, csv_file,parser_opt):
 
 
 def plaso_version(log2timeline_location):
-    myproc = subprocess.Popen([log2timeline_location,"--version"],stderr=subprocess.PIPE)
-    output,err = myproc.communicate()
-    pver = ".".join(str(err).split(" ")[-1].split(".")[0:2]).rstrip("\\n\'").rstrip("\\r")
-    return(pver)
+    newout = subprocess.check_output([log2timeline_location,"--version"], stderr=subprocess.STDOUT).decode("utf-8")
+    pver_out = ".".join(str(newout).split(" ")[-1].split(".")[0:2]).rstrip("\\n\'").rstrip("\\r").strip()
+    return(pver_out)
 
 def output_elasticsearch(mylogfile,srcfilename,casename,psort_location,server,port,user):
     # Run psort against plaso db file to output to an ElasticSearch server running on the localhost
@@ -1604,7 +1603,6 @@ def main():
             parser_opt = default_parser
 
     # Determine if Plaso version is compatible
-        # Determine Plaso version and use correct version
         p_ver = plaso_version(log2timeline_location)
         print("Plaso Version: "+p_ver)
         log_list.append("Plaso Version: "+p_ver+"\n")
