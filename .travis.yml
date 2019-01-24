@@ -1,15 +1,17 @@
 os: windows
+language: sh
+python: "3.7"
 before_install:
-  - choco install python 3.7.1
-  - C:\python37\scripts\pip install pyinstaller
+  - choco install python3
+  - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+  - python -m pip install --upgrade pip pyinstaller
 script:
-  - build.sh
+  - /c/Python37/Scripts/pyinstaller.exe -F --clean -c "src\cdqr.py" -n cdqr.exe -i "Icons\Martin-Berube-Character-Knight.ico"
 deploy:
   provider: releases
   api_key:
     secure: BcuY8Or8PCre26nKczH9426UPoRkUddK4eZelit309w8SXfrHE3aRZILZ9cbU+8bmi5noGoeLWLiscl70COX018cnf8yzkPnAj9tigVALKojlF2Cv8Vt0p9b2l5gHZb73HMWbARkkaGlycrqofSv9LFqUyf6BSQu0UtWUaV1Y7ofZAhU3whVw+TB/0y6RrnIIq2C1qLrxMqPIrzcUcR6Bf+2RtVwqqEmjxFLawZA/IuY7HzTJd/YcWv1G6VjgELXAab0YI2BV0ZxpAmuofnV7IxBst355djlSxFy+/cHBn1YbWiIA9STWBgNUvDtp9wX12CcAUQiqeNsljb/nAUMx9gp9jkBKRtbXSW0i8wZSAH7xBVeTLYfE7oDRMAHa+jU8OTtmpgXX1zHHIcTj5stAZi+wk3GRvwNKkC+els/R+Xl8R3GLHkRS28qhYNHPIm7bEZfawM5pSOhNyxRc62mIs0zmLhjQu7eLDheJKBioM35xgCl00aV/531xjvzazRMJ/75E49LtODeE61H/I2jE2dZ8wchHHxTTvV77/kwWilYdXYfoUAFhXc1WTPyvmkMoYL/Dq0hGk05ID2/A9YYafyZRhyzfInV1NLTSezkBnjFnXIaK3REzKRVJK+WkaHxLLFJPSFVVzgZ7UlPp+CBVKbgfksp0syjyOgUpQfpJlU=
-  file:
-    - cdqr.exe
+  file: cdqr.exe
   name: Draft Release
   draft: true
   skip_cleanup: true
