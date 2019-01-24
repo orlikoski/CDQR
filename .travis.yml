@@ -1,8 +1,10 @@
 os: windows
-language: go
+language: sh
 before_install:
-  - choco install -y python3 --params "/TargetDir=C:\Python37\"
-  - C:\Python37\Scripts\pip install pyinstaller
+  - choco install python3
+  - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+  - python -m pip install --upgrade pip wheel
+  - pip install pyinstaller
 script:
   - build.sh
 deploy:
