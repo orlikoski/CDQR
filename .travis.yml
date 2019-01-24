@@ -1,10 +1,10 @@
 os: windows
 language: sh
+python: "3.7"
 before_install:
   - choco install python3
   - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
-  - python -m pip install --upgrade pip wheel
-  - pip install pyinstaller
+  - python -m pip install --upgrade pip pyinstaller
 script:
   - build.sh
 deploy:
