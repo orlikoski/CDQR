@@ -1,8 +1,8 @@
 os: windows
 language: go
 before_install:
-  - choco install python3 --version 3.7.2
-  - C:\python37\scripts\pip install pyinstaller
+  - choco install python3
+  - pip install pyinstaller
 script:
   - build.sh
 deploy:
