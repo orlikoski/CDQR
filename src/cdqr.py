@@ -23,7 +23,7 @@ modes = {
 }
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 4.2.1"
+cdqr_version = "CDQR Version: 4.3"
 #
 ###############################################################################
 # Global Variables
@@ -40,14 +40,14 @@ create_db = True
 
 
 # Compatible Plaso versions
-p_compat = ["1.3","1.4","1.5","20170930","20171231","20180127", "20180524"]
+p_compat = ["1.3","1.4","1.5","20170930","20171231","20180127", "20180524", "20181219"]
 
 # Dictionary of parsing options from command line to log2timeline
 parse_optionslatest = {
-    'win' : "amcache,appcompatcache,bash,bash_history,bagmru,bencode_transmission,bencode_utorrent,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cron,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,hachoir,java_idx,lnk,mcafee_protection,mft,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,network_drives,olecf,openxml,opera_global,opera_typed_history,pe,pls_recall,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,sccm,sophos_av,sqlite,syslog,ssh,symantec_scanlog,userassist,usnjrnl,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winjob,winlogon,winrar_mru,winreg,winreg_default,xchatlog,xchatscrollback",
-    'lin' : "bash,bash_history,bencode_transmission,bencode_utorrent,binary_cookies,bsm_log,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cron,cups_ipp,dockerjson,dpkg,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,fsevents,google_drive,hachoir,imessage,java_idx,mac_appfirewall_log,mcafee_protection,olecf,openxml,opera_global,opera_typed_history,pe,popularity_contest,safari_history,selinux,sophos_av,sqlite,ssh,symantec_scanlog,syslog,systemd_journal,utmp,utmpx,xchatlog,xchatscrollback,zsh_extended_history",
-    'mac' : "airport,apple_id,bash,bash_history,bencode_transmission,bencode_utorrent,binary_cookies,bsm_log,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cron,cups_ipp,dockerjson,dpkg,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,fsevents,google_drive,hachoir,imessage,ipod_device,java_idx,mac_appfirewall_log,mac_document_versions,mac_keychain,mac_securityd,mackeeper_cache,macosx_bluetooth,macosx_install_history,mactime,macuser,macwifi,maxos_software_update,mcafee_protection,olecf,openxml,opera_global,opera_typed_history,pe,plist,plist_default,popularity_contest,safari_history,selinux,sophos_av,spotlight,spotlight_volume,sqlite,ssh,symantec_scanlog,syslog,systemd_journal,time_machine,utmp,utmpx,xchatlog,xchatscrollback,zeitgeist,zsh_extended_history",
-    'datt' : "airport,amcache,android_app_usage,android_calls,android_sms,android_webview,android_webviewcache,appcompatcache,apple_id,appusage,asl_log,bagmru,bash,bash_history,bencode,bencode_transmission,bencode_utorrent,binary_cookies,bsm_log,ccleaner,chrome_27_history,chrome_8_history,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_preferences,cron,cups_ipp,custom_destinations,dockerjson,dpkg,esedb,explorer_mountpoints2,explorer_programscache,file_history,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,fsevents,google_drive,hachoir,imessage,ipod_device,java_idx,kik_messenger,lnk,ls_quarantine,mac_appfirewall_log,mac_document_versions,mac_keychain,mac_securityd,mackeeper_cache,macosx_bluetooth,macosx_install_history,mactime,macuser,macwifi,maxos_software_update,mcafee_protection,mft,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_webcache,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,network_drives,olecf,olecf_automatic_destinations,olecf_default,olecf_document_summary,openxml,opera_global,opera_typed_history,pe,plist,plist_default,pls_recall,popularity_contest,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,sccm,selinux,skydrive_log,skydrive_log_old,skype,sophos_av,spotlight,spotlight_volume,sqlite,srum,ssh,symantec_scanlog,syslog,systemd_journal,time_machine,twitter_ios,userassist,usnjrnl,utmp,utmpx,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winlogon,winrar_mru,winreg,winreg_default,xchatlog,xchatscrollback,zeitgeist,zsh_extended_history",
+    'win' : "bencode,czip,ccleaner,esedb,filestat,lnk,mft,mcafee_protection,olecf,pe,prefetch,recycle_bin,recycle_bin_info2,sccm,sophos_av,sqlite,symantec_scanlog,usnjrnl,winevt,winevtx,webhist,winfirewall,winjob,windows_typed_urls,winreg",
+    'lin' : "bash,bash_history,bencode,czip,dockerjson,dpkg,filestat,mcafee_protection,olecf,pls_recall,popularity_contest,selinux,sophos_av,sqlite,symantec_scanlog,syslog,systemd_journal,utmp,webhist,xchatlog,xchatscrollback,zsh_extended_history",
+    'mac' : "asl_log,bash_history,bash,bencode,bsm_log,ccleaner,cups_ipp,czipplist,filestat,fseventsd,mcafee_protection,mac_appfirewall_log,mac_keychain,mac_securityd,macwifi,mcafee_protection,olecf,sophos_av,sqlite,symantec_scanlog,syslog,utmpx,webhist,zsh_extended_history",
+    'datt' : "amcache,android_app_usage,apache_access,asl_log,bash_history,bash,bencode,binary_cookies,bsm_log,chrome_cache,chrome_preferences,cups_ipp,custom_destinations,czip,dockerjson,dpkg,esedb,filestat,firefox_cache,firefox_cache2,fsevents,gdrive_synclog,hachoir,java_idx,lnk,mac_appfirewall_log,mac_keychain,mac_securityd,mactime,macwifi,mcafee_protection,mft,msiecf,olecf,opera_global,opera_typed_history,pe,plist,pls_recall,popularity_contest,prefetch,recycle_bin_info2,recycle_bin,rplog,santa,sccm,selinux,skydrive_log_old,skydrive_log,sophos_av,sqlite,symantec_scanlog,syslog,systemd_journal,trendmicro_url,trendmicro_vd,usnjrnl,utmp,utmpx,winevt,winevtx,winfirewall,winiis,winjob,winreg,xchatlog,xchatscrollback,zsh_extended_history",
 }
 
 parse_options15 = {
@@ -739,18 +739,19 @@ def create_reports(mylogfile,dst_loc, csv_file,parser_opt):
     rpt_fsfs_search = re.compile(r'filestat|recycle_bin')
     rpt_fsmft_search = re.compile(r',mft,')
     rpt_fsusnjrnl_search = re.compile(r',usnjrnl,')
-    rpt_ih_search = re.compile(r'bencode|binary_cookies|chrome_|firefox_|google_drive|java_idx|msiecf|opera_|safari_|sqlite|windows_typed_urls')
+    rpt_ih_search = re.compile(r'webhist|windows_typed_urls')
     rpt_pf_search = re.compile(r'prefetch')
     rpt_appc_search = re.compile(r'appcompatcache')
     rpt_reg_search = re.compile(r'winreg')
     rpt_st_search = re.compile(r'winjob|windows_task_cache|cron')
     rpt_per_search = re.compile(r'bagmru|bencode|mrulist|msie_zone|mstsc_rdp|userassist|windows_bootwindows_run|windows_sam_users|windows_services|winrar_mru')
     rpt_si_search = re.compile(r'dockerjson|dpkg|explorer_|fsevents|mac_keychain|mac_securityd|mackeeper_cache|macosx_bluetooth|macosx_install_history|mactime|macuser|macwifi|network_drives|rplog|windows_shutdown|windows_timezone|windows_usb_devices|windows_usbstor_devices|windows_version')
-    rpt_av_search = re.compile(r'mcafee_protection|symantec_scanlog|winfirewall|ccleaner|sophos_av')
+    rpt_av_search = re.compile(r'mcafee_protection|symantec_scanlog|ccleaner|sophos_av')
     rpt_fw_search = re.compile(r'winfirewall|mac_appfirewall_log')
-    rpt_mac_search = re.compile(r'airport|apple_id|bash|bash_history|bsm_log|cron|cups_ipp|dockerjson|dpkg|fsevents|google_drive|hachoir|imessage|ipod_device|java_idx|mac_document_versions|mac_keychain|mac_securityd|mackeeper_cache|macosx_bluetooth|macosx_install_history|mactime|macuser|macwifi|maxos_software_update|mcafee_protection|olecf|openxml|,pe,|plist|plist_default|popularity_contest|selinux|spotlight|sqlite|ssh|syslog|systemd_journal|time_machine|utmp|xchatlog|xchatscrollback|zeitgeist|zsh_extended_history')
-    rpt_lin_search = re.compile(r'bash|bash_history|binary_cookies|bsm_log|cron|cups_ipp|dockerjson|dpkg|fsevents|google_drive|hachoir|java_idx|olecf|openxml|,pe,|popularity_contest|selinux|sqlite|ssh|syslog|systemd_journal|utmp|utmpx|xchatlog|xchatscrollback|zsh_extended_history')
+    rpt_mac_search = re.compile(r'asl_log|bash_history|bash|bencode|bsm_log|ccleaner|cups_ipp|czipplist|filestat|fseventsd|mcafee_protection|mac_appfirewall_log|mac_keychain|mac_securityd|macwifi|mcafee_protection|olecf|sophos_av|sqlite|symantec_scanlog|syslog|utmpx|webhist|zsh_extended_history')
+    rpt_lin_search = re.compile(r'bash|bash_history|bencode|czip|dockerjson|dpkg|filestat|mcafee_protection|olecf|pls_recall|popularity_contest|selinux|sophos_av|sqlite|symantec_scanlog|syslog|systemd_journal|utmp|webhist|xchatlog|xchatscrollback|zsh_extended_history')
     rpt_login_search = re.compile(r'dockerjson|ssh|winlogon|utmp')
+
     # Create a list of the report names
     if parser_opt == "datt":
         lor = [\
@@ -1713,11 +1714,14 @@ def main():
 
     print("Log File: "+ logfilename)
     print("Database File: "+ db_file)
-    print("SuperTimeline CSV File: "+ csv_file)
 
     log_list.append("Log File: "+ logfilename+"\n")
     log_list.append("Database File: "+db_file+"\n")
-    log_list.append("SuperTimeline CSV File: "+ csv_file+"\n")
+
+    # Todo only print this if not using ES or TS
+    if args.es_kb is None and args.es_ts is None:
+        print("SuperTimeline CSV File: "+ csv_file)
+        log_list.append("SuperTimeline CSV File: "+ csv_file+"\n")
 
     command1.append(db_file)
     command1.append(src_loc)
