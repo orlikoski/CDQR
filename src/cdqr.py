@@ -17,6 +17,11 @@ try:
 except:
     compression = zipfile.ZIP_STORED
 
+try:
+    input = raw_input
+except:
+    pass
+
 modes = {
     zipfile.ZIP_DEFLATED: 'deflated',
     zipfile.ZIP_STORED: 'stored',
