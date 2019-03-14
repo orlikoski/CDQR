@@ -17,8 +17,3 @@ src/Results_Linux/
 src/plaso-20180127-win32/
 src/plaso.1.5
 src/plaso*
-
-.vs/VSWorkspaceState.json
-.vs/slnx.sqlite
-.vs/ProjectSettings.json
-.vs/CDQR/v15/.suo
