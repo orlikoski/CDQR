@@ -18,7 +18,7 @@ except:
     compression = zipfile.ZIP_STORED
 
 if sys.version_info[0] < 3:
-  print('CDQR has dependencies on python3 you attempted to run this script with an incompatible python interpreter.')
+  print('CDQR requires python3 and python2 was detected. Please run this script with an compatible python interpreter.')
   sys.exit(1)
 
 modes = {
