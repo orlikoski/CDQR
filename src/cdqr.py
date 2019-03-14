@@ -17,10 +17,9 @@ try:
 except:
     compression = zipfile.ZIP_STORED
 
-try:
-    input = raw_input
-except:
-    pass
+if sys.version_info[0] < 3:
+  print('CDQR has dependencies on python3 you attempted to run this script with an incompatible python interpreter.')
+  sys.exit(1)
 
 modes = {
     zipfile.ZIP_DEFLATED: 'deflated',
