@@ -17,6 +17,10 @@ try:
 except:
     compression = zipfile.ZIP_STORED
 
+if sys.version_info[0] < 3:
+  print('CDQR requires python3 and python2 was detected. Please run this script with an compatible python interpreter.')
+  sys.exit(1)
+
 modes = {
     zipfile.ZIP_DEFLATED: 'deflated',
     zipfile.ZIP_STORED: 'stored',
@@ -665,6 +669,8 @@ def query_plaso_location():
 
 # Ask a yes/no question via input() and return their answer.
 def query_yes_no(question, default="yes"):
+    if args.confirmAll:
+        return True
     if default == "yes":
         prompt = " [Y/n]"
         yes = set(['yes','y', 'ye', ''])
@@ -1567,6 +1573,7 @@ def main():
     parser.add_argument('--ignore_archives', action='store_true', default=False, help='Do not extract and inspect contents of archives found inside of artifacts list or disk image')
     parser.add_argument('-v','--version', action='version', version=cdqr_version)
     parser.add_argument('-f', nargs=1, action="store", help='Include a filter file to filter log2timeline output. List of files to include for targeted collection of files to parse, one line per file path')
+    parser.add_argument('-y', action="store_true", default=False, dest='confirmAll', help='Accepts all defaults on prompted questions in the program.')
     args = parser.parse_args()
 
     # List to help with logging
