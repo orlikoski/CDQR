@@ -27,7 +27,7 @@ modes = {
 }
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 4.3"
+cdqr_version = "CDQR Version: 4.4"
 #
 ###############################################################################
 # Global Variables
@@ -668,9 +668,12 @@ def query_plaso_location():
                 return l2t_loc, p_loc
 
 # Ask a yes/no question via input() and return their answer.
-def query_yes_no(question, default="yes"):
+def query_yes_no(args, question, default="yes"):
     if args.confirmAll:
-        return True
+        if default == "yes":
+          return True
+        else:
+          return False
     if default == "yes":
         prompt = " [Y/n]"
         yes = set(['yes','y', 'ye', ''])
@@ -714,7 +717,7 @@ def multi_thread_reports(mqueue,infile,terms):
     print("Report Created:",terms[2])
 
 
-def create_reports(mylogfile,dst_loc, csv_file,parser_opt):
+def create_reports(args,mylogfile,dst_loc, csv_file,parser_opt):
     start_dt = datetime.datetime.now()
     print("Reporting started at: "+str(start_dt))
     mylogfile.writelines("Reporting started at: "+str(start_dt)+"\n")
@@ -829,7 +832,7 @@ def create_reports(mylogfile,dst_loc, csv_file,parser_opt):
             existing_report_list.append(rpt_name)
 
     if all_reports_exit:
-        if query_yes_no("\nAll sub-reports already exist.  Would you like to delete these files?","no"):
+        if query_yes_no(args, "\nAll sub-reports already exist.  Would you like to delete these files?","no"):
             for rpt_name in lor:
                 os.remove(rpt_name)
         else:
@@ -1081,7 +1084,7 @@ def create_export(dst_loc,srcfilename,mylogfile,db_file,psort_location):
     dstrawfilename = dst_loc+"/"+srcfilename.split("/")[-1]+".json"
     dstfilename = dst_loc+"/"+srcfilename.split("/")[-1]+".json.zip"
     if os.path.exists(dstfilename):
-        if query_yes_no("\n"+dstfilename+" already exists.  Would you like to delete that file?","no"):
+        if query_yes_no(args, "\n"+dstfilename+" already exists.  Would you like to delete that file?","no"):
             os.remove(dstfilename)
 
     # Run psort against plaso db file to output a file in line delimited json format
@@ -1391,10 +1394,10 @@ def report_improvements(lor,mylogfile):
 
 
 # This processes the image using parser option selected and creates .plaso file
-def parse_the_things(mylogfile,command1,db_file,unzipped_file,unzipped_file_loc,csv_file):
+def parse_the_things(args,mylogfile,command1,db_file,unzipped_file,unzipped_file_loc,csv_file):
     # Check if the database and supertimeline files already exists and ask to keep or delete them if they do
     if os.path.isfile(db_file):
-        if query_yes_no("\n"+db_file+" already exists.  Would you like to delete this file?","no"):
+        if query_yes_no(args, "\n"+db_file+" already exists.  Would you like to delete this file?","no"):
             print("Removing the existing file: "+db_file)
             mylogfile.writelines("Removing the existing file: "+db_file+"\n")
             os.remove(db_file)
@@ -1443,10 +1446,10 @@ def parse_the_things(mylogfile,command1,db_file,unzipped_file,unzipped_file_loc,
 
     return
 
-def create_supertimeline(mylogfile,csv_file,psort_location,db_file):
+def create_supertimeline(args,mylogfile,csv_file,psort_location,db_file):
     # This processes the .plaso file creates the SuperTimeline
     if os.path.isfile(csv_file):
-        if query_yes_no("\n"+csv_file+" already exists.  Would you like to delete this file?","no"):
+        if query_yes_no(args, "\n"+csv_file+" already exists.  Would you like to delete this file?","no"):
             print("Removing the existing file: "+csv_file)
             mylogfile.writelines("Removing the existing file: "+csv_file+"\n")
             os.remove(csv_file)
@@ -1681,7 +1684,7 @@ def main():
         dst_loc = args.dst_location.replace("\\\\","/").replace("\\","/").rstrip("/")
 
         if os.path.exists(dst_loc):
-            if not query_yes_no("\n"+dst_loc+" already exists.  Would you like to use that directory anyway?","yes"):
+            if not query_yes_no(args, "\n"+dst_loc+" already exists.  Would you like to use that directory anyway?","yes"):
                 dst_loc = dst_loc+"_"+datetime.datetime.now().strftime("%d-%b-%y_%H-%M-%S")
                 os.makedirs(dst_loc)
         else:
@@ -1695,7 +1698,7 @@ def main():
             src_loc = unzip_files(dst_loc,src_loc)
             unzipped_file_loc = dst_loc+"/artifacts/"
         elif src_loc[-4:].lower() == ".zip":
-            if query_yes_no("\n"+src_loc+" appears to be a zip file.  Would you like CDQR to unzip it and process the contents?","yes"):
+            if query_yes_no(args, "\n"+src_loc+" appears to be a zip file.  Would you like CDQR to unzip it and process the contents?","yes"):
                 unzipped_file = True
                 src_loc = unzip_files(dst_loc,src_loc)
                 unzipped_file_loc = dst_loc+"/artifacts/"
@@ -1750,15 +1753,15 @@ def main():
         mylogfile.writelines("\nWARNING: File must be plaso database file otherwise it will not work.  Example: artifact.plaso (from CDQR)"+"\n")
         db_file = src_loc
     else:
-        parse_the_things(mylogfile,command1,db_file,unzipped_file,unzipped_file_loc,csv_file)
+        parse_the_things(args,mylogfile,command1,db_file,unzipped_file,unzipped_file_loc,csv_file)
 
     if args.export:
         export_to_json(dst_loc,src_loc,mylogfile,db_file,psort_location)
     elif args.es_kb or args.es_ts:
         export_to_elasticsearch(mylogfile,args,db_file,psort_location)
     else:
-        create_supertimeline(mylogfile,csv_file,psort_location,db_file)
-        create_reports(mylogfile,dst_loc,csv_file,parser_opt)
+        create_supertimeline(args,mylogfile,csv_file,psort_location,db_file)
+        create_reports(args,mylogfile,dst_loc,csv_file,parser_opt)
 
     end_dt = datetime.datetime.now()
     duration_full = end_dt - start_dt
