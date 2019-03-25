@@ -4,7 +4,7 @@ The CDQR docker is a docker image with CDQR and all of the dependencies installe
 The docker itself is stored on DockerHub at https://hub.docker.com/r/aorlikoski/cdqr. The docker can be used by `docker run aorlikoski/cdqr`.
 
 # Skadi Compatibility
-Due to do the complexity of using docker a helper bash script `cdqr` was created. It was made to work specifically on the Skadi server environment. It can be easily modified to work in any environment.
+Due to the complexity of using docker a helper bash script `cdqr` was created. It was made to work specifically on the Skadi server environment. It can be easily modified to work in any environment.
 
 # Command Line Changes
 It is not required to use `aorlikoski/cdqr` but it makes the transition much easier. That said, there is one critical difference in the commands used with the bash script `cdqr` vs the original python `cdqr.py`. The path to the data being processed (input) and the path to the output folder (output) are parsed differently in the bash script.
