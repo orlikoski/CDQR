@@ -57,12 +57,6 @@ duration02 = end_dt - start_dt
 duration03 = end_dt - start_dt
 create_db = True
 
-# Compatible Plaso versions
-p_compat = [
-    "1.3", "1.4", "1.5", "20170930", "20171231", "20180127", "20180524",
-    "20181219"
-]
-
 # Dictionary of parsing options from command line to log2timeline
 parse_optionslatest = {
     'win':
@@ -1792,13 +1786,6 @@ def get_parser_list(parser_opt, plaso_ver):
     parserlist = parse_optionslatest[parser_opt]
     unknownversion = True
 
-    if plaso_ver in p_compat:
-        unknownversion = False
-
-    if unknownversion:
-        print(
-            "WARNING!! Known compatible version of Plaso NOT detected. Attempting to use default parser list. Try using the --no_dependencies_check if Plaso dependancies are the issue."
-        )
     return parserlist
 
 
@@ -2541,18 +2528,6 @@ def main():
         else:
             # Set Default parser value to "datt"
             parser_opt = default_parser
-
-    # Determine if Plaso version is compatible
-        p_ver = plaso_version(log2timeline_location)
-        print("Plaso Version: " + p_ver)
-        log_list.append("Plaso Version: " + p_ver + "\n")
-
-        plaso_ver = plaso_version(log2timeline_location)
-        if plaso_ver not in p_compat:
-            if not re.match(r"^201\d{5}$", plaso_ver):
-                print("Plaso version " + plaso_ver +
-                      " not supported.....Exiting")
-                sys.exit(1)
 
     # Determine if Export is being used and option is valid
         if args.export:
