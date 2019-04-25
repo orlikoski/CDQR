@@ -5,14 +5,15 @@ FROM ubuntu:18.04
 RUN apt-get update && apt-get -y upgrade && apt-get -y dist-upgrade
 
 # Setup install environment and Timesketch dependencies
-RUN apt-get -y install apt-transport-https\
-                       curl\
-                       git\
-                       libffi-dev\
-                       lsb-release\
-                       python-dev\
-                       python-pip\
-                       python-psycopg2
+RUN apt-get -y install apt-transport-https \
+    cmdtest \
+    curl \
+    git \
+    libffi-dev \
+    lsb-release \
+    python-dev \
+    python-pip \
+    python-psycopg2
 
 RUN curl -sS https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 RUN VERSION=node_8.x && \

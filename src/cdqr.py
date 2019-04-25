@@ -10,7 +10,20 @@ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 this program. If not, see <http://www.gnu.org/licenses/>.
 """
-import io, os, sys, argparse, subprocess, csv, time, datetime, re, multiprocessing, shutil, zipfile, queue, threading
+import io, \
+  os, \
+  sys, \
+  argparse, \
+  subprocess, \
+  csv, \
+  time, \
+  datetime, \
+  re, \
+  multiprocessing, \
+  shutil, \
+  zipfile, \
+  queue, \
+  threading
 try:
     import zlib
     compression = zipfile.ZIP_DEFLATED
@@ -29,7 +42,7 @@ modes = {
 }
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 4.4"
+cdqr_version = "CDQR Version: 4.5.beta"
 #
 ###############################################################################
 # Global Variables
@@ -2708,4 +2721,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
