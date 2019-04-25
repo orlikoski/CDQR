@@ -2529,6 +2529,13 @@ def main():
             # Set Default parser value to "datt"
             parser_opt = default_parser
 
+    # Determine if Plaso version is compatible
+        p_ver = plaso_version(log2timeline_location)
+        print("Plaso Version: " + p_ver)
+        log_list.append("Plaso Version: " + p_ver + "\n")
+
+        plaso_ver = plaso_version(log2timeline_location)
+
     # Determine if Export is being used and option is valid
         if args.export:
             print("Export data option selected")
