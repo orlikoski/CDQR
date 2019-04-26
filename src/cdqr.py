@@ -1752,7 +1752,9 @@ def create_export(dst_loc, srcfilename, mylogfile, db_file, psort_location, logn
 
 def get_parser_list(parser_opt, plaso_ver, args):
     parserlist = parse_optionslatest[parser_opt]
-    parser_opt = args.parser[0]
+    parser_opt = "win"
+    if args.parser:
+        parser_opt = args.parser[0]
     if parser_opt != "datt":
         if args.mft:
              parserlist = parserlist + ",mft"
