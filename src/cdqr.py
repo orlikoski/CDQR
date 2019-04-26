@@ -2516,11 +2516,11 @@ def main():
         'Re-enables the log2timeline the dependencies check. It is skipped by default'
     )
     parser.add_argument(
-        '--ignore_archives',
+        '--process_archives',
         action='store_true',
         default=False,
         help=
-        'Do not extract and inspect contents of archives found inside of artifacts list or disk image'
+        'Extract and inspect contents of archives found inside of artifacts or disk images'
     )
     parser.add_argument(
         '-v', '--version', action='version', version=cdqr_version)
@@ -2548,8 +2548,8 @@ def main():
             "--status_view", "linear"
         ]
 
-        # If ignore archive is not explicitly selected process them
-        if not args.ignore_archives:
+        # Do not process archives unless enabled
+        if args.process_archives:
             command1.append("--process_archives")
 
     # Set log2timeline parsing option(s)
@@ -2566,7 +2566,7 @@ def main():
             if parser_opt == "lin" or parser_opt == "mac":
                 command1 = [
                     log2timeline_location, "--partition", "all",
-                    "--status_view", "none", "--process_archives"
+                    "--status_view", "none"
                 ]
         else:
             # Set Default parser
