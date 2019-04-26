@@ -1754,7 +1754,7 @@ def create_export(dst_loc, srcfilename, mylogfile, db_file, psort_location, logn
     # Create command to run
     command = [
         psort_location, "-o", "json_line", "--status_view", "linear", db_file,
-        "-w", "--log-file", logname, dstrawfilename
+        "--log-file", "-w", logname, dstrawfilename
     ]
 
     print("\"" + "\" \"".join(command) + "\"")
@@ -2272,7 +2272,7 @@ def create_supertimeline(args, mylogfile, csv_file, psort_location, db_file, log
             return
     command2 = [
         psort_location, "-o", "l2tcsv", "--status_view", "linear", db_file,
-        "-w", "--log-file", logname, csv_file
+        "--log-file", "-w", logname, csv_file
     ]
     # Create SuperTimeline
     print("\nCreating the SuperTimeline CSV file")
