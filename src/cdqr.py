@@ -2643,7 +2643,7 @@ def main():
 
         # Set artifact filters
         if args.artifact_filters:
-            artifact_filters_file = args.artifact_filters[0]
+            artifact_filters = args.artifact_filters[0]
             command1.append("--artifact_filters")
             command1.append(artifact_filters)
             print("Artifact Definitions used: " + artifact_filters)
