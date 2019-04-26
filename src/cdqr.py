@@ -1216,7 +1216,7 @@ eventlog_dict = {
 
 def verify_file(file_location_tmp):
     file_loc = file_location_tmp
-    file_loc = filter_file_loc.replace("\\\\", "/").replace(
+    file_loc = file_loc.replace("\\\\", "/").replace(
         "\\", "/").rstrip("/")
     if file_loc.count("/") > 1:
         filter_file_loc = file_loc.rstrip("/")
