@@ -1214,6 +1214,20 @@ eventlog_dict = {
 ####################### BEGIN FUNCTIONS ############################
 
 
+def verify_file(file_location_tmp):
+    file_loc = file_location_tmp
+    file_loc = filter_file_loc.replace("\\\\", "/").replace(
+        "\\", "/").rstrip("/")
+    if file_loc.count("/") > 1:
+        filter_file_loc = file_loc.rstrip("/")
+
+    if not os.path.exists(file_loc):
+        print(
+            "ERROR: \"" + file_loc +
+            "\" cannot be found by the system.  Please verify command.")
+        print("Exiting...")
+        sys.exit(1)
+
 def query_plaso_location():
     # This prompts user for a plaso location and confirms it exists before returning
     # a valided file location
@@ -2443,7 +2457,7 @@ def main():
         used to describe and quickly collect data of interest, \
         such as specific files or Windows Registry keys.')
     parser.add_argument(
-        '--file-filter', '-f',
+        '--file_filter', '-f',
         nargs=1,
         help='Plaso passthrough: List of files to include for targeted \
          collection of files to parse, one line per file path, setup is \
@@ -2593,40 +2607,28 @@ def main():
         log_list.append("Number of cpu cores to use: " + str(num_cpus) + "\n")
 
         # Set filter file location
-        if args.f:
-            filter_file_loc = args.f[0]
-            filter_file_loc = filter_file_loc.replace("\\\\", "/").replace(
-                "\\", "/").rstrip("/")
-            if filter_file_loc.count("/") > 1:
-                filter_file_loc = filter_file_loc.rstrip("/")
-
-            if not os.path.exists(filter_file_loc):
-                print(
-                    "ERROR: \"" + filter_file_loc +
-                    "\" cannot be found by the system.  Please verify command.")
-                print("Exiting...")
-                sys.exit(1)
-            command1.append("-f")
+        if args.FILE_FILTER:
+            filter_file_loc = verify_file(args.FILE_FILTER[0])
+            command1.append("--file_filter")
             command1.append(filter_file_loc)
             print("Filter file being used is: " + filter_file_loc)
             log_list.append("Filter file to use is: " + filter_file_loc)
 
-    # Set source location/file
-        src_loc = args.src_location[0]
-        src_loc = src_loc.replace("\\\\", "/").replace("\\", "/").rstrip("/")
-        if src_loc.count("/") > 1:
-            src_loc = src_loc.rstrip("/")
+        # Set custom artifact definitions file location
+        if args.CUSTOM_ARTIFACT_DEFINITIONS:
+            custom_artifact_definitions_file = verify_file(args.CUSTOM_ARTIFACT_DEFINITIONS[0])
+            command1.append("--custom_artifact_definitions")
+            command1.append(custom_artifact_definitions_file)
+            print("Custom Artifact Definition file being used is: " + custom_artifact_definitions_file)
+            log_list.append("Filter file to use is: " + custom_artifact_definitions_file)
 
-        if not os.path.exists(src_loc):
-            print("ERROR: \"" + src_loc +
-                  "\" cannot be found by the system.  Please verify command.")
-            print("Exiting...")
-            sys.exit(1)
+
+    # Set source location/file
+        src_loc = verify_file(args.src_location[0])
 
     # Set destination location/file
         dst_loc = args.dst_location.replace("\\\\",
                                             "/").replace("\\", "/").rstrip("/")
-
         if os.path.exists(dst_loc):
             if not query_yes_no(
                     args, "\n" + dst_loc +
