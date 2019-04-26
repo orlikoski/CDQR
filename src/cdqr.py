@@ -1227,6 +1227,8 @@ def verify_file(file_location_tmp):
             "\" cannot be found by the system.  Please verify command.")
         print("Exiting...")
         sys.exit(1)
+    else:
+        return file_loc
 
 def query_plaso_location():
     # This prompts user for a plaso location and confirms it exists before returning
