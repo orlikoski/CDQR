@@ -2443,7 +2443,7 @@ def main():
         used to describe and quickly collect data of interest, \
         such as specific files or Windows Registry keys.')
     parser.add_argument(
-        '--file-filter', '-f'
+        '--file-filter', '-f',
         nargs=1,
         help='Plaso passthrough: List of files to include for targeted \
          collection of files to parse, one line per file path, setup is \
