@@ -2649,8 +2649,6 @@ def main():
             print("Artifact Definitions used: " + artifact_filters)
             log_list.append("Artifact Definitions used: " + artifact_filters)
 
-artifact_filters
-
     # Set source location/file
         src_loc = verify_file(args.src_location[0])
 
