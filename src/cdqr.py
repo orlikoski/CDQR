@@ -2405,6 +2405,45 @@ def main():
         action='store_true',
         help='Creates zipped, line delimited json export file')
     parser.add_argument(
+        '--artifact_filters',
+        nargs=1,
+        help='Plaso passthrough: Names of forensic artifact definitions, \
+            provided on the command command line (comma separated). Forensic \
+            artifacts are stored in .yaml files that are directly \
+            pulled from the artifact definitions project. You can \
+            also specify a custom artifacts yaml file (see \
+            --custom_artifact_definitions). Artifact definitions \
+            can be used to describe and quickly collect data of \
+            interest, such as specific files or Windows Registry \
+            keys.')
+    parser.add_argument(
+        '--artifact_filters_file',
+        nargs=1,
+        help='Plaso passthrough: Names of forensic artifact definitions, \
+            provided in a file with one artifact name per line. Forensic \
+            artifacts are stored in .yaml files that are directly \
+            pulled from the artifact definitions project. You can \
+            also specify a custom artifacts yaml file (see \
+            --custom_artifact_definitions). Artifact definitions \
+            can be used to describe and quickly collect data of \
+            interest, such as specific files or Windows Registry \
+            keys.')
+    parser.add_argument(
+        '--artifact_definitions',
+        nargs=1,
+        help='Plaso passthrough: Path to a directory containing artifact \
+            definitions, which are .yaml files. Artifact definitions can \
+            be used to describe and quickly collect data of interest, \
+            such as specific files or Windows Registry keys.')
+    parser.add_argument(
+        '--custom_artifact_definitions',
+        nargs=1,
+        help='Plaso passthrough: Path to a file containing custom artifact \
+        definitions, which are .yaml files. Artifact definitions can be \
+        used to describe and quickly collect data of interest, \
+        such as specific files or Windows Registry keys.')
+
+    parser.add_argument(
         '--es_kb',
         nargs=1,
         help=
@@ -2650,6 +2689,7 @@ def main():
         log_list.append("SuperTimeline CSV File: " + csv_file + "\n")
 
     command1.append(db_file)
+    command1.append("--data")
     command1.append(src_loc)
 
     if args.no_dependencies_check:
