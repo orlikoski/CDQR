@@ -42,7 +42,7 @@ modes = {
 }
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 4.5.beta"
+cdqr_version = "CDQR Version: 5.0"
 #
 ###############################################################################
 # Global Variables
