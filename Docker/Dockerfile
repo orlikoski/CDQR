@@ -35,7 +35,7 @@ RUN pip install /tmp/timesketch/
 
 # Download and install CDQR
 RUN git clone https://github.com/orlikoski/CDQR.git /tmp/CDQR
-RUN cd /tmp/CDQR && git checkout tags/4.4
+RUN cd /tmp/CDQR && git checkout tags/5.0
 RUN cp /tmp/CDQR/src/cdqr.py /usr/local/bin/cdqr.py
 RUN chmod a+x /usr/local/bin/cdqr.py
 
