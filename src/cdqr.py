@@ -1661,7 +1661,7 @@ def output_elasticsearch(mylogfile, srcfilename, casename, psort_location,
     # Create psort command to run
     command = [
         psort_location, "-o", "elastic", "--status_view", "linear",
-        "--index_name", "case_cdqr-" + casename.lower(), "--log-file", "psort_"+logname, "--server", server,
+        "--index_name", "case_cdqr-" + casename.lower(), "--log-file", logname, "--server", server,
         "--port", port, srcfilename
     ]
     if user != "":
@@ -1692,7 +1692,7 @@ def output_elasticsearch_ts(mylogfile, srcfilename, casename, psort_location, lo
     # Create command to run
     command = [
         psort_location, "-o", "timesketch", "--status_view", "linear",
-        "--log-file", "psort_"+logname, "--name", casename.lower(),
+        "--log-file", logname, "--name", casename.lower(),
         "--index", casename.lower(), srcfilename
     ]
 
@@ -1754,7 +1754,7 @@ def create_export(dst_loc, srcfilename, mylogfile, db_file, psort_location, logn
     # Create command to run
     command = [
         psort_location, "-o", "json_line", "--status_view", "linear", db_file,
-        "-w", "--log-file", "psort_"+logname, dstrawfilename
+        "-w", "--log-file", logname, dstrawfilename
     ]
 
     print("\"" + "\" \"".join(command) + "\"")
@@ -2272,7 +2272,7 @@ def create_supertimeline(args, mylogfile, csv_file, psort_location, db_file, log
             return
     command2 = [
         psort_location, "-o", "l2tcsv", "--status_view", "linear", db_file,
-        "-w", "--log-file", "psort_"+logname, csv_file
+        "-w", "--log-file", logname, csv_file
     ]
     # Create SuperTimeline
     print("\nCreating the SuperTimeline CSV file")
