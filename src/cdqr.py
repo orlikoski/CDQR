@@ -2410,6 +2410,18 @@ def main():
         help=
         'Do not hash all the files as part of the processing of the image')
     parser.add_argument(
+        '--mft',
+        action='store_true',
+        default=False,
+        help=
+        'Process the MFT file (disabled by default except for DATT)')
+    parser.add_argument(
+        '--usnjrnl',
+        action='store_true',
+        default=False,
+        help=
+        'Process the USNJRNL file (disabled by default except for DATT)')
+    parser.add_argument(
         '--max_cpu',
         action='store_true',
         default=False,
