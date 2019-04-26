@@ -2618,8 +2618,8 @@ def main():
             log_list.append("Filter file to use is: " + filter_file_loc)
 
         # Set custom artifact definitions file location
-        if args.CUSTOM_ARTIFACT_DEFINITIONS:
-            custom_artifact_definitions_file = verify_file(args.CUSTOM_ARTIFACT_DEFINITIONS[0])
+        if args.custom_artifact_definitions:
+            custom_artifact_definitions_file = verify_file(args.custom_artifact_definitions[0])
             command1.append("--custom_artifact_definitions")
             command1.append(custom_artifact_definitions_file)
             print("Custom Artifact Definition file being used is: " + custom_artifact_definitions_file)
