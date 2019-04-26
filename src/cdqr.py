@@ -1660,7 +1660,7 @@ def output_elasticsearch(mylogfile, srcfilename, casename, psort_location,
 
     # Create psort command to run
     command = [
-        psort_location, "-o", "elastic", "--status_view", "linear",
+        psort_location, "-o", "elastic", "--status_view", "none",
         "--index_name", "case_cdqr-" + casename.lower(), "--logfile", logname, "--server", server,
         "--port", port, srcfilename
     ]
@@ -1691,7 +1691,7 @@ def output_elasticsearch_ts(mylogfile, srcfilename, casename, psort_location, lo
 
     # Create command to run
     command = [
-        psort_location, "-o", "timesketch", "--status_view", "linear",
+        psort_location, "-o", "timesketch", "--status_view", "none",
         "--logfile", logname, "--name", casename.lower(),
         "--index", casename.lower(), srcfilename
     ]
@@ -1753,7 +1753,7 @@ def create_export(dst_loc, srcfilename, mylogfile, db_file, psort_location, logn
 
     # Create command to run
     command = [
-        psort_location, "-o", "json_line", "--status_view", "linear", db_file,
+        psort_location, "-o", "json_line", "--status_view", "none", db_file,
         "--logfile", logname, "-w", dstrawfilename
     ]
 
@@ -2271,7 +2271,7 @@ def create_supertimeline(args, mylogfile, csv_file, psort_location, db_file, log
             mylogfile.writelines("Keeping the existing file: " + csv_file)
             return
     command2 = [
-        psort_location, "-o", "l2tcsv", "--status_view", "linear", db_file,
+        psort_location, "-o", "l2tcsv", "--status_view", "none", db_file,
         "--logfile", logname, "-w", csv_file
     ]
     # Create SuperTimeline
@@ -2524,7 +2524,7 @@ def main():
             if parser_opt == "lin" or parser_opt == "mac":
                 command1 = [
                     log2timeline_location, "--partition", "all",
-                    "--status_view", "linear", "--process_archives"
+                    "--status_view", "none", "--process_archives"
                 ]
         else:
             # Set Default parser value to "datt"
