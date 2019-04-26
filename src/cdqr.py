@@ -2614,17 +2614,42 @@ def main():
             filter_file_loc = verify_file(args.file_filter[0])
             command1.append("--file_filter")
             command1.append(filter_file_loc)
-            print("Filter file being used is: " + filter_file_loc)
-            log_list.append("Filter file to use is: " + filter_file_loc)
+            print("Filter file used: " + filter_file_loc)
+            log_list.append("Filter file used: " + filter_file_loc)
 
         # Set custom artifact definitions file location
         if args.custom_artifact_definitions:
             custom_artifact_definitions_file = verify_file(args.custom_artifact_definitions[0])
             command1.append("--custom_artifact_definitions")
             command1.append(custom_artifact_definitions_file)
-            print("Custom Artifact Definition file being used is: " + custom_artifact_definitions_file)
-            log_list.append("Filter file to use is: " + custom_artifact_definitions_file)
+            print("Custom Artifact Definition file used: " + custom_artifact_definitions_file)
+            log_list.append("Custom Artifact Definition file used: " + custom_artifact_definitions_file)
 
+        # Set artifact definitions file location
+        if args.artifact_definitions:
+            artifact_definitions_file = verify_file(args.artifact_definitions[0])
+            command1.append("--artifact_definitions")
+            command1.append(artifact_definitions_file)
+            print("Artifact Definition file used: " + artifact_definitions_file)
+            log_list.append("Artifact Definition file used: " + artifact_definitions_file)
+
+        # Set artifact filters file location
+        if args.artifact_filters_file:
+            artifact_filters_file = verify_file(args.artifact_filters_file[0])
+            command1.append("--artifact_filters_file")
+            command1.append(artifact_filters_file)
+            print("Artifact Definition file used: " + artifact_filters_file)
+            log_list.append("Artifact Definition file used: " + artifact_filters_file)
+
+        # Set artifact filters
+        if args.artifact_filters:
+            artifact_filters_file = args.artifact_filters[0]
+            command1.append("--artifact_filters")
+            command1.append(artifact_filters)
+            print("Artifact Definitions used: " + artifact_filters)
+            log_list.append("Artifact Definitions used: " + artifact_filters)
+
+artifact_filters
 
     # Set source location/file
         src_loc = verify_file(args.src_location[0])
