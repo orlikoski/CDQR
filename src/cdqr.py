@@ -2443,10 +2443,10 @@ def main():
         used to describe and quickly collect data of interest, \
         such as specific files or Windows Registry keys.')
     parser.add_argument(
-        '--file-filter',
+        '--file-filter', '-f'
         nargs=1,
-        help='List of files to include for targeted collection of \
-        files to parse, one line per file path, setup is \
+        help='Plaso passthrough: List of files to include for targeted \
+         collection of files to parse, one line per file path, setup is \
         /path|file - where each element can contain either a \
         variable set in the preprocessing stage or a regular \
         expression.')
@@ -2507,13 +2507,6 @@ def main():
     )
     parser.add_argument(
         '-v', '--version', action='version', version=cdqr_version)
-    parser.add_argument(
-        '-f',
-        nargs=1,
-        action="store",
-        help=
-        'Include a filter file to filter log2timeline output. List of files to include for targeted collection of files to parse, one line per file path'
-    )
     parser.add_argument(
         '-y',
         action="store_true",
