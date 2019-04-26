@@ -2442,7 +2442,14 @@ def main():
         definitions, which are .yaml files. Artifact definitions can be \
         used to describe and quickly collect data of interest, \
         such as specific files or Windows Registry keys.')
-
+    parser.add_argument(
+        '--file-filter',
+        nargs=1,
+        help='List of files to include for targeted collection of \
+        files to parse, one line per file path, setup is \
+        /path|file - where each element can contain either a \
+        variable set in the preprocessing stage or a regular \
+        expression.')
     parser.add_argument(
         '--es_kb',
         nargs=1,
@@ -2689,7 +2696,6 @@ def main():
         log_list.append("SuperTimeline CSV File: " + csv_file + "\n")
 
     command1.append(db_file)
-    command1.append("--data")
     command1.append(src_loc)
 
     if args.no_dependencies_check:
