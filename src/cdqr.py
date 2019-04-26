@@ -1755,7 +1755,7 @@ def get_parser_list(parser_opt, plaso_ver, args):
     parser_opt = "win"
     if args.parser:
         parser_opt = args.parser[0]
-    if parser_opt != "datt":
+    if parser_opt = "win":
         if args.mft:
              parserlist = parserlist + ",mft"
         if args.usnjrnl:
