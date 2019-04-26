@@ -61,6 +61,8 @@ create_db = True
 parse_optionslatest = {
     'win':
     "bencode,czip,ccleaner,esedb,filestat,lnk,mcafee_protection,olecf,pe,prefetch,recycle_bin,recycle_bin_info2,sccm,sophos_av,sqlite,symantec_scanlog,winevt,winevtx,webhist,winfirewall,winjob,windows_typed_urls,winreg",
+    'mft_usnjrnl`:
+    "mft,usnjrnl",
     'lin':
     "bash,bash_history,bencode,czip,dockerjson,dpkg,filestat,mcafee_protection,olecf,pls_recall,popularity_contest,selinux,sophos_av,sqlite,symantec_scanlog,syslog,systemd_journal,utmp,webhist,xchatlog,xchatscrollback,zsh_extended_history",
     'mac':
@@ -1765,10 +1767,8 @@ def create_export(dst_loc, srcfilename, mylogfile, db_file, psort_location, logn
 
     return dstfilename
 
-
 def get_parser_list(parser_opt, plaso_ver, args):
     parserlist = parse_optionslatest[parser_opt]
-    parser_opt = "win"
     if args.parser:
         parser_opt = args.parser[0]
     if parser_opt == "win":
@@ -1779,9 +1779,7 @@ def get_parser_list(parser_opt, plaso_ver, args):
 
     return parserlist
 
-
 ###################### REPORT FIXING SECTION ###############################
-
 
 def prefetch_report_fix(row):
     header_desc_rows = report_header_dict['Prefetch Report.csv'][0][0]

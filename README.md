@@ -145,6 +145,10 @@ There are four available parsers for CDQR: `datt` , `win` , `lin` , and `mac` an
   ```
   bencode,czip,ccleaner,esedb,filestat,lnk,mcafee_protection,olecf,pe,prefetch,recycle_bin,recycle_bin_info2,sccm,sophos_av,sqlite,symantec_scanlog,winevt,winevtx,webhist,winfirewall,winjob,windows_typed_urls,winreg
   ```
+* **mft_usnjrnl**
+  ```
+  mft,usnjrnl
+  ```
 * **mac**
   ```
   asl_log,bash_history,bash,bencode,bsm_log,ccleaner,cups_ipp,czipplist,filestat,fseventsd,mcafee_protection,mac_appfirewall_log,mac_keychain,mac_securityd,macwifi,mcafee_protection,olecf,sophos_av,sqlite,symantec_scanlog,syslog,utmpx,webhist,zsh_extended_history
