@@ -1758,8 +1758,6 @@ def get_parser_list(parser_opt, plaso_ver, args):
     if args.usnjrnl:
         parserlist = parserlist + ",usnjrnl"
 
-if args.es_kb:
-    casename = args.es_kb[0]
     return parserlist
 
 
