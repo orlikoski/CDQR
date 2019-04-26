@@ -1753,10 +1753,11 @@ def create_export(dst_loc, srcfilename, mylogfile, db_file, psort_location, logn
 def get_parser_list(parser_opt, plaso_ver, args):
     parserlist = parse_optionslatest[parser_opt]
     unknownversion = True
-    if args.mft:
-         parserlist = parserlist + ",mft"
-    if args.usnjrnl:
-        parserlist = parserlist + ",usnjrnl"
+    if args.parser[0] != "datt":
+        if args.mft:
+             parserlist = parserlist + ",mft"
+        if args.usnjrnl:
+            parserlist = parserlist + ",usnjrnl"
 
     return parserlist
 
@@ -2510,7 +2511,7 @@ def main():
                     "--status_view", "none", "--process_archives"
                 ]
         else:
-            # Set Default parser value to "datt"
+            # Set Default parser
             parser_opt = default_parser
 
     # Determine if Plaso version is compatible
