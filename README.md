@@ -2,7 +2,7 @@
 
 CDQR — Cold Disk Quick Response tool by Alan Orlikoski
 
-For latest release click [here](https://github.com/rough007/CDQR/releases/latest)
+For latest release click [here](https://github.com/orlikoski/CDQR/releases/latest)
 ## Videos and Media
 *  [OSDFCON 2017](http://www.osdfcon.org/presentations/2017/Asif-Matadar_Rapid-Incident-Response.pdf) Slides: Walk-through different techniques that are required to provide forensics results for Windows and *nix environments (Including CyLR and CDQR)
 
@@ -26,23 +26,9 @@ It creates up to 16 Reports (.csv files) based on triaging best practices and th
       Login, File System, Internet History, System Information, AntiVirus, Firewall, Mac, and Linux
       ```
 
-## What's New
-*  Now Supports Plaso 20180127
-*  Now using ".plaso" extention to match TimeSketch output (makes it easier to import into TimeSketch through its web UI)
-*  Improved logging
-
 ## Important Notes
 * Make sure account has permissions to create files and directories when running (when in doubt, run as administrator)
 *  Ensure line endings are correct for the OS it is running on
-
-## SYNOPSIS
-
-Windows 64-bit binary or Python 3.x
-```
-cdqr.[exe|py] [-h] [-p [PARSER]] [--nohash] [--max_cpu] [--export]
-                [--es_kb ES_KB] [--es_ts ES_TS] [--plaso_db] [-z] [-v]
-                src_location [dst_location]
-```
 
 ## DESCRIPTION
 
@@ -60,99 +46,127 @@ This program uses [Plaso](https://github.com/log2timeline/plaso/wiki) and a stre
       Login, File System, Internet History, System Information, AntiVirus, Firewall, Mac, and Linux
       ```
 
-## ARGUMENTS
-* `src_location` — Source file location, such as `Y:\Case\Tag009\sample.E01`, `E:\Artifacts_folder\` or `E:\Artifacts_folder\mylogs.evtx` or `E:\Artifacts_folder\mylogs.zip`
-* `dst_location` — Destination folder location. If nothing is supplied, then the default is `Results\`
+## ARGUMENTS & OPTIONS
+```
+positional arguments:
+  src_location          Source File location: Y:/Case/Tag009/sample.E01
+  dst_location          Destination Folder location. If nothing is supplied
+                        then the default is 'Results'
 
-
-## OPTIONS
-
-* `-h` , `--help` — Show this help message and exit.
-* `-p [parser]` , `--parser [parser]` — Choose parser to use. If nothing is chosen then `win` is used.
-* `--nohash` — Do not hash all the files as part of the processing of the image.
-* `--max_cpu` — Use the same number of workers as cpu cores
-* `--export` — Creates gzipped, line delimited json export file
-* `--es_ts ES_TS` — Outputs TimeSketch format to local elasticsearch database. Requires index/timesketch name. Example: '--es_ts my_name'
-* `--es_kb ES_KB` — Outputs Kibana format to local elasticsearch database. Requires index name. Example: '--es_kb my_index'
-* `--plaso_db` — Process an existing Plaso DB file. Example: artifacts.db OR artifacts.plaso
-* `-z` — Indicates the input file is a zip file and needs to be decompressed
-* `-v : --version` — Show version
-
+optional arguments:
+  -h, --help            show this help message and exit
+  -p PARSER, --parser PARSER
+                        Choose parser to use. If nothing chosen then 'win' is
+                        used. The parsing options are: win, lin, mac, datt
+  --nohash              Do not hash all the files as part of the processing of
+                        the image
+  --mft                 Process the MFT file (disabled by default except for
+                        DATT)
+  --usnjrnl             Process the USNJRNL file (disabled by default except
+                        for DATT)
+  --max_cpu             Use the maximum number of cpu cores to process the
+                        image
+  --export              Creates zipped, line delimited json export file
+  --artifact_filters ARTIFACT_FILTERS
+                        Plaso passthrough: Names of forensic artifact
+                        definitions, provided on the command command line
+                        (comma separated). Forensic artifacts are stored in
+                        .yaml files that are directly pulled from the artifact
+                        definitions project. You can also specify a custom
+                        artifacts yaml file (see
+                        --custom_artifact_definitions). Artifact definitions
+                        can be used to describe and quickly collect data of
+                        interest, such as specific files or Windows Registry
+                        keys.
+  --artifact_filters_file ARTIFACT_FILTERS_FILE
+                        Plaso passthrough: Names of forensic artifact
+                        definitions, provided in a file with one artifact name
+                        per line. Forensic artifacts are stored in .yaml files
+                        that are directly pulled from the artifact definitions
+                        project. You can also specify a custom artifacts yaml
+                        file (see --custom_artifact_definitions). Artifact
+                        definitions can be used to describe and quickly
+                        collect data of interest, such as specific files or
+                        Windows Registry keys.
+  --artifact_definitions ARTIFACT_DEFINITIONS
+                        Plaso passthrough: Path to a directory containing
+                        artifact definitions, which are .yaml files. Artifact
+                        definitions can be used to describe and quickly
+                        collect data of interest, such as specific files or
+                        Windows Registry keys.
+  --custom_artifact_definitions CUSTOM_ARTIFACT_DEFINITIONS
+                        Plaso passthrough: Path to a file containing custom
+                        artifact definitions, which are .yaml files. Artifact
+                        definitions can be used to describe and quickly
+                        collect data of interest, such as specific files or
+                        Windows Registry keys.
+  --file_filter FILE_FILTER, -f FILE_FILTER
+                        Plaso passthrough: List of files to include for
+                        targeted collection of files to parse, one line per
+                        file path, setup is /path|file - where each element
+                        can contain either a variable set in the preprocessing
+                        stage or a regular expression.
+  --es_kb ES_KB         Outputs Kibana format to elasticsearch database.
+                        Requires index name. Example: '--es_kb my_index'
+  --es_kb_server ES_KB_SERVER
+                        Kibana Format Only: Exports to remote (default is
+                        127.0.0.1) elasticsearch database. Requires Server
+                        name or IP address Example: '--es_kb_server
+                        myserver.elk.go' or '--es_kb_server 192.168.1.10'
+  --es_kb_port ES_KB_PORT
+                        Kibana Format Only: Port (default is 9200) for remote
+                        elasticsearch database. Requires port number Example:
+                        '--es_kb_port 9200 '
+  --es_kb_user ES_KB_USER
+                        Kibana Format Only: Username (default is none) for
+                        remote elasticsearch database. Requires port number
+                        Example: '--es_kb_user skadi '
+  --es_ts ES_TS         Outputs TimeSketch format to elasticsearch database.
+                        Requires index/timesketch name. Example: '--es_ts
+                        my_name'
+  --plaso_db            Process an existing Plaso DB file. Example:
+                        artifacts.plaso
+  -z                    Indicates the input file is a zip file and needs to be
+                        decompressed
+  --no_dependencies_check
+                        Re-enables the log2timeline the dependencies check. It
+                        is skipped by default
+  --process_archives    Extract and inspect contents of archives found inside
+                        of artifacts or disk images
+  -v, --version         show program's version number and exit
+  -y                    Accepts all defaults on prompted questions in the
+                        program.
+```
 
 ## PARSER LIST
 
 There are four available parsers for CDQR: `datt` , `win` , `lin` , and `mac` and here the Plaso parsers they represent:
 * **win**
-  * Plaso v20170930
   ```
-    appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,java_idx,mcafee_protection,mft,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,network_drives,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,symantec_scanlog,userassist,usnjrnl,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winjob,winlogon,winrar_mru,winreg,winreg_default
+  bencode,czip,ccleaner,esedb,filestat,lnk,mcafee_protection,olecf,pe,prefetch,recycle_bin,recycle_bin_info2,sccm,sophos_av,sqlite,symantec_scanlog,winevt,winevtx,webhist,winfirewall,winjob,windows_typed_urls,winreg
   ```
-* Plaso v1.5.x
+* **mft_usnjrnl**
   ```
-    appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,java_idx,mcafee_protection,mft,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,network_drives,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,symantec_scanlog,userassist,usnjrnl,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winjob,winlogon,winrar_mru,winreg,winreg_default
-  ```
-  * Plaso v1.4
-  ```
-  appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,java_idx,mcafee_protection,mft,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,symantec_scanlog,userassist,usnjrnl,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winjob,winrar_mru,winreg,winreg_default
-  ```
-  * Plaso v1.3
-  ```
-  appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cookies,firefox_downloads,firefox_history,firefox_old_cache,google_drive,java_idx,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msie_zone_software,msiecf,mstsc_rdp,mstsc_rdp_mru,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,symantec_scanlog,userassist,windows_boot_execute,windows_boot_verify,windows_run,windows_run_software,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winrar_mru,winreg,winreg_default
-  ```
-* **datt**
-  * Plaso v20170930
-  ```
-    airport,android_app_usage,android_calls,android_sms,appcompatcache,apple_id,appusage,asl_log,bagmru,bencode,bencode_transmission,bencode_utorrent,binary_cookies,bsm_log,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cron,cups_ipp,custom_destinations,dockerjson,dpkg,esedb,esedb_file_history,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,imessage,ipod_device,java_idx,kik_messenger,lnk,ls_quarantine,mac_appfirewall_log,mac_document_versions,mac_keychain,mac_securityd,mackeeper_cache,macosx_bluetooth,macosx_install_history,mactime,macuser,macwifi,maxos_software_update,mcafee_protection,mft,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_webcache,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,network_drives,olecf,olecf_automatic_destinations,olecf_default,olecf_document_summary,olecf_summary,openxml,opera_global,opera_typed_history,pe,plist,plist_default,pls_recall,popularity_contest,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,sccm,selinux,skydrive_log,skydrive_log_old,skype,spotlight,spotlight_volume,sqlite,ssh,symantec_scanlog,syslog,time_machine,twitter_ios,userassist,usnjrnl,utmp,utmpx,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winlogon,winrar_mru,winreg,winreg_default,xchatlog,xchatscrollback,zeitgeist,zsh_extended_history
-  ```
-* Plaso v1.5.x
-  ```
-    airport,android_app_usage,android_calls,android_sms,appcompatcache,apple_id,appusage,asl_log,bagmru,bencode,bencode_transmission,bencode_utorrent,binary_cookies,bsm_log,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cron,cups_ipp,custom_destinations,dockerjson,dpkg,esedb,esedb_file_history,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,imessage,ipod_device,java_idx,kik_messenger,lnk,ls_quarantine,mac_appfirewall_log,mac_document_versions,mac_keychain,mac_securityd,mackeeper_cache,macosx_bluetooth,macosx_install_history,mactime,macuser,macwifi,maxos_software_update,mcafee_protection,mft,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_webcache,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,network_drives,olecf,olecf_automatic_destinations,olecf_default,olecf_document_summary,olecf_summary,openxml,opera_global,opera_typed_history,pe,plist,plist_default,pls_recall,popularity_contest,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,sccm,selinux,skydrive_log,skydrive_log_old,skype,spotlight,spotlight_volume,sqlite,ssh,symantec_scanlog,syslog,time_machine,twitter_ios,userassist,usnjrnl,utmp,utmpx,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winlogon,winrar_mru,winreg,winreg_default,xchatlog,xchatscrollback,zeitgeist,zsh_extended_history
-  ```
-  * Plaso v1.4
-  ```
-  airport,android_app_usage,android_calls,android_sms,appcompatcache,apple_id,appusage,asl_log,bagmru,bencode,bencode_transmission,bencode_utorrent,binary_cookies,bsm_log,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cups_ipp,custom_destinations,esedb,esedb_file_history,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,ipod_device,java_idx,lnk,ls_quarantine,mac_appfirewall_log,mac_document_versions,mac_keychain,mac_securityd,mackeeper_cache,macosx_bluetooth,macosx_install_history,mactime,macuser,macwifi,maxos_software_update,mcafee_protection,mft,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_webcache,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,olecf,olecf_automatic_destinations,olecf_default,olecf_document_summary,olecf_summary,openxml,opera_global,opera_typed_history,pe,plist,plist_default,pls_recall,popularity_contest,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,sccm,selinux,skydrive_log,skydrive_log_old,skype,spotlight,spotlight_volume,sqlite,symantec_scanlog,syslog,time_machine,userassist,usnjrnl,utmp,utmpx,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winrar_mru,winreg,winreg_default,xchatlog,xchatscrollback,zeitgeist
-  ```
-  * Plaso v1.3
-  ```
-  android_app_usage,asl_log,bencode,binary_cookies,bsm_log,chrome_cache,chrome_preferences,cups_ipp,custom_destinations,esedb,filestat,firefox_cache,firefox_old_cache,hachoir,java_idx,lnk,mac_appfirewall_log,mac_keychain,mac_securityd,mactime,macwifi,mcafee_protection,msiecf,olecf,openxml,opera_global,opera_typed_history,pcap,pe,plist,pls_recall,popularity_contest,prefetch,recycle_bin,recycle_bin_info2,rplog,selinux,skydrive_log,skydrive_log_error,sqlite,symantec_scanlog,syslog,utmp,utmpx,winevt,winevtx,winfirewall,winiis,winjob,winreg,xchatlog,xchatscrollback,bencode_transmission,bencode_utorrent,esedb_file_history,msie_webcache,olecf_automatic_destinations,olecf_default,olecf_document_summary,olecf_summary,airport,apple_id,ipod_device,macosx_bluetooth,macosx_install_history,macuser,maxos_software_update,plist_default,safari_history,spotlight,spotlight_volume,time_machine,android_calls,android_sms,appusage,chrome_cookies,chrome_extension_activity,chrome_history,firefox_cookies,firefox_downloads,firefox_history,google_drive,ls_quarantine,mac_document_versions,mackeeper_cache,skype,zeitgeist,appcompatcache,bagmru,ccleaner,explorer_mountpoints2,explorer_programscache,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msie_zone_software,mstsc_rdp,mstsc_rdp_mru,userassist,windows_boot_execute,windows_boot_verify,windows_run,windows_run_software,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winrar_mru,winreg_default
+  mft,usnjrnl
   ```
 * **mac**
-  * Plaso v1.5
   ```
-  airport,apple_id,appusage,binary_cookies,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cron,dockerjson,dpkg,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,imessage,ipod_device,java_idx,mac_appfirewall_log,mac_keychain,mac_securityd,mackeeper_cache,macosx_bluetooth,macosx_install_history,mactime,macuser,maxos_software_update,mcafee_protection,opera_global,opera_typed_history,plist,plist_default,popularity_contest,safari_history,spotlight,spotlight_volume,ssh,symantec_scanlog,time_machine,utmp,utmpx,zsh_extended_history
-  ```
-  * Plaso v1.4
-  ```
-  binary_cookies,bsm_log,chrome_cache,chrome_preferences,filestat,firefox_cache,firefox_cache2,java_idx,mac_appfirewall_log,mac_keychain,mac_securityd,mactime,mcafee_protection,opera_global,opera_typed_history,plist,popularity_contest,selinux,utmp,utmpx,airport,apple_id,macosx_install_history,plist_default,spotlight,spotlight_volume,time_machine,appusage,chrome_cookies,chrome_extension_activity,chrome_history,firefox_cookies,firefox_downloads,firefox_history,google_drive,ls_quarantine,mackeeper_cache
-  ```
-  * Plaso v1.3  
-  ```
-  macosx
+  asl_log,bash_history,bash,bencode,bsm_log,ccleaner,cups_ipp,czipplist,filestat,fseventsd,mcafee_protection,mac_appfirewall_log,mac_keychain,mac_securityd,macwifi,mcafee_protection,olecf,sophos_av,sqlite,symantec_scanlog,syslog,utmpx,webhist,zsh_extended_history
+
   ```
 * **lin**
-  * Plaso v20170930
   ```
-  binary_cookies,bsm_log,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cron,dockerjson,dpkg,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,imessage,java_idx,mac_appfirewall_log,mcafee_protection,opera_global,opera_typed_history,popularity_contest,safari_history,selinux,ssh,symantec_scanlog,utmp,utmpx,zsh_extended_history
-  ```
-  * Plaso v1.5.x
-  ```
-  binary_cookies,bsm_log,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cron,dockerjson,dpkg,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,imessage,java_idx,mac_appfirewall_log,mcafee_protection,opera_global,opera_typed_history,popularity_contest,safari_history,selinux,ssh,symantec_scanlog,utmp,utmpx,zsh_extended_history
-  ```
-  * Plaso v1.4
-  ```
-  airport,apple_id,appusage,binary_cookies,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,ipod_device,java_idx,mac_appfirewall_log,mac_keychain,mac_securityd,mackeeper_cache,macosx_bluetooth,macosx_install_history,mactime,macuser,maxos_software_update,mcafee_protection,opera_global,opera_typed_history,plist,plist_default,popularity_contest,safari_history,spotlight,spotlight_volume,symantec_scanlog,time_machine,utmp,utmpx
-  ```
-  * Plaso v1.3  
-  ```
-  linux
-  ```
+  bash,bash_history,bencode,czip,dockerjson,dpkg,filestat,mcafee_protection,olecf,pls_recall,popularity_contest,selinux,sophos_av,sqlite,symantec_scanlog,syslog,systemd_journal,utmp,webhist,xchatlog,xchatscrollback,zsh_extended_history
 
+  ```
+* **datt**
+  ```
+  amcache,android_app_usage,apache_access,asl_log,bash_history,bash,bencode,binary_cookies,bsm_log,chrome_cache,chrome_preferences,cups_ipp,custom_destinations,czip,dockerjson,dpkg,esedb,filestat,firefox_cache,firefox_cache2,fsevents,gdrive_synclog,hachoir,java_idx,lnk,mac_appfirewall_log,mac_keychain,mac_securityd,mactime,macwifi,mcafee_protection,mft,msiecf,olecf,opera_global,opera_typed_history,pe,plist,pls_recall,popularity_contest,prefetch,recycle_bin_info2,recycle_bin,rplog,santa,sccm,selinux,skydrive_log_old,skydrive_log,sophos_av,sqlite,symantec_scanlog,syslog,systemd_journal,trendmicro_url,trendmicro_vd,usnjrnl,utmp,utmpx,winevt,winevtx,winfirewall,winiis,winjob,winreg,xchatlog,xchatscrollback,zsh_extended_history
+  ```
 ## DEPENDENCIES
 
-1. 64-bit Windows, Linux, or Mac Operating System 
-2. Depending on your preference, either:
-  * Win 64-bit: [Plaso 1.5.x (x64)](https://github.com/log2timeline/plaso/releases) AND [Microsoft Visual C++ 2010 Redistributable Package (x64)](https://www.microsoft.com/en-us/download/details.aspx?id=14632), or
-  * Win 32-bit: [Plaso 1.5.x (x86)](https://github.com/log2timeline/plaso/releases) AND [Microsoft Visual C++ 2008 Redistributable Package (x86)](https://www.microsoft.com/en-us/download/details.aspx?id=29)
+1. 64-bit Windows, Linux, or Mac Operating System (OS)
+2. The appropriate version of Plaso for the OS https://github.com/log2timeline/plaso/releases
 3. [Python v3.x](https://www.python.org/downloads/) (if using cdqr.py source code)
 
 ## EXAMPLES
@@ -176,14 +190,9 @@ cdqr.exe -z --max_cpu C:\artifacts\tag009\artifacts.zip
 cdqr.exe -z --max_cpu C:\artifacts\tag009\artifacts.zip --es myindexname
 ```
 
-## Plaso Installation Guides
-1. From Plaso's site [Windows Installation Guide](https://github.com/log2timeline/plaso/wiki/Windows-Packaged-Release)
-2. From Plaso's site [Ubuntu and SIFT Installation Guide](https://github.com/log2timeline/plaso/wiki/Ubuntu-Packaged-Release)
-3. From Plaso's site [Mac OS X Installation Guide](https://github.com/log2timeline/plaso/wiki/Development-release-Mac-OS-X)
-
 
 ## AUTHOR
 
 Alan Orlikoski
-* [GitHub](https://github.com/rough007)
+* [GitHub](https://github.com/orlikoski)
 * [Twitter](https://twitter.com/AlanOrlikoski)

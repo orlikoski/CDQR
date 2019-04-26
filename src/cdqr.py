@@ -10,7 +10,20 @@ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 this program. If not, see <http://www.gnu.org/licenses/>.
 """
-import io, os, sys, argparse, subprocess, csv, time, datetime, re, multiprocessing, shutil, zipfile, queue, threading
+import io, \
+  os, \
+  sys, \
+  argparse, \
+  subprocess, \
+  csv, \
+  time, \
+  datetime, \
+  re, \
+  multiprocessing, \
+  shutil, \
+  zipfile, \
+  queue, \
+  threading
 try:
     import zlib
     compression = zipfile.ZIP_DEFLATED
@@ -29,7 +42,7 @@ modes = {
 }
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 4.4"
+cdqr_version = "CDQR Version: 5.0"
 #
 ###############################################################################
 # Global Variables
@@ -44,55 +57,18 @@ duration02 = end_dt - start_dt
 duration03 = end_dt - start_dt
 create_db = True
 
-# Compatible Plaso versions
-p_compat = [
-    "1.3", "1.4", "1.5", "20170930", "20171231", "20180127", "20180524",
-    "20181219"
-]
-
 # Dictionary of parsing options from command line to log2timeline
 parse_optionslatest = {
     'win':
-    "bencode,czip,ccleaner,esedb,filestat,lnk,mft,mcafee_protection,olecf,pe,prefetch,recycle_bin,recycle_bin_info2,sccm,sophos_av,sqlite,symantec_scanlog,usnjrnl,winevt,winevtx,webhist,winfirewall,winjob,windows_typed_urls,winreg",
+    "bencode,czip,ccleaner,esedb,filestat,lnk,mcafee_protection,olecf,pe,prefetch,recycle_bin,recycle_bin_info2,sccm,sophos_av,sqlite,symantec_scanlog,winevt,winevtx,webhist,winfirewall,winjob,windows_typed_urls,winreg",
+    'mft_usnjrnl':
+    "mft,usnjrnl",
     'lin':
     "bash,bash_history,bencode,czip,dockerjson,dpkg,filestat,mcafee_protection,olecf,pls_recall,popularity_contest,selinux,sophos_av,sqlite,symantec_scanlog,syslog,systemd_journal,utmp,webhist,xchatlog,xchatscrollback,zsh_extended_history",
     'mac':
     "asl_log,bash_history,bash,bencode,bsm_log,ccleaner,cups_ipp,czipplist,filestat,fseventsd,mcafee_protection,mac_appfirewall_log,mac_keychain,mac_securityd,macwifi,mcafee_protection,olecf,sophos_av,sqlite,symantec_scanlog,syslog,utmpx,webhist,zsh_extended_history",
     'datt':
     "amcache,android_app_usage,apache_access,asl_log,bash_history,bash,bencode,binary_cookies,bsm_log,chrome_cache,chrome_preferences,cups_ipp,custom_destinations,czip,dockerjson,dpkg,esedb,filestat,firefox_cache,firefox_cache2,fsevents,gdrive_synclog,hachoir,java_idx,lnk,mac_appfirewall_log,mac_keychain,mac_securityd,mactime,macwifi,mcafee_protection,mft,msiecf,olecf,opera_global,opera_typed_history,pe,plist,pls_recall,popularity_contest,prefetch,recycle_bin_info2,recycle_bin,rplog,santa,sccm,selinux,skydrive_log_old,skydrive_log,sophos_av,sqlite,symantec_scanlog,syslog,systemd_journal,trendmicro_url,trendmicro_vd,usnjrnl,utmp,utmpx,winevt,winevtx,winfirewall,winiis,winjob,winreg,xchatlog,xchatscrollback,zsh_extended_history",
-}
-
-parse_options15 = {
-    'win':
-    "sqlite,appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,java_idx,mcafee_protection,mft,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,network_drives,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,symantec_scanlog,userassist,usnjrnl,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winjob,winlogon,winrar_mru,winreg,winreg_default",
-    'lin':
-    "sqlite,binary_cookies,bsm_log,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cron,dockerjson,dpkg,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,imessage,java_idx,mac_appfirewall_log,mcafee_protection,opera_global,opera_typed_history,popularity_contest,safari_history,selinux,ssh,symantec_scanlog,utmp,utmpx,zsh_extended_history",
-    'mac':
-    "sqlite,airport,apple_id,appusage,binary_cookies,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cron,dockerjson,dpkg,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,imessage,ipod_device,java_idx,mac_appfirewall_log,mac_keychain,mac_securityd,mackeeper_cache,macosx_bluetooth,macosx_install_history,mactime,macuser,maxos_software_update,mcafee_protection,opera_global,opera_typed_history,plist,plist_default,popularity_contest,safari_history,spotlight,spotlight_volume,ssh,symantec_scanlog,time_machine,utmp,utmpx,zsh_extended_history",
-    'datt':
-    "airport,android_app_usage,android_calls,android_sms,appcompatcache,apple_id,appusage,asl_log,bagmru,bencode,bencode_transmission,bencode_utorrent,binary_cookies,bsm_log,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cron,cups_ipp,custom_destinations,dockerjson,dpkg,esedb,esedb_file_history,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,imessage,ipod_device,java_idx,kik_messenger,lnk,ls_quarantine,mac_appfirewall_log,mac_document_versions,mac_keychain,mac_securityd,mackeeper_cache,macosx_bluetooth,macosx_install_history,mactime,macuser,macwifi,maxos_software_update,mcafee_protection,mft,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_webcache,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,network_drives,olecf,olecf_automatic_destinations,olecf_default,olecf_document_summary,olecf_summary,openxml,opera_global,opera_typed_history,pe,plist,plist_default,pls_recall,popularity_contest,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,sccm,selinux,skydrive_log,skydrive_log_old,skype,spotlight,spotlight_volume,sqlite,ssh,symantec_scanlog,syslog,time_machine,twitter_ios,userassist,usnjrnl,utmp,utmpx,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winlogon,winrar_mru,winreg,winreg_default,xchatlog,xchatscrollback,zeitgeist,zsh_extended_history",
-}
-
-parse_options14 = {
-    'win':
-    "sqlite,appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,java_idx,mcafee_protection,mft,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,symantec_scanlog,userassist,usnjrnl,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winjob,winrar_mru,winreg,winreg_default",
-    'lin':
-    "sqlite,binary_cookies,bsm_log,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,java_idx,mac_appfirewall_log,mcafee_protection,opera_global,opera_typed_history,popularity_contest,safari_history,selinux,symantec_scanlog,utmp,utmpx",
-    'mac':
-    "sqlite,airport,apple_id,appusage,binary_cookies,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,ipod_device,java_idx,mac_appfirewall_log,mac_keychain,mac_securityd,mackeeper_cache,macosx_bluetooth,macosx_install_history,mactime,macuser,maxos_software_update,mcafee_protection,opera_global,opera_typed_history,plist,plist_default,popularity_contest,safari_history,spotlight,spotlight_volume,symantec_scanlog,time_machine,utmp,utmpx",
-    'datt':
-    "airport,android_app_usage,android_calls,android_sms,appcompatcache,apple_id,appusage,asl_log,bagmru,bencode,bencode_transmission,bencode_utorrent,binary_cookies,bsm_log,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,cups_ipp,custom_destinations,esedb,esedb_file_history,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cache2,firefox_cookies,firefox_downloads,firefox_history,google_drive,ipod_device,java_idx,lnk,ls_quarantine,mac_appfirewall_log,mac_document_versions,mac_keychain,mac_securityd,mackeeper_cache,macosx_bluetooth,macosx_install_history,mactime,macuser,macwifi,maxos_software_update,mcafee_protection,mft,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_webcache,msie_zone,msiecf,mstsc_rdp,mstsc_rdp_mru,olecf,olecf_automatic_destinations,olecf_default,olecf_document_summary,olecf_summary,openxml,opera_global,opera_typed_history,pe,plist,plist_default,pls_recall,popularity_contest,prefetch,recycle_bin,recycle_bin_info2,rplog,safari_history,sccm,selinux,skydrive_log,skydrive_log_old,skype,spotlight,spotlight_volume,sqlite,symantec_scanlog,syslog,time_machine,userassist,usnjrnl,utmp,utmpx,windows_boot_execute,windows_boot_verify,windows_run,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winrar_mru,winreg,winreg_default,xchatlog,xchatscrollback,zeitgeist",
-}
-
-parse_options13 = {
-    'win':
-    "sqlite,appcompatcache,bagmru,binary_cookies,ccleaner,chrome_cache,chrome_cookies,chrome_extension_activity,chrome_history,chrome_preferences,explorer_mountpoints2,explorer_programscache,filestat,firefox_cache,firefox_cookies,firefox_downloads,firefox_history,firefox_old_cache,google_drive,java_idx,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msie_zone_software,msiecf,mstsc_rdp,mstsc_rdp_mru,opera_global,opera_typed_history,prefetch,recycle_bin,recycle_bin_info2,rplog,symantec_scanlog,userassist,windows_boot_execute,windows_boot_verify,windows_run,windows_run_software,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winevt,winevtx,winfirewall,winiis,winjob,winrar_mru,winreg,winreg_default",
-    'lin':
-    "linux",
-    'mac':
-    "macosx",
-    'datt':
-    "android_app_usage,asl_log,bencode,binary_cookies,bsm_log,chrome_cache,chrome_preferences,cups_ipp,custom_destinations,esedb,filestat,firefox_cache,firefox_old_cache,hachoir,java_idx,lnk,mac_appfirewall_log,mac_keychain,mac_securityd,mactime,macwifi,mcafee_protection,msiecf,olecf,openxml,opera_global,opera_typed_history,pcap,pe,plist,pls_recall,popularity_contest,prefetch,recycle_bin,recycle_bin_info2,rplog,selinux,skydrive_log,skydrive_log_error,sqlite,symantec_scanlog,syslog,utmp,utmpx,winevt,winevtx,winfirewall,winiis,winjob,winreg,xchatlog,xchatscrollback,bencode_transmission,bencode_utorrent,esedb_file_history,msie_webcache,olecf_automatic_destinations,olecf_default,olecf_document_summary,olecf_summary,airport,apple_id,ipod_device,macosx_bluetooth,macosx_install_history,macuser,maxos_software_update,plist_default,safari_history,spotlight,spotlight_volume,time_machine,android_calls,android_sms,appusage,chrome_cookies,chrome_extension_activity,chrome_history,firefox_cookies,firefox_downloads,firefox_history,google_drive,ls_quarantine,mac_document_versions,mackeeper_cache,skype,zeitgeist,appcompatcache,bagmru,ccleaner,explorer_mountpoints2,explorer_programscache,microsoft_office_mru,microsoft_outlook_mru,mrulist_shell_item_list,mrulist_string,mrulistex_shell_item_list,mrulistex_string,mrulistex_string_and_shell_item,mrulistex_string_and_shell_item_list,msie_zone,msie_zone_software,mstsc_rdp,mstsc_rdp_mru,userassist,windows_boot_execute,windows_boot_verify,windows_run,windows_run_software,windows_sam_users,windows_services,windows_shutdown,windows_task_cache,windows_timezone,windows_typed_urls,windows_usb_devices,windows_usbstor_devices,windows_version,winrar_mru,winreg_default"
 }
 
 # All credit for these definitions below to: https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/default.aspx
@@ -1240,6 +1216,22 @@ eventlog_dict = {
 ####################### BEGIN FUNCTIONS ############################
 
 
+def verify_file(file_location_tmp):
+    file_loc = file_location_tmp
+    file_loc = file_loc.replace("\\\\", "/").replace(
+        "\\", "/").rstrip("/")
+    if file_loc.count("/") > 1:
+        filter_file_loc = file_loc.rstrip("/")
+
+    if not os.path.exists(file_loc):
+        print(
+            "ERROR: \"" + file_loc +
+            "\" cannot be found by the system.  Please verify filename and path are correct.")
+        print("Exiting...")
+        sys.exit(1)
+    else:
+        return file_loc
+
 def query_plaso_location():
     # This prompts user for a plaso location and confirms it exists before returning
     # a valided file location
@@ -1645,7 +1637,7 @@ def plaso_version(log2timeline_location):
 
 
 def output_elasticsearch(mylogfile, srcfilename, casename, psort_location,
-                         server, port, user):
+                         server, port, user, logname):
     # Run psort against plaso db file to output to an ElasticSearch server running on the localhost
     print("Exporting results in Kibana format to the ElasticSearch server")
     mylogfile.writelines(
@@ -1653,8 +1645,8 @@ def output_elasticsearch(mylogfile, srcfilename, casename, psort_location,
 
     # Create psort command to run
     command = [
-        psort_location, "-o", "elastic", "--status_view", "linear",
-        "--index_name", "case_cdqr-" + casename.lower(), "--server", server,
+        psort_location, "-o", "elastic", "--status_view", "none",
+        "--index_name", "case_cdqr-" + casename.lower(), "--logfile", logname, "--server", server,
         "--port", port, srcfilename
     ]
     if user != "":
@@ -1676,7 +1668,7 @@ def output_elasticsearch(mylogfile, srcfilename, casename, psort_location,
         "case_cdqr-" + casename.lower() + "\n")
 
 
-def output_elasticsearch_ts(mylogfile, srcfilename, casename, psort_location):
+def output_elasticsearch_ts(mylogfile, srcfilename, casename, psort_location, logname):
     # Run psort against plaso db file to output to an ElasticSearch server running on the localhost
     print("Exporting results in TimeSketch format to the ElasticSearch server")
     mylogfile.writelines(
@@ -1684,8 +1676,9 @@ def output_elasticsearch_ts(mylogfile, srcfilename, casename, psort_location):
 
     # Create command to run
     command = [
-        psort_location, "-o", "timesketch", "--status_view", "linear",
-        "--name", casename.lower(), "--index", casename.lower(), srcfilename
+        psort_location, "-o", "timesketch", "--status_view", "none",
+        "--logfile", logname, "--name", casename.lower(),
+        "--index", casename.lower(), srcfilename
     ]
 
     print("\"" + "\" \"".join(command) + "\"")
@@ -1729,7 +1722,7 @@ def unzip_source(src_loc_tmp, outputzipfolder):
         sys.exit(1)
 
 
-def create_export(dst_loc, srcfilename, mylogfile, db_file, psort_location):
+def create_export(dst_loc, srcfilename, mylogfile, db_file, psort_location, logname):
     # Create Output filenames
     dstrawfilename = dst_loc + "/" + srcfilename.split("/")[-1] + ".json"
     dstfilename = dst_loc + "/" + srcfilename.split("/")[-1] + ".json.zip"
@@ -1745,8 +1738,8 @@ def create_export(dst_loc, srcfilename, mylogfile, db_file, psort_location):
 
     # Create command to run
     command = [
-        psort_location, "-o", "json_line", "--status_view", "linear", db_file,
-        "-w", dstrawfilename
+        psort_location, "-o", "json_line", "--status_view", "none", db_file,
+        "--logfile", logname, "-w", dstrawfilename
     ]
 
     print("\"" + "\" \"".join(command) + "\"")
@@ -1774,23 +1767,19 @@ def create_export(dst_loc, srcfilename, mylogfile, db_file, psort_location):
 
     return dstfilename
 
-
-def get_parser_list(parser_opt, plaso_ver):
+def get_parser_list(parser_opt, plaso_ver, args):
     parserlist = parse_optionslatest[parser_opt]
-    unknownversion = True
+    if args.parser:
+        parser_opt = args.parser[0]
+    if parser_opt == "win":
+        if args.mft:
+             parserlist = parserlist + ",mft"
+        if args.usnjrnl:
+            parserlist = parserlist + ",usnjrnl"
 
-    if plaso_ver in p_compat:
-        unknownversion = False
-
-    if unknownversion:
-        print(
-            "WARNING!! Known compatible version of Plaso NOT detected. Attempting to use default parser list. Try using the --no_dependencies_check if Plaso dependancies are the issue."
-        )
     return parserlist
 
-
 ###################### REPORT FIXING SECTION ###############################
-
 
 def prefetch_report_fix(row):
     header_desc_rows = report_header_dict['Prefetch Report.csv'][0][0]
@@ -2249,7 +2238,7 @@ def parse_the_things(args, mylogfile, command1, db_file, unzipped_file,
     return
 
 
-def create_supertimeline(args, mylogfile, csv_file, psort_location, db_file):
+def create_supertimeline(args, mylogfile, csv_file, psort_location, db_file, logname):
     # This processes the .plaso file creates the SuperTimeline
     if os.path.isfile(csv_file):
         if query_yes_no(
@@ -2270,8 +2259,8 @@ def create_supertimeline(args, mylogfile, csv_file, psort_location, db_file):
             mylogfile.writelines("Keeping the existing file: " + csv_file)
             return
     command2 = [
-        psort_location, "-o", "l2tcsv", "--status_view", "linear", db_file,
-        "-w", csv_file
+        psort_location, "-o", "l2tcsv", "--status_view", "none", db_file,
+        "--logfile", logname, "-w", csv_file
     ]
     # Create SuperTimeline
     print("\nCreating the SuperTimeline CSV file")
@@ -2313,17 +2302,17 @@ def get_ts_es_info(args):
     return casename
 
 
-def export_to_elasticsearch(mylogfile, args, db_file, psort_location):
+def export_to_elasticsearch(mylogfile, args, db_file, psort_location, logname):
     start_dt = datetime.datetime.now()
     print("\nProcess to export to ElasticSearch started")
     mylogfile.writelines("\nProcess to export to ElasticSearch started" + "\n")
     if args.es_kb:
         casename, server, port, user = get_es_info(args)
         output_elasticsearch(mylogfile, db_file, casename, psort_location,
-                             server, port, user)
+                             server, port, user, logname)
     else:
         casename = get_ts_es_info(args)
-        output_elasticsearch_ts(mylogfile, db_file, casename, psort_location)
+        output_elasticsearch_ts(mylogfile, db_file, casename, psort_location, logname)
     end_dt = datetime.datetime.now()
     duration03 = end_dt - start_dt
     print("\nProcess to export to ElasticSearch completed")
@@ -2380,7 +2369,7 @@ def main():
         psort_location = r"psort.py"
 
     # Parsing begins
-    parser_list = ["win", "lin", "mac", "datt"]
+    parser_list = ["win", "mft_usnjrnl", "lin", "mac", "datt"]
 
     parser = argparse.ArgumentParser(
         description='Cold Disk Quick Response Tool (CDQR)')
@@ -2409,6 +2398,18 @@ def main():
         help=
         'Do not hash all the files as part of the processing of the image')
     parser.add_argument(
+        '--mft',
+        action='store_true',
+        default=False,
+        help=
+        'Process the MFT file (disabled by default except for DATT)')
+    parser.add_argument(
+        '--usnjrnl',
+        action='store_true',
+        default=False,
+        help=
+        'Process the USNJRNL file (disabled by default except for DATT)')
+    parser.add_argument(
         '--max_cpu',
         action='store_true',
         default=False,
@@ -2417,6 +2418,53 @@ def main():
         '--export',
         action='store_true',
         help='Creates zipped, line delimited json export file')
+    parser.add_argument(
+        '--artifact_filters',
+        nargs=1,
+        help='Plaso passthrough: Names of forensic artifact definitions, \
+            provided on the command command line (comma separated). Forensic \
+            artifacts are stored in .yaml files that are directly \
+            pulled from the artifact definitions project. You can \
+            also specify a custom artifacts yaml file (see \
+            --custom_artifact_definitions). Artifact definitions \
+            can be used to describe and quickly collect data of \
+            interest, such as specific files or Windows Registry \
+            keys.')
+    parser.add_argument(
+        '--artifact_filters_file',
+        nargs=1,
+        help='Plaso passthrough: Names of forensic artifact definitions, \
+            provided in a file with one artifact name per line. Forensic \
+            artifacts are stored in .yaml files that are directly \
+            pulled from the artifact definitions project. You can \
+            also specify a custom artifacts yaml file (see \
+            --custom_artifact_definitions). Artifact definitions \
+            can be used to describe and quickly collect data of \
+            interest, such as specific files or Windows Registry \
+            keys.')
+    parser.add_argument(
+        '--artifact_definitions',
+        nargs=1,
+        help='Plaso passthrough: Path to a directory containing artifact \
+            definitions, which are .yaml files. Artifact definitions can \
+            be used to describe and quickly collect data of interest, \
+            such as specific files or Windows Registry keys.')
+    parser.add_argument(
+        '--custom_artifact_definitions',
+        nargs=1,
+        help='Plaso passthrough: Path to a file containing custom artifact \
+        definitions, which are .yaml files. Artifact definitions can be \
+        used to describe and quickly collect data of interest, \
+        such as specific files or Windows Registry keys.')
+    parser.add_argument(
+        '--file_filter',
+        '-f',
+        nargs=1,
+        help='Plaso passthrough: List of files to include for targeted \
+         collection of files to parse, one line per file path, setup is \
+        /path|file - where each element can contain either a \
+        variable set in the preprocessing stage or a regular \
+        expression.')
     parser.add_argument(
         '--es_kb',
         nargs=1,
@@ -2466,21 +2514,14 @@ def main():
         'Re-enables the log2timeline the dependencies check. It is skipped by default'
     )
     parser.add_argument(
-        '--ignore_archives',
+        '--process_archives',
         action='store_true',
         default=False,
         help=
-        'Do not extract and inspect contents of archives found inside of artifacts list or disk image'
+        'Extract and inspect contents of archives found inside of artifacts or disk images'
     )
     parser.add_argument(
         '-v', '--version', action='version', version=cdqr_version)
-    parser.add_argument(
-        '-f',
-        nargs=1,
-        action="store",
-        help=
-        'Include a filter file to filter log2timeline output. List of files to include for targeted collection of files to parse, one line per file path'
-    )
     parser.add_argument(
         '-y',
         action="store_true",
@@ -2505,8 +2546,8 @@ def main():
             "--status_view", "linear"
         ]
 
-        # If ignore archive is not explicitly selected process them
-        if not args.ignore_archives:
+        # Do not process archives unless enabled
+        if args.process_archives:
             command1.append("--process_archives")
 
     # Set log2timeline parsing option(s)
@@ -2523,10 +2564,10 @@ def main():
             if parser_opt == "lin" or parser_opt == "mac":
                 command1 = [
                     log2timeline_location, "--partition", "all",
-                    "--status_view", "linear", "--process_archives"
+                    "--status_view", "none"
                 ]
         else:
-            # Set Default parser value to "datt"
+            # Set Default parser
             parser_opt = default_parser
 
     # Determine if Plaso version is compatible
@@ -2535,11 +2576,6 @@ def main():
         log_list.append("Plaso Version: " + p_ver + "\n")
 
         plaso_ver = plaso_version(log2timeline_location)
-        if plaso_ver not in p_compat:
-            if not re.match(r"^201\d{5}$", plaso_ver):
-                print("Plaso version " + plaso_ver +
-                      " not supported.....Exiting")
-                sys.exit(1)
 
     # Determine if Export is being used and option is valid
         if args.export:
@@ -2547,7 +2583,7 @@ def main():
             log_list.append("Export data option selected\n")
         # add parsing options to the command
         command1.append("--parsers")
-        command1.append(get_parser_list(parser_opt, plaso_ver))
+        command1.append(get_parser_list(parser_opt, plaso_ver, args))
         print("Using parser: " + parser_opt)
         log_list.append("Using parser: " + parser_opt + "\n")
 
@@ -2572,40 +2608,51 @@ def main():
         log_list.append("Number of cpu cores to use: " + str(num_cpus) + "\n")
 
         # Set filter file location
-        if args.f:
-            filter_file_loc = args.f[0]
-            filter_file_loc = filter_file_loc.replace("\\\\", "/").replace(
-                "\\", "/").rstrip("/")
-            if filter_file_loc.count("/") > 1:
-                filter_file_loc = filter_file_loc.rstrip("/")
-
-            if not os.path.exists(filter_file_loc):
-                print(
-                    "ERROR: \"" + filter_file_loc +
-                    "\" cannot be found by the system.  Please verify command.")
-                print("Exiting...")
-                sys.exit(1)
-            command1.append("-f")
+        if args.file_filter:
+            filter_file_loc = verify_file(args.file_filter[0])
+            command1.append("--file_filter")
             command1.append(filter_file_loc)
-            print("Filter file being used is: " + filter_file_loc)
-            log_list.append("Filter file to use is: " + filter_file_loc)
+            print("Filter file used: " + filter_file_loc)
+            log_list.append("Filter file used: " + filter_file_loc)
+
+        # Set custom artifact definitions file location
+        if args.custom_artifact_definitions:
+            custom_artifact_definitions_file = verify_file(args.custom_artifact_definitions[0])
+            command1.append("--custom_artifact_definitions")
+            command1.append(custom_artifact_definitions_file)
+            print("Custom Artifact Definition file used: " + custom_artifact_definitions_file)
+            log_list.append("Custom Artifact Definition file used: " + custom_artifact_definitions_file)
+
+        # Set artifact definitions file location
+        if args.artifact_definitions:
+            artifact_definitions_file = verify_file(args.artifact_definitions[0])
+            command1.append("--artifact_definitions")
+            command1.append(artifact_definitions_file)
+            print("Artifact Definition file used: " + artifact_definitions_file)
+            log_list.append("Artifact Definition file used: " + artifact_definitions_file)
+
+        # Set artifact filters file location
+        if args.artifact_filters_file:
+            artifact_filters_file = verify_file(args.artifact_filters_file[0])
+            command1.append("--artifact_filters_file")
+            command1.append(artifact_filters_file)
+            print("Artifact Definition file used: " + artifact_filters_file)
+            log_list.append("Artifact Definition file used: " + artifact_filters_file)
+
+        # Set artifact filters
+        if args.artifact_filters:
+            artifact_filters = args.artifact_filters[0]
+            command1.append("--artifact_filters")
+            command1.append(artifact_filters)
+            print("Artifact Definitions used: " + artifact_filters)
+            log_list.append("Artifact Definitions used: " + artifact_filters)
 
     # Set source location/file
-        src_loc = args.src_location[0]
-        src_loc = src_loc.replace("\\\\", "/").replace("\\", "/").rstrip("/")
-        if src_loc.count("/") > 1:
-            src_loc = src_loc.rstrip("/")
-
-        if not os.path.exists(src_loc):
-            print("ERROR: \"" + src_loc +
-                  "\" cannot be found by the system.  Please verify command.")
-            print("Exiting...")
-            sys.exit(1)
+        src_loc = verify_file(args.src_location[0])
 
     # Set destination location/file
         dst_loc = args.dst_location.replace("\\\\",
                                             "/").replace("\\", "/").rstrip("/")
-
         if os.path.exists(dst_loc):
             if not query_yes_no(
                     args, "\n" + dst_loc +
@@ -2636,19 +2683,25 @@ def main():
         print("Source data: " + src_loc)
         log_list.append("Source data: " + src_loc + "\n")
 
-    # Create DB, CSV and Log Filenames
     if args.plaso_db:
         db_file = dst_loc + "/" + src_loc
     else:
         db_file = dst_loc + "/" + src_loc.split("/")[-1] + ".plaso"
+
+    # Create DB, CSV and Log Filenames
     csv_file = dst_loc + "/" + src_loc.split("/")[-1] + ".SuperTimeline.csv"
+    logname = dst_loc + "/" + src_loc.split("/")[-1] + "_log2timeline.gz"
     logfilename = dst_loc + "/" + src_loc.split("/")[-1] + ".log"
 
     # Check to see if it's a mounted drive and update filename if so
     if db_file == dst_loc + "/.plaso" or db_file[-7:] == ":.plaso":
         db_file = dst_loc + "/" + "mounted_image.plaso"
         csv_file = dst_loc + "/" + "mounted_image.SuperTimeline.csv"
-        logfilename = dst_loc + "/" + "mounted_image.log"
+        logname = dst_loc + "/" + "mounted_image.gz"
+        logfilename = logname + ".log"
+
+    command1.append("--logfile")
+    command1.append(logname)
 
     print("Log File: " + logfilename)
     print("Database File: " + db_file)
@@ -2670,11 +2723,14 @@ def main():
     if os.path.isfile(logfilename):
         os.remove(logfilename)
 
+    if os.path.isfile(logname):
+        os.remove(logname)
+
     mylogfile = open(logfilename, 'w')
     mylogfile.writelines("".join(log_list))
 
     start_dt = datetime.datetime.now()
-    print("\nTotal start time was: " + str(start_dt))
+    print("\n Start time was: " + str(start_dt))
     mylogfile.writelines("\nStart time  was: " + str(start_dt) + "\n")
 
     # If this is plaso database file, skip parsing
@@ -2690,13 +2746,14 @@ def main():
         parse_the_things(args, mylogfile, command1, db_file, unzipped_file,
                          unzipped_file_loc, csv_file)
 
+    logname = dst_loc + "/" + src_loc.split("/")[-1] + "_psort.gz"
     if args.export:
-        export_to_json(dst_loc, src_loc, mylogfile, db_file, psort_location)
+        export_to_json(dst_loc, src_loc, mylogfile, db_file, psort_location, logname)
     elif args.es_kb or args.es_ts:
-        export_to_elasticsearch(mylogfile, args, db_file, psort_location)
+        export_to_elasticsearch(mylogfile, args, db_file, psort_location, logname)
     else:
         create_supertimeline(args, mylogfile, csv_file, psort_location,
-                             db_file)
+                             db_file, logname)
         create_reports(args, mylogfile, dst_loc, csv_file, parser_opt)
 
     end_dt = datetime.datetime.now()
@@ -2708,4 +2765,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
