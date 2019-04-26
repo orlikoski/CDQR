@@ -2369,7 +2369,7 @@ def main():
         psort_location = r"psort.py"
 
     # Parsing begins
-    parser_list = ["win", "lin", "mac", "datt"]
+    parser_list = ["win", "mft_usnjrnl", "lin", "mac", "datt"]
 
     parser = argparse.ArgumentParser(
         description='Cold Disk Quick Response Tool (CDQR)')
