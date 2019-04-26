@@ -2631,19 +2631,24 @@ def main():
         print("Source data: " + src_loc)
         log_list.append("Source data: " + src_loc + "\n")
 
-    # Create DB, CSV and Log Filenames
     if args.plaso_db:
         db_file = dst_loc + "/" + src_loc
     else:
         db_file = dst_loc + "/" + src_loc.split("/")[-1] + ".plaso"
+
+    # Create DB, CSV and Log Filenames
     csv_file = dst_loc + "/" + src_loc.split("/")[-1] + ".SuperTimeline.csv"
-    logfilename = dst_loc + "/" + src_loc.split("/")[-1] + ".log"
+    logname = dst_loc + "/" + src_loc.split("/")[-1]
+    logfilename = logname + ".log"
 
     # Check to see if it's a mounted drive and update filename if so
     if db_file == dst_loc + "/.plaso" or db_file[-7:] == ":.plaso":
         db_file = dst_loc + "/" + "mounted_image.plaso"
         csv_file = dst_loc + "/" + "mounted_image.SuperTimeline.csv"
-        logfilename = dst_loc + "/" + "mounted_image.log"
+        logname = dst_loc + "/" + "mounted_image"
+        logfilename = logname + ".log"
+
+    command1.append("--logfile " + logname)
 
     print("Log File: " + logfilename)
     print("Database File: " + db_file)
@@ -2665,11 +2670,14 @@ def main():
     if os.path.isfile(logfilename):
         os.remove(logfilename)
 
+    if os.path.isfile(logname):
+        os.remove(logname)
+
     mylogfile = open(logfilename, 'w')
     mylogfile.writelines("".join(log_list))
 
     start_dt = datetime.datetime.now()
-    print("\nTotal start time was: " + str(start_dt))
+    print("\n Start time was: " + str(start_dt))
     mylogfile.writelines("\nStart time  was: " + str(start_dt) + "\n")
 
     # If this is plaso database file, skip parsing
