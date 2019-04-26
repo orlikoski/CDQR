@@ -2703,7 +2703,7 @@ def main():
     else:
         create_supertimeline(args, mylogfile, csv_file, psort_location,
                              db_file, logname)
-        create_reports(args, mylogfile, dst_loc, csv_file, parser_opt, logname)
+        create_reports(args, mylogfile, dst_loc, csv_file, parser_opt)
 
     end_dt = datetime.datetime.now()
     duration_full = end_dt - start_dt
