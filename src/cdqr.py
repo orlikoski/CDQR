@@ -1652,7 +1652,7 @@ def plaso_version(log2timeline_location):
 
 
 def output_elasticsearch(mylogfile, srcfilename, casename, psort_location,
-                         server, port, user):
+                         server, port, user, logname):
     # Run psort against plaso db file to output to an ElasticSearch server running on the localhost
     print("Exporting results in Kibana format to the ElasticSearch server")
     mylogfile.writelines(
@@ -1683,7 +1683,7 @@ def output_elasticsearch(mylogfile, srcfilename, casename, psort_location,
         "case_cdqr-" + casename.lower() + "\n")
 
 
-def output_elasticsearch_ts(mylogfile, srcfilename, casename, psort_location):
+def output_elasticsearch_ts(mylogfile, srcfilename, casename, psort_location, logname):
     # Run psort against plaso db file to output to an ElasticSearch server running on the localhost
     print("Exporting results in TimeSketch format to the ElasticSearch server")
     mylogfile.writelines(
@@ -1737,7 +1737,7 @@ def unzip_source(src_loc_tmp, outputzipfolder):
         sys.exit(1)
 
 
-def create_export(dst_loc, srcfilename, mylogfile, db_file, psort_location):
+def create_export(dst_loc, srcfilename, mylogfile, db_file, psort_location, logname):
     # Create Output filenames
     dstrawfilename = dst_loc + "/" + srcfilename.split("/")[-1] + ".json"
     dstfilename = dst_loc + "/" + srcfilename.split("/")[-1] + ".json.zip"
@@ -2250,7 +2250,7 @@ def parse_the_things(args, mylogfile, command1, db_file, unzipped_file,
     return
 
 
-def create_supertimeline(args, mylogfile, csv_file, psort_location, db_file):
+def create_supertimeline(args, mylogfile, csv_file, psort_location, db_file, logname):
     # This processes the .plaso file creates the SuperTimeline
     if os.path.isfile(csv_file):
         if query_yes_no(
@@ -2314,7 +2314,7 @@ def get_ts_es_info(args):
     return casename
 
 
-def export_to_elasticsearch(mylogfile, args, db_file, psort_location):
+def export_to_elasticsearch(mylogfile, args, db_file, psort_location, logname):
     start_dt = datetime.datetime.now()
     print("\nProcess to export to ElasticSearch started")
     mylogfile.writelines("\nProcess to export to ElasticSearch started" + "\n")
@@ -2639,7 +2639,7 @@ def main():
 
     # Create DB, CSV and Log Filenames
     csv_file = dst_loc + "/" + src_loc.split("/")[-1] + ".SuperTimeline.csv"
-    logname = dst_loc + "/" + src_loc.split("/")[-1] + ".gz"
+    logname = dst_loc + "/" + src_loc.split("/")[-1] + "_log2timeline.gz"
     logfilename = dst_loc + "/" + src_loc.split("/")[-1] + ".log"
 
     # Check to see if it's a mounted drive and update filename if so
@@ -2695,14 +2695,15 @@ def main():
         parse_the_things(args, mylogfile, command1, db_file, unzipped_file,
                          unzipped_file_loc, csv_file)
 
+    logname = dst_loc + "/" + src_loc.split("/")[-1] + "_psort.gz"
     if args.export:
-        export_to_json(dst_loc, src_loc, mylogfile, db_file, psort_location)
+        export_to_json(dst_loc, src_loc, mylogfile, db_file, psort_location, logname)
     elif args.es_kb or args.es_ts:
-        export_to_elasticsearch(mylogfile, args, db_file, psort_location)
+        export_to_elasticsearch(mylogfile, args, db_file, psort_location, logname)
     else:
         create_supertimeline(args, mylogfile, csv_file, psort_location,
-                             db_file)
-        create_reports(args, mylogfile, dst_loc, csv_file, parser_opt)
+                             db_file, logname)
+        create_reports(args, mylogfile, dst_loc, csv_file, parser_opt, logname)
 
     end_dt = datetime.datetime.now()
     duration_full = end_dt - start_dt
