@@ -140,7 +140,7 @@ optional arguments:
 
 ## PARSER LIST
 
-There are four available parsers for CDQR: `datt` , `win` , `lin` , and `mac` and here the Plaso parsers they represent:
+There are four available parsers for CDQR: `win` , `mft_usnjrnl` , `mac` , `lin` , and `datt`  and here the Plaso parsers they represent:
 * **win**
   ```
   bencode,czip,ccleaner,esedb,filestat,lnk,mcafee_protection,olecf,pe,prefetch,recycle_bin,recycle_bin_info2,sccm,sophos_av,sqlite,symantec_scanlog,winevt,winevtx,webhist,winfirewall,winjob,windows_typed_urls,winreg
