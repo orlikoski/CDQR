@@ -2457,7 +2457,8 @@ def main():
         used to describe and quickly collect data of interest, \
         such as specific files or Windows Registry keys.')
     parser.add_argument(
-        '--file_filter', '-f',
+        '--file_filter',
+        '-f',
         nargs=1,
         help='Plaso passthrough: List of files to include for targeted \
          collection of files to parse, one line per file path, setup is \
@@ -2607,8 +2608,8 @@ def main():
         log_list.append("Number of cpu cores to use: " + str(num_cpus) + "\n")
 
         # Set filter file location
-        if args.FILE_FILTER:
-            filter_file_loc = verify_file(args.FILE_FILTER[0])
+        if args.file_filter:
+            filter_file_loc = verify_file(args.file_filter[0])
             command1.append("--file_filter")
             command1.append(filter_file_loc)
             print("Filter file being used is: " + filter_file_loc)
