@@ -5,14 +5,14 @@ FROM ubuntu:18.04
 RUN apt-get update && apt-get -y upgrade && apt-get -y dist-upgrade
 
 # Setup install environment and Timesketch dependencies
-RUN apt-get -y install apt-transport-https\
-                       curl\
-                       git\
-                       libffi-dev\
-                       lsb-release\
-                       python-dev\
-                       python-pip\
-                       python-psycopg2
+RUN apt-get -y install apt-transport-https \
+    curl \
+    git \
+    libffi-dev \
+    lsb-release \
+    python-dev \
+    python-pip \
+    python-psycopg2
 
 RUN curl -sS https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 RUN VERSION=node_8.x && \
@@ -24,7 +24,7 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.lis
 # Install Plaso
 RUN apt-get -y install software-properties-common
 RUN add-apt-repository ppa:gift/stable && apt-get update
-RUN apt-get update && apt-get -y install python-plaso=20190131-1ppa1~bionic plaso-tools=20190131-1ppa1~bionic nodejs yarn
+RUN apt-get update && apt-get -y install python-plaso=20190331-2ppa1~bionic plaso-tools=20190331-2ppa1~bionic nodejs yarn
 
 # Build and Install Timesketch from GitHub Master with Pip
 RUN git clone https://github.com/google/timesketch.git /tmp/timesketch
@@ -35,7 +35,7 @@ RUN pip install /tmp/timesketch/
 
 # Download and install CDQR
 RUN git clone https://github.com/orlikoski/CDQR.git /tmp/CDQR
-RUN cd /tmp/CDQR && git checkout tags/4.4
+RUN cd /tmp/CDQR && git checkout tags/5.0
 RUN cp /tmp/CDQR/src/cdqr.py /usr/local/bin/cdqr.py
 RUN chmod a+x /usr/local/bin/cdqr.py
 

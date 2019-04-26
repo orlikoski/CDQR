@@ -1,5 +1,5 @@
 #!/bin/bash
-cdqr_version="4.4.0"
+cdqr_version="5.0.0"
 cur_dir="$(pwd)"
 timesketch_conf="/etc/timesketch.conf"
 docker_args="docker run \
