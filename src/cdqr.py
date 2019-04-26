@@ -1224,7 +1224,7 @@ def verify_file(file_location_tmp):
     if not os.path.exists(file_loc):
         print(
             "ERROR: \"" + file_loc +
-            "\" cannot be found by the system.  Please verify command.")
+            "\" cannot be found by the system.  Please verify filename and path are correct.")
         print("Exiting...")
         sys.exit(1)
     else:
