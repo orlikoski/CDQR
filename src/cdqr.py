@@ -2638,17 +2638,18 @@ def main():
 
     # Create DB, CSV and Log Filenames
     csv_file = dst_loc + "/" + src_loc.split("/")[-1] + ".SuperTimeline.csv"
-    logname = dst_loc + "/" + src_loc.split("/")[-1]
-    logfilename = logname + ".log"
+    logname = dst_loc + "/" + src_loc.split("/")[-1] + ".gz"
+    logfilename = dst_loc + "/" + src_loc.split("/")[-1] + ".log"
 
     # Check to see if it's a mounted drive and update filename if so
     if db_file == dst_loc + "/.plaso" or db_file[-7:] == ":.plaso":
         db_file = dst_loc + "/" + "mounted_image.plaso"
         csv_file = dst_loc + "/" + "mounted_image.SuperTimeline.csv"
-        logname = dst_loc + "/" + "mounted_image"
+        logname = dst_loc + "/" + "mounted_image.gz"
         logfilename = logname + ".log"
 
-    command1.append("--logfile " + logname)
+    command1.append("--log-file")
+    command1.append("logname")
 
     print("Log File: " + logfilename)
     print("Database File: " + db_file)
