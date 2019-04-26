@@ -2321,10 +2321,10 @@ def export_to_elasticsearch(mylogfile, args, db_file, psort_location, logname):
     if args.es_kb:
         casename, server, port, user = get_es_info(args)
         output_elasticsearch(mylogfile, db_file, casename, psort_location,
-                             server, port, user)
+                             server, port, user, logname)
     else:
         casename = get_ts_es_info(args)
-        output_elasticsearch_ts(mylogfile, db_file, casename, psort_location)
+        output_elasticsearch_ts(mylogfile, db_file, casename, psort_location, logname)
     end_dt = datetime.datetime.now()
     duration03 = end_dt - start_dt
     print("\nProcess to export to ElasticSearch completed")
