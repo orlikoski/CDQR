@@ -6,8 +6,7 @@ $cur_dir=Get-Location
 $docker_network=$env:DOCKER_NETWORK
 $timesketch_conf=$env:TIMESKETCH_CONF
 $timesketch_server_ipaddress=$env:TIMESKETCH_SERVER_IPADDRESS
-$postgres_server=$env:POSTGRES_SERVER
-$docker_args="docker run --name cdqr_$(openssl rand -hex 8)"
+$docker_args="docker run"
 $custom_args=@()
 
 # Set the docker network (if any) to use
@@ -23,17 +22,16 @@ foreach ($i in $args) {
     # If it's timesketch add the timesketch config file mapping
     if ( $i -eq "--es_ts" ) {
       while ($timesketch_conf -eq $null){
-      $timesketch_conf = read-host "Enter the location of the timesketch.conf file to use in this operation"
-      if (-not(test-path $timesketch_conf)){
+        $timesketch_conf = read-host "Enter the location of the timesketch.conf file to use in this operation"
+        if (-not(test-path $timesketch_conf)){
           Write-host "Invalid file path, re-enter."
           $timesketch_conf = $null
-          }
-      elseif ((get-item $timesketch_conf).psiscontainer){
+        }
+        elseif ((get-item $timesketch_conf).psiscontainer){
           Write-host "Source must be a file, re-enter."
           $timesketch_conf = $null
-          }
+        }
       }
-
       if ( $timesketch_server_ipaddress -eq $null) {
           $timesketch_server_ipaddress = '127.0.0.1'
       }
