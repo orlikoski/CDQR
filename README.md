@@ -57,7 +57,8 @@ optional arguments:
   -h, --help            show this help message and exit
   -p PARSER, --parser PARSER
                         Choose parser to use. If nothing chosen then 'win' is
-                        used. The parsing options are: win, lin, mac, datt
+                        used. The parsing options are: win, mft_usnjrnl, lin, 
+                        mac, datt
   --nohash              Do not hash all the files as part of the processing of
                         the image
   --mft                 Process the MFT file (disabled by default except for
