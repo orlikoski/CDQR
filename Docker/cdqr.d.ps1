@@ -5,6 +5,8 @@ $cdqr_version="5.0.0"
 $cur_dir=Get-Location
 $docker_network=$env:DOCKER_NETWORK
 $timesketch_conf=$env:TIMESKETCH_CONF
+$timesketch_server_ipaddress=$env:TIMESKETCH_SERVER_IPADDRESS
+$postgres_server=$env:POSTGRES_SERVER
 $docker_args="docker run -d"
 $custom_args=@()
 
@@ -31,7 +33,11 @@ foreach ($i in $args) {
           $timesketch_conf = $null
           }
       }
-      $docker_args="$docker_args -v '${timesketch_conf}:/etc/timesketch.conf'"
+
+      if ( $timesketch_server_ipaddress -eq $null) {
+          $timesketch_server_ipaddress = '127.0.0.1'
+      }
+      $docker_args="$docker_args --add-host=elasticsearch:$timesketch_server_ipaddress --add-host=postgres:$timesketch_server_ipaddress -v '${timesketch_conf}:/etc/timesketch.conf'"
     }
     # If it's an input file/dir (denoted by "in:" then resolve absolute path)
     if ( $i.SubString(0,3) -eq "in:" ) {

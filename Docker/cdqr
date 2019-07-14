@@ -4,8 +4,7 @@ cur_dir="$(pwd)"
 timesketch_conf="/etc/timesketch.conf"
 docker_args="docker run \
   -v /etc/hosts:/etc/hosts:ro \
-  --network host \
-  --name cdqr_$(openssl rand -hex 8)"
+  --network host "
 args=()
 for i in "$@"; do
   # If it's timesketch add the timesketch mapping
