@@ -3,6 +3,7 @@ cdqr_version="5.0.0"
 cur_dir="$(pwd)"
 docker_network=${DOCKER_NETWORK}
 timesketch_conf=${TIMESKETCH_CONF:-"/opt/Skadi/Docker/timesketch/timesketch_default.conf"}
+timesketch_conf_legacy="/etc/timesketch.conf"
 timesketch_server_ipaddress=${TIMESKETCH_SERVER_IPADDRESS:-""}
 docker_args="docker run "
 args=()
@@ -37,14 +38,19 @@ for i in "$@"; do
   # If it's timesketch add the timesketch mapping
   if [ "$i" == "--es_ts" ]; then
     if [ ! -f "$timesketch_conf" ]; then
-      while [ "$timesketch_conf" == "" ]; do
-        read -e -p "Enter the location of the timesketch.conf file to use in this operation: " timesketch_conf
-        timesketch_conf="$(fix_path $timesketch_conf)"
-        if [ ! -f "$timesketch_conf" ]; then
-          echo "Invalid file path, re-enter."
-          timesketch_conf=""
-        fi
-      done
+      timesketch_conf=""
+      if [ ! -f "$timesketch_conf_legacy" ]; then
+        while [ "$timesketch_conf" == "" ]; do
+          read -e -p "Enter the location of the timesketch.conf file to use in this operation: " timesketch_conf
+          timesketch_conf="$(fix_path $timesketch_conf)"
+          if [ ! -f "$timesketch_conf" ]; then
+            echo "Invalid file path, re-enter."
+            timesketch_conf=""
+          fi
+        done
+      else
+        timesketch_conf=$timesketch_conf_legacy
+      fi
     fi
     if [ "$timesketch_server_ipaddress" == "" ]; then
         timesketch_server_ipaddress='127.0.0.1'
