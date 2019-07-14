@@ -2,7 +2,7 @@
 cdqr_version="5.0.0"
 cur_dir="$(pwd)"
 timesketch_conf="/etc/timesketch.conf"
-docker_args="docker run \
+docker_args="docker run -d \
   -v /etc/hosts:/etc/hosts:ro \
   --network host "
 args=()
