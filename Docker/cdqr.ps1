@@ -11,9 +11,19 @@ $custom_args=@()
 
 # Set the docker network (if any) to use
 if ( $docker_network ) {
-  $docker_args="$docker_args --network '$docker_network' "
+  echo "Validating the Docker network exists: $docker_network"
+  $test = docker network ls | findstr $docker_network | %{ $_.Split(" ")[8]; }
+  if ( $test -eq "skadi-backend" ) {
+    echo "Connecting CDQR to the Docker network: $docker_network"
+    $docker_args="$docker_args --network $docker_network "
+  }
+  else {
+    echo "Docker network $docker_network does not exist, quitting"
+    exit
+  }
 }
 else {
+  echo "Assigning CDQR to the host network"
   $docker_args="$docker_args --network host "
 }
 
@@ -22,7 +32,7 @@ foreach ($i in $args) {
     # If it's timesketch add the timesketch config file mapping
     if ( $i -eq "--es_ts" ) {
       while ($timesketch_conf -eq $null){
-        $timesketch_conf = read-host "Enter the location of the timesketch.conf file to use in this operation"
+        $timesketch_conf = read-host "Enter the location of the TimeSketch configuration file to use in this operation. The default configuration is the absolute path to Skadi\Docker\timesketch\timesketch_default.conf "
         if (-not(test-path $timesketch_conf)){
           Write-host "Invalid file path, re-enter."
           $timesketch_conf = $null

@@ -11,9 +11,19 @@ $custom_args=@()
 
 # Set the docker network (if any) to use
 if ( $docker_network ) {
-  $docker_args="$docker_args --network '$docker_network' "
+  echo "Validating the Docker network exists: $docker_network"
+  $test = docker network ls | findstr $docker_network | %{ $_.Split(" ")[8]; }
+  if ( $test -eq "skadi-backend" ) {
+    echo "Connecting CDQR to the Docker network: $docker_network"
+    $docker_args="$docker_args --network $docker_network "
+  }
+  else {
+    echo "Docker network $docker_network does not exist, quitting"
+    exit
+  }
 }
 else {
+  echo "Assigning CDQR to the host network"
   $docker_args="$docker_args --network host "
 }
 
