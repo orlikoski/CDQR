@@ -39,6 +39,9 @@ if [ $docker_network ]; then
   fi
 else
   echo "Assigning CDQR to the host network"
+  echo "The Docker network can be changed by modifying the \"DOCKER_NETWORK\" environment variable"
+  echo "Example (default Skadi mode): export DOCKER_NETWORK=host"
+  echo "Example (use other Docker network): export DOCKER_NETWORK=skadi-backend"
   docker_args="$docker_args --network host "
 fi
 
@@ -46,18 +49,14 @@ for i in "$@"; do
   # If it's timesketch add the timesketch mapping
   if [ "$i" == "--es_ts" ]; then
     if [ ! -f "$timesketch_conf" ]; then
-      timesketch_conf=""
-      if [ ! -f "$timesketch_conf_legacy" ]; then
-        while [ "$timesketch_conf" == "" ]; do
-          read -e -p "Enter the location of the timesketch.conf file to use in this operation: " timesketch_conf
-          timesketch_conf="$(fix_path $timesketch_conf)"
-          if [ ! -f "$timesketch_conf" ]; then
-            echo "Invalid file path, re-enter."
-            timesketch_conf=""
-          fi
-        done
-      else
+      if [ -f "$timesketch_conf_legacy" ]; then
         timesketch_conf=$timesketch_conf_legacy
+      else
+        echo "TimeSketch default configuration file must be set with Environment variable in daemon mode."
+        echo "The default configuration is the absolute path to Skadi/Docker/timesketch/timesketch_default.conf."
+        echo "Example with Skadi git repo in \"/opt/Skadi\"): export TIMESKETCH_CONF=\"/opt/Skadi/Docker/timesketch/timesketch_default.conf\""
+        echo "Exiting"
+        exit
       fi
     fi
     if [ "$timesketch_server_ipaddress" == "" ]; then
