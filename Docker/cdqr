@@ -39,6 +39,7 @@ if [ $docker_network ]; then
   fi
 else
   echo "Assigning CDQR to the host network"
+
   docker_args="$docker_args --network host "
 fi
 

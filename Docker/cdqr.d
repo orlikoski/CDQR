@@ -24,7 +24,7 @@ fix_path () {
   else
     final_path=("$cur_dir/$file_path")
   fi
-  echo "$followingal_path"
+  echo "$final_path"
 }
 
 # Set the docker network (if any) to use
