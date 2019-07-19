@@ -11,9 +11,23 @@ $custom_args=@()
 
 # Set the docker network (if any) to use
 if ( $docker_network ) {
-  $docker_args="$docker_args --network '$docker_network' "
+  echo "Validating the Docker network exists: $docker_network"
+  $test = docker network ls | findstr $docker_network | %{ $_.Split(" ")[8]; }
+  if ( $test ) {
+    echo "Connecting CDQR to the Docker network: $docker_network"
+    $docker_args="$docker_args --network $docker_network "
+  }
+  else {
+    echo "Docker network $docker_network does not exist, quitting"
+    echo "Exiting"
+    exit
+  }
 }
 else {
+  echo "Assigning CDQR to the host network"
+  echo "The Docker network can be changed by modifying the `"DOCKER_NETWORK`" environment variable"
+  echo "Example (default Skadi mode): `$env:DOCKER_NETWORK = `"host`""
+  echo "Example (use other Docker network): `$env:DOCKER_NETWORK = `"skadi-backend`""
   $docker_args="$docker_args --network host "
 }
 
@@ -21,16 +35,22 @@ else {
 foreach ($i in $args) {
     # If it's timesketch add the timesketch config file mapping
     if ( $i -eq "--es_ts" ) {
-      while ($timesketch_conf -eq $null){
-        $timesketch_conf = read-host "Enter the location of the timesketch.conf file to use in this operation"
+      if ($timesketch_conf -ne $null){
         if (-not(test-path $timesketch_conf)){
-          Write-host "Invalid file path, re-enter."
-          $timesketch_conf = $null
+          Write-host "Invalid file path, exiting."
+          exit
         }
         elseif ((get-item $timesketch_conf).psiscontainer){
-          Write-host "Source must be a file, re-enter."
-          $timesketch_conf = $null
+          Write-host "Source must be a file, exiting."
+          exit
         }
+      }
+      else {
+        echo "TimeSketch default configuration file must be set with Environment variable in daemon mode."
+        echo "The default configuration is the absolute path to Skadi\Docker\timesketch\timesketch_default.conf."
+        echo "Example with Skadi git repo in `"C:\GitHub\Skadi`"): `$env:TIMESKETCH_CONF = `"C:\GitHub\Skadi\Docker\timesketch\timesketch_default.conf`""
+        echo "Exiting"
+        exit
       }
       if ( $timesketch_server_ipaddress -eq $null) {
           $timesketch_server_ipaddress = '127.0.0.1'
