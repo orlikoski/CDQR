@@ -32,7 +32,7 @@ foreach ($i in $args) {
     # If it's timesketch add the timesketch config file mapping
     if ( $i -eq "--es_ts" ) {
       while ($timesketch_conf -eq $null){
-        $timesketch_conf = read-host "Enter the location of the timesketch.conf file to use in this operation"
+        $timesketch_conf = read-host "Enter the location of the TimeSketch configuration file to use in this operation. The default configuration is the absolute path to Skadi\Docker\timesketch\timesketch_default.conf "
         if (-not(test-path $timesketch_conf)){
           Write-host "Invalid file path, re-enter."
           $timesketch_conf = $null
