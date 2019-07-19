@@ -1,7 +1,7 @@
 #!/bin/bash
 cdqr_version="5.0.0"
 cur_dir="$(pwd)"
-docker_network=${DOCKER_NETWORK}
+docker_network=${DOCKER_NETWORK:-"skadi-backend"}
 timesketch_conf=${TIMESKETCH_CONF:-"/opt/Skadi/Docker/timesketch/timesketch_default.conf"}
 timesketch_conf_legacy="/etc/timesketch.conf"
 timesketch_server_ipaddress=${TIMESKETCH_SERVER_IPADDRESS:-""}
@@ -24,13 +24,16 @@ fix_path () {
   else
     final_path=("$cur_dir/$file_path")
   fi
-  echo "$final_path"
+  echo "$followingal_path"
 }
 
 # Set the docker network (if any) to use
-if [ $docker_network ]; then
+echo "Validating the Docker network exists: $docker_network"
+if [ $(docker network ls |grep $docker_network |awk '{print $2}' ) ]; then
+  echo "Connecting CDQR to the Docker network: $docker_network"
   docker_args="$docker_args --network '$docker_network' "
 else
+  echo "Docker network $docker_network does not exist, assigning CDQR to the host network"
   docker_args="$docker_args --network host "
 fi
 
