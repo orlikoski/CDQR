@@ -11,7 +11,17 @@ It is not required to use the `cdqr` bash script to make `aorlikoski/cdqr` work 
 
 _TL;DR_ use `in:` and `out:` to specify the input and output paths. The `-y` flag to accept default answers to all CDQR questions is added automatically by the script at run time. _This is important since the process will fail if any user input is required._  
 
-`cdqr` is a transaltion script that does the heavy lifting of volume mapping and networking for docker.  
+
+# Windows, MacOS and Linux Support
+## Bash
+`cdqr` is a translation script that does the heavy lifting of volume mapping and networking for docker.  
+`cdqr.d` is a daemon version that doesn't output to the screen, thereby enabling processing in the background
+Example: `bash cdqr in:artifacts.zip`
+
+## PowerShell
+`cdqr.ps1` is a translation script that does the heavy lifting of volume mapping and networking for docker.  
+`cdqr.d.ps1` is a daemon version that doesn't output to the screen, thereby enabling processing in the background
+Example: `powershell -ExecutionPolicy Bypass cdqr.ps1 in:artifacts.zip`
 
 ### How it Works
 Helper Script Command  
@@ -34,4 +44,3 @@ This uses existing .plaso file and doesn't save the output on the host (it is ep
 This uses existing .plaso file and doesn't save the output on the host. This uses `/etc/timesketh.conf` on the host to pass the values it needs to insert into TimeSketch.  
 *cdqr in:Results/winevt.plaso --plaso_db --es_ts winevt*  
 ![](/objects/images/plaso_ts.gif?)
-
