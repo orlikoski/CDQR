@@ -15,12 +15,12 @@ _TL;DR_ use `in:` and `out:` to specify the input and output paths. The `-y` fla
 # Windows, MacOS and Linux Support
 ## Bash
 `cdqr` is a translation script that does the heavy lifting of volume mapping and networking for docker.  
-`cdqr.d` is a daemon version that doesn't output to the screen, thereby enabling processing in the background
+`cdqr.d` is a daemon version that doesn't output to the screen, thereby enabling processing in the background  
 Example: `bash cdqr in:artifacts.zip`
 
 ## PowerShell
 `cdqr.ps1` is a translation script that does the heavy lifting of volume mapping and networking for docker.  
-`cdqr.d.ps1` is a daemon version that doesn't output to the screen, thereby enabling processing in the background
+`cdqr.d.ps1` is a daemon version that doesn't output to the screen, thereby enabling processing in the background  
 Example: `powershell -ExecutionPolicy Bypass cdqr.ps1 in:artifacts.zip`
 
 ### How it Works
