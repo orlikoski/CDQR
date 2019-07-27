@@ -33,7 +33,7 @@ RUN git clone https://github.com/google/timesketch.git /tmp/timesketch && \
 
 # Download and install CDQR
 RUN git clone https://github.com/orlikoski/CDQR.git /tmp/CDQR && \
-    cd /tmp/CDQR && git checkout tags/5.0 && \
+    cd /tmp/CDQR && git checkout tags/5.1.0 && \
     cp /tmp/CDQR/src/cdqr.py /usr/local/bin/cdqr.py && \
     rm -rf /tmp/* && \
     chmod a+x /usr/local/bin/cdqr.py
@@ -41,7 +41,7 @@ RUN git clone https://github.com/orlikoski/CDQR.git /tmp/CDQR && \
 # Cleanup apt cache
 RUN apt-get -y autoremove --purge && \
     apt-get -y clean && \
-    apt-get -y autoclean 
+    apt-get -y autoclean
 
 # Load the entrypoint script to be run later
 ENTRYPOINT ["/usr/local/bin/cdqr.py"]
