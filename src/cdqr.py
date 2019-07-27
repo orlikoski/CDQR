@@ -42,7 +42,7 @@ modes = {
 }
 ###############################################################################
 # Created by: Alan Orlikoski
-cdqr_version = "CDQR Version: 5.0"
+cdqr_version = "CDQR Version: 5.1.0"
 #
 ###############################################################################
 # Global Variables
@@ -60,15 +60,15 @@ create_db = True
 # Dictionary of parsing options from command line to log2timeline
 parse_optionslatest = {
     'win':
-    "bencode,czip,ccleaner,esedb,filestat,lnk,mcafee_protection,olecf,pe,prefetch,recycle_bin,recycle_bin_info2,sccm,sophos_av,sqlite,symantec_scanlog,winevt,winevtx,webhist,winfirewall,winjob,windows_typed_urls,winreg",
+    "bash,bencode,czip,esedb,filestat,lnk,mcafee_protection,olecf,pe,prefetch,recycle_bin,recycle_bin_info2,sccm,sophos_av,sqlite,symantec_scanlog,winevt,winevtx,webhist,winfirewall,winjob,windows_typed_urls,winreg",
     'mft_usnjrnl':
     "mft,usnjrnl",
     'lin':
-    "bash,bash_history,bencode,czip,dockerjson,dpkg,filestat,mcafee_protection,olecf,pls_recall,popularity_contest,selinux,sophos_av,sqlite,symantec_scanlog,syslog,systemd_journal,utmp,webhist,xchatlog,xchatscrollback,zsh_extended_history",
+    "bash,bencode,czip,dockerjson,dpkg,filestat,mcafee_protection,olecf,pls_recall,popularity_contest,selinux,sophos_av,sqlite,symantec_scanlog,syslog,systemd_journal,utmp,webhist,xchatlog,xchatscrollback,zsh_extended_history",
     'mac':
-    "asl_log,bash_history,bash,bencode,bsm_log,ccleaner,cups_ipp,czipplist,filestat,fseventsd,mcafee_protection,mac_appfirewall_log,mac_keychain,mac_securityd,macwifi,mcafee_protection,olecf,sophos_av,sqlite,symantec_scanlog,syslog,utmpx,webhist,zsh_extended_history",
+    "asl_log,bash,bencode,bsm_log,cups_ipp,czipplist,filestat,fseventsd,mcafee_protection,mac_appfirewall_log,mac_keychain,mac_securityd,macwifi,mcafee_protection,olecf,sophos_av,sqlite,symantec_scanlog,syslog,utmpx,webhist,zsh_extended_history",
     'datt':
-    "amcache,android_app_usage,apache_access,asl_log,bash_history,bash,bencode,binary_cookies,bsm_log,chrome_cache,chrome_preferences,cups_ipp,custom_destinations,czip,dockerjson,dpkg,esedb,filestat,firefox_cache,firefox_cache2,fsevents,gdrive_synclog,hachoir,java_idx,lnk,mac_appfirewall_log,mac_keychain,mac_securityd,mactime,macwifi,mcafee_protection,mft,msiecf,olecf,opera_global,opera_typed_history,pe,plist,pls_recall,popularity_contest,prefetch,recycle_bin_info2,recycle_bin,rplog,santa,sccm,selinux,skydrive_log_old,skydrive_log,sophos_av,sqlite,symantec_scanlog,syslog,systemd_journal,trendmicro_url,trendmicro_vd,usnjrnl,utmp,utmpx,winevt,winevtx,winfirewall,winiis,winjob,winreg,xchatlog,xchatscrollback,zsh_extended_history",
+    "amcache,android_app_usage,apache_access,asl_log,bash,bencode,binary_cookies,bsm_log,chrome_cache,chrome_preferences,cups_ipp,custom_destinations,czip,dockerjson,dpkg,esedb,filestat,firefox_cache,firefox_cache2,fsevents,gdrive_synclog,hachoir,java_idx,lnk,mac_appfirewall_log,mac_keychain,mac_securityd,mactime,macwifi,mcafee_protection,mft,msiecf,olecf,opera_global,opera_typed_history,pe,plist,pls_recall,popularity_contest,prefetch,recycle_bin_info2,recycle_bin,rplog,santa,sccm,selinux,skydrive_log_old,skydrive_log,sophos_av,sqlite,symantec_scanlog,syslog,systemd_journal,trendmicro_url,trendmicro_vd,usnjrnl,utmp,utmpx,winevt,winevtx,winfirewall,winiis,winjob,winreg,xchatlog,xchatscrollback,zsh_extended_history",
 }
 
 # All credit for these definitions below to: https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/default.aspx
@@ -1352,13 +1352,13 @@ def create_reports(args, mylogfile, dst_loc, csv_file, parser_opt):
         r'dockerjson|dpkg|explorer_|fsevents|mac_keychain|mac_securityd|mackeeper_cache|macosx_bluetooth|macosx_install_history|mactime|macuser|macwifi|network_drives|rplog|windows_shutdown|windows_timezone|windows_usb_devices|windows_usbstor_devices|windows_version'
     )
     rpt_av_search = re.compile(
-        r'mcafee_protection|symantec_scanlog|ccleaner|sophos_av')
+        r'mcafee_protection|symantec_scanlog|sophos_av')
     rpt_fw_search = re.compile(r'winfirewall|mac_appfirewall_log')
     rpt_mac_search = re.compile(
-        r'asl_log|bash_history|bash|bencode|bsm_log|ccleaner|cups_ipp|czipplist|filestat|fseventsd|mcafee_protection|mac_appfirewall_log|mac_keychain|mac_securityd|macwifi|mcafee_protection|olecf|sophos_av|sqlite|symantec_scanlog|syslog|utmpx|webhist|zsh_extended_history'
+        r'asl_log|bash|bencode|bsm_log|cups_ipp|czipplist|filestat|fseventsd|mcafee_protection|mac_appfirewall_log|mac_keychain|mac_securityd|macwifi|mcafee_protection|olecf|sophos_av|sqlite|symantec_scanlog|syslog|utmpx|webhist|zsh_extended_history'
     )
     rpt_lin_search = re.compile(
-        r'bash|bash_history|bencode|czip|dockerjson|dpkg|filestat|mcafee_protection|olecf|pls_recall|popularity_contest|selinux|sophos_av|sqlite|symantec_scanlog|syslog|systemd_journal|utmp|webhist|xchatlog|xchatscrollback|zsh_extended_history'
+        r'bash|bencode|czip|dockerjson|dpkg|filestat|mcafee_protection|olecf|pls_recall|popularity_contest|selinux|sophos_av|sqlite|symantec_scanlog|syslog|systemd_journal|utmp|webhist|xchatlog|xchatscrollback|zsh_extended_history'
     )
     rpt_login_search = re.compile(r'dockerjson|ssh|winlogon|utmp')
 
