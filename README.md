@@ -6,25 +6,29 @@ For latest release click [here](https://github.com/orlikoski/CDQR/releases/lates
 ## Videos and Media
 *  [OSDFCON 2017](http://www.osdfcon.org/presentations/2017/Asif-Matadar_Rapid-Incident-Response.pdf) Slides: Walk-through different techniques that are required to provide forensics results for Windows and *nix environments (Including CyLR and CDQR)
 
-
 ## What is CDQR?
-The CDQR tool uses Plaso to parse disk images with specific parsers and create easy to analyze custom reports. The parsers were chosen based triaging best practices and the custom reports group like items together to make analysis easier. The design came from the Live Response Model of investigating the important artifacts first. This is meant to be a starting point for investigations, not the complete investigation.
+The CDQR tool uses Plaso to parse forensic artifacts and/or disk images with specific parsers and create easy to analyze custom reports. The parsers were chosen based triaging best practices and the custom reports group like items together to make analysis easier. The design came from the Live Response Model of investigating the important artifacts first. This is meant to be a starting point for investigations, not the complete investigation.
 
 In addition to processing entire forensic images it also parses extracted forensic artifact(s) as an individual file or collection of files inside of a folder structure (or inside a .zip file).
 
-It creates up to 16 Reports (.csv files) based on triaging best practices and the parsing option selected
-*  16 Reports for DATT:  
+It creates up to 18 Reports (.csv files) based on triaging best practices and the parsing option selected
+*  18 Reports for DATT:  
       ```
-      Appcompat, Login, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall, Mac, and Linux
+      Appcompat, Amcache, Bash, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall, Mac, Linux, and Android
       ```
 *  14 Reports for Win:  
       ```
-      Appcompat, Login, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall
+      Appcompat, Amcache, Bash, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall
       ```
 *   8 Reports for Mac and Lin:  
       ```
-      Login, File System, Internet History, System Information, AntiVirus, Firewall, Mac, and Linux
+      File System, Internet History, System Information, AntiVirus, Firewall, Mac, and Linux
       ```
+*   7 Reports for Android:  
+      ```
+      File System, Internet History, Persistence, System Information, AntiVirus, Firewall, and Android
+      ```
+
 
 ## Important Notes
 * Make sure account has permissions to create files and directories when running (when in doubt, run as administrator)
@@ -33,17 +37,21 @@ It creates up to 16 Reports (.csv files) based on triaging best practices and th
 ## DESCRIPTION
 
 This program uses [Plaso](https://github.com/log2timeline/plaso/wiki) and a streamlined list of its parsers to quickly analyze a forenisic image file (dd, E01, .vmdk, etc) or group of forensic artifacts.  The results are output in either ElasticSearch, JSON (line delimited), or the following report files in CSV format:
-*  16 Reports for DATT:  
+*  18 Reports for DATT:  
       ```
-      Appcompat, Login, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall, Mac, and Linux
+      Appcompat, Amcache, Bash, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall, Mac, Linux, and Android
       ```
 *  14 Reports for Win:  
       ```
-      Appcompat, Login, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall
+      Appcompat, Amcache, Bash, Event Logs, File System, MFT, UsnJrnl, Internet History, Prefetch, Registry, Scheduled Tasks, Persistence, System Information, AntiVirus, Firewall
       ```
 *   8 Reports for Mac and Lin:  
       ```
-      Login, File System, Internet History, System Information, AntiVirus, Firewall, Mac, and Linux
+      File System, Internet History, System Information, AntiVirus, Firewall, Mac, and Linux
+      ```
+*   7 Reports for Android:  
+      ```
+      File System, Internet History, Persistence, System Information, AntiVirus, Firewall, and Android
       ```
 
 ## ARGUMENTS & OPTIONS
@@ -57,7 +65,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -p PARSER, --parser PARSER
                         Choose parser to use. If nothing chosen then 'win' is
-                        used. The parsing options are: win, mft_usnjrnl, lin, 
+                        used. The parsing options are: win, mft_usnjrnl, lin,
                         mac, datt
   --nohash              Do not hash all the files as part of the processing of
                         the image
@@ -139,31 +147,6 @@ optional arguments:
                         program.
 ```
 
-## PARSER LIST
-
-There are four available parsers for CDQR: `win` , `mft_usnjrnl` , `mac` , `lin` , and `datt`  and here the Plaso parsers they represent:
-* **win**
-  ```
-  bencode,czip,ccleaner,esedb,filestat,lnk,mcafee_protection,olecf,pe,prefetch,recycle_bin,recycle_bin_info2,sccm,sophos_av,sqlite,symantec_scanlog,winevt,winevtx,webhist,winfirewall,winjob,windows_typed_urls,winreg
-  ```
-* **mft_usnjrnl**
-  ```
-  mft,usnjrnl
-  ```
-* **mac**
-  ```
-  asl_log,bash_history,bash,bencode,bsm_log,ccleaner,cups_ipp,czipplist,filestat,fseventsd,mcafee_protection,mac_appfirewall_log,mac_keychain,mac_securityd,macwifi,mcafee_protection,olecf,sophos_av,sqlite,symantec_scanlog,syslog,utmpx,webhist,zsh_extended_history
-
-  ```
-* **lin**
-  ```
-  bash,bash_history,bencode,czip,dockerjson,dpkg,filestat,mcafee_protection,olecf,pls_recall,popularity_contest,selinux,sophos_av,sqlite,symantec_scanlog,syslog,systemd_journal,utmp,webhist,xchatlog,xchatscrollback,zsh_extended_history
-
-  ```
-* **datt**
-  ```
-  amcache,android_app_usage,apache_access,asl_log,bash_history,bash,bencode,binary_cookies,bsm_log,chrome_cache,chrome_preferences,cups_ipp,custom_destinations,czip,dockerjson,dpkg,esedb,filestat,firefox_cache,firefox_cache2,fsevents,gdrive_synclog,hachoir,java_idx,lnk,mac_appfirewall_log,mac_keychain,mac_securityd,mactime,macwifi,mcafee_protection,mft,msiecf,olecf,opera_global,opera_typed_history,pe,plist,pls_recall,popularity_contest,prefetch,recycle_bin_info2,recycle_bin,rplog,santa,sccm,selinux,skydrive_log_old,skydrive_log,sophos_av,sqlite,symantec_scanlog,syslog,systemd_journal,trendmicro_url,trendmicro_vd,usnjrnl,utmp,utmpx,winevt,winevtx,winfirewall,winiis,winjob,winreg,xchatlog,xchatscrollback,zsh_extended_history
-  ```
 ## DEPENDENCIES
 
 1. 64-bit Windows, Linux, or Mac Operating System (OS)
