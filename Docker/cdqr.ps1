@@ -1,7 +1,7 @@
 #! /usr/bin/pwsh
 $ErrorActionPreference = "Stop"
 
-$cdqr_version="5.0.0"
+$cdqr_version="5.1.0.1"
 $cur_dir=Get-Location
 $docker_network=$env:DOCKER_NETWORK
 $timesketch_conf=$env:TIMESKETCH_CONF
