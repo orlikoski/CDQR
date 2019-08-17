@@ -49,7 +49,6 @@ RUN git clone https://github.com/google/timesketch.git /tmp/timesketch && \
     cd /tmp/timesketch && ls && yarn install && \
     yarn run build  && \
     pip3 install /tmp/timesketch/ && \
-    pip3 install /tmp/timesketch/ && \
     sed -i -e '/pyyaml/d' /tmp/timesketch/requirements.txt && \
     rm -rf /tmp/*
 
