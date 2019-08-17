@@ -1,5 +1,5 @@
 #!/bin/bash
-cdqr_version="5.0.0"
+cdqr_version="5.1.0.1"
 cur_dir="$(pwd)"
 docker_network=${DOCKER_NETWORK}
 timesketch_conf=${TIMESKETCH_CONF:-"/opt/Skadi/Docker/timesketch/timesketch_default.conf"}
