@@ -1,6 +1,6 @@
 os: windows
 language: sh
-python: "3.7"
+python: "3.8"
 before_install:
   - choco install python3
   - export PATH="/c/Python38:/c/Python38/Scripts:$PATH"
