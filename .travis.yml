@@ -3,7 +3,7 @@ language: sh
 python: "3.7"
 before_install:
   - choco install python3
-  - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+  - export PATH="/c/Python38:/c/Python38/Scripts:$PATH"
   - python -m pip install --upgrade pip pyinstaller
 script:
   - /c/Python37/Scripts/pyinstaller.exe -F --clean -c "src/cdqr.py" -n cdqr.exe -i "Icons/Martin-Berube-Character-Knight.ico"
