@@ -18,6 +18,7 @@ RUN apt-get -qq -y update && \
       gpg-agent \
       libffi-dev \
       lsb-release \
+      locales \
       python3-dev \
       python3-setuptools \
       python-plaso \
@@ -45,16 +46,23 @@ RUN apt-get -qq -y update && \
 # Build and Install Timesketch from GitHub Master with Pip
 RUN git clone https://github.com/google/timesketch.git /tmp/timesketch && \
     cd /tmp/timesketch && \
-    git checkout d8c3ac17abdbf06d23614e0b68cff3bb94224c35 && \
+    git checkout aded1b19acca44b99854083088ef920390f75457 && \
     cd /tmp/timesketch && ls && yarn install && \
     yarn run build  && \
-    pip3 install /tmp/timesketch/ && \
     sed -i -e '/pyyaml/d' /tmp/timesketch/requirements.txt && \
+    pip3 install /tmp/timesketch/ && \
     rm -rf /tmp/*
+
+# Set terminal to UTF-8 by default
+RUN locale-gen en_US.UTF-8 && \
+    update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
 
 # Download and install CDQR
 RUN curl -s -o /usr/local/bin/cdqr.py \
-      https://raw.githubusercontent.com/orlikoski/CDQR/master/src/cdqr.py && \
+    https://raw.githubusercontent.com/orlikoski/CDQR/master/src/cdqr.py && \
     chmod 755 /usr/local/bin/cdqr.py
 
 # Load the entrypoint script to be run later
