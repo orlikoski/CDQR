@@ -2373,7 +2373,7 @@ def export_to_json(dst_loc, srcfilename, mylogfile, db_file, psort_location, log
     mylogfile.writelines("\nProcess to create export document started" + "\n")
     # Create the file for export
     exportfname = create_export(dst_loc, srcfilename, mylogfile, db_file,
-                                psort_location)
+                                psort_location, logname)
     print("Process to create export document complete")
     mylogfile.writelines("Process to create export document complete" + "\n")
 
