@@ -1772,7 +1772,7 @@ def create_export(dst_loc, srcfilename, mylogfile, db_file, psort_location, logn
     if os.path.exists(dstfilename):
         if query_yes_no(
                 args, "\n" + dstfilename +
-                " already exists.  Would you like to delete that file?", "no"):
+                " already exists.  Would you like to delete that file?", "yes"):
             os.remove(dstfilename)
 
     # Run psort against plaso db file to output a file in line delimited json format
@@ -1795,18 +1795,6 @@ def create_export(dst_loc, srcfilename, mylogfile, db_file, psort_location, logn
 
     print("Json line delimited file created")
     mylogfile.writelines("Json line delimited file created" + "\n")
-    print("Adding Json line delimited file to " + dstfilename)
-    mylogfile.writelines("Adding Json line delimited file to " + dstfilename +
-                         "\n")
-    mylogfile.writelines("Adding " + dstrawfilename + " to " + dstfilename +
-                         "\n")
-
-    # Compresse the file for export
-    zip_source(dstrawfilename, dstfilename)
-    os.remove(dstrawfilename)
-    print("Cleaning up temporary file: Removed " + dstrawfilename)
-    mylogfile.writelines("Cleaning up temporary file: Removed " +
-                         dstrawfilename + "\n")
 
     return dstfilename
 
@@ -2460,7 +2448,7 @@ def main():
     parser.add_argument(
         '--export',
         action='store_true',
-        help='Creates zipped, line delimited json export file')
+        help='Creates line delimited json export file')
     parser.add_argument(
         '--artifact_filters',
         nargs=1,
