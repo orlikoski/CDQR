@@ -47,9 +47,10 @@ RUN curl -sL -o /tmp/plaso-20190916.tar.gz https://github.com/log2timeline/plaso
     cd /tmp/ && \
     tar zxf plaso-20190916.tar.gz && \
     cd plaso-20190916 && \
-    sudo pip3 install -r requirements.txt && \
+    pip3 install -r requirements.txt && \
+    pip3 install mock && \
     python3 setup.py build && \
-    sudo python3 setup.py install && \
+    python3 setup.py install && \
     rm -rf /tmp/*
 
 # Build and Install Timesketch from GitHub Master with Pip
