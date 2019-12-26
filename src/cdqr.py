@@ -2367,7 +2367,7 @@ def export_to_elasticsearch(mylogfile, args, db_file, psort_location, logname):
     return
 
 
-def export_to_json(dst_loc, srcfilename, mylogfile, db_file, psort_location):
+def export_to_json(dst_loc, srcfilename, mylogfile, db_file, psort_location, logname):
     # Export Data (if selected)
     print("\nProcess to create export document started")
     mylogfile.writelines("\nProcess to create export document started" + "\n")
