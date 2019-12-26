@@ -13,6 +13,7 @@ RUN apt-get -qq -y update && \
     apt-get -qq -y update && \
     apt-get -qq -y --assume-yes --no-install-recommends install \
       python-setuptools \
+      build-essential \
       curl \
       git \
       gpg-agent \
@@ -21,8 +22,6 @@ RUN apt-get -qq -y update && \
       locales \
       python3-dev \
       python3-setuptools \
-      python-plaso \
-      plaso-tools \
       python3 \
       python3-pip \
       python3-psycopg2 \
@@ -42,6 +41,16 @@ RUN apt-get -qq -y update && \
     apt-get -qq -y autoclean && \
     apt-get -qq -y autoremove && \
     rm -rf /var/cache/apt/ /var/lib/apt/lists/
+
+# Download and install Plaso from GitHub Release
+RUN curl -sL -o /tmp/plaso-20190916.tar.gz https://github.com/log2timeline/plaso/archive/20190916.tar.gz && \
+    cd /tmp/ && \
+    tar zxf plaso-20190916.tar.gz && \
+    cd plaso-20190916 && \
+    sudo pip3 install -r requirements.txt && \
+    python3 setup.py build && \
+    sudo python3 setup.py install && \
+    rm -rf /tmp/*
 
 # Build and Install Timesketch from GitHub Master with Pip
 RUN git clone https://github.com/google/timesketch.git /tmp/timesketch && \
