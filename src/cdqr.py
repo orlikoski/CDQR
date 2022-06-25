@@ -2745,6 +2745,7 @@ def main():
         print("SuperTimeline CSV File: " + csv_file)
         log_list.append("SuperTimeline CSV File: " + csv_file + "\n")
 
+    command1.append("--storage-file")
     command1.append(db_file)
     command1.append(src_loc)
 
